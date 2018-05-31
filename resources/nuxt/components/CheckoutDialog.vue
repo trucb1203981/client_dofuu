@@ -224,7 +224,7 @@
 		</v-container>
 	</v-card>
 </v-dialog>
-<v-dialog v-model="dialog" max-width="400">
+<v-dialog v-model="dialog" max-width="400" v-if="currentCity != null">
 	<v-btn slot="activator" color="primary" dark>Open Dialog</v-btn>
 	<v-card>
 		<v-toolbar dense flat class="elevation-0">

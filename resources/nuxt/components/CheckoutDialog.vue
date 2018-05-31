@@ -224,6 +224,27 @@
 		</v-container>
 	</v-card>
 </v-dialog>
+<v-dialog v-model="dialog" max-width="400">
+	<v-btn slot="activator" color="primary" dark>Open Dialog</v-btn>
+	<v-card>
+		<v-toolbar dense flat class="elevation-0">
+			<v-toolbar-title>
+				<v-icon>notifications_active</v-icon>Thông báo
+			</v-toolbar-title>
+		</v-toolbar>
+		<v-divider></v-divider>
+		<v-card-text>
+			<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
+			<div>
+				Phạm vi giao hàng của dofuu tối đa <strong class="red--text">{{currentCity.service.maxRange}} km</strong>
+			</div>
+			<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
+		</v-card-text>
+		<v-card-actions>
+			<v-btn color="green darken-1"  dark @click.native="dialog = false" block>Đồng ý</v-btn>
+		</v-card-actions>
+	</v-card>
+</v-dialog>
 </v-layout>
 </template>
 <script>
@@ -286,6 +307,7 @@ export default {
 			loadingLocation:false,
 			disabled: true,
 			menuTime: false,
+			dialog:false
 		}
 	},
 	methods: {
@@ -377,7 +399,20 @@ export default {
 									duration    = element.duration.text
 								}
 								if (numeral(distance.slice(0,-3)).value() > vm.currentCity.service.maxRange) {
-
+									directionsDisplay.setMap(null)
+									var map = new google.maps.Map(document.getElementById('map'), {
+										zoom: 17,
+										center: {lat:vm.store.lat, lng:vm.store.lng}
+									});
+									var marker = new google.maps.Marker({
+										position: {lat:vm.store.lat, lng:vm.store.lng},
+										map: map,
+										title: 'Hello World!'
+									});
+									vm.matrix.distance = distance
+									vm.matrix.duration = duration
+									vm.disabled           = true
+									vm.editedItem.address = null
 								} else {
 									var leg            = response.routes[ 0 ].legs[ 0 ];
 									vm.matrix.distance = distance
@@ -585,7 +620,7 @@ export default {
 			if(val) {
 				const distance = numeral(val.slice(0,-3)).value()
 				if(distance > this.currentCity.service.maxRange) {
-					alert('Vượt khoảng cách tối đa là '+this.currentCity.service.maxRange+' Km')
+					this.dialog = true
 				} else {
 					if(this.currentCity.service.deliveryActived) {
 

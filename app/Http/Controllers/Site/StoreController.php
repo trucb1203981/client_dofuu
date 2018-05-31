@@ -227,7 +227,7 @@ class StoreController extends Controller
                     'type'    => 'success',
                     'message' => 'Get store information successfully!!!',
                     'store'   => new StoreResource($store->load('activities', 'catalogues')),
-                    'city'    => new CityResource($city) 
+                    'city'    => new CityResource($city->load('districts', 'service', 'deliveries')) 
                 ];
                 return response($res, 200)->withCookie(cookie('flag_c', $city->id, 43200, '/', '', '', false));
             }            

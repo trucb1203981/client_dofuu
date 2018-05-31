@@ -1,6 +1,6 @@
 <template>
 	<v-layout>
-		<v-dialog :value="show" fullscreen hide-overlay  persistent transition="dialog-bottom-transition" v-if="show">
+		<v-dialog :value="show" fullscreen hide-overlay  persistent transition="dialog-bottom-transition" v-if="store != null">
 			<v-card>
 				<v-toolbar dense flat fixed>
 					<v-btn icon @click.native="$store.commit('CLOSE_CHECKOUT')">
@@ -224,8 +224,7 @@
 		</v-container>
 	</v-card>
 </v-dialog>
-<v-dialog v-model="dialog" max-width="400" v-if="currentCity != null">
-	<v-btn slot="activator" color="primary" dark>Open Dialog</v-btn>
+<v-dialog v-model="dialog" max-width="400">
 	<v-card>
 		<v-toolbar dense flat class="elevation-0">
 			<v-toolbar-title>
@@ -233,10 +232,10 @@
 			</v-toolbar-title>
 		</v-toolbar>
 		<v-divider></v-divider>
-		<v-card-text>
+		<v-card-text >
 			<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
 			<div>
-				Phạm vi giao hàng của dofuu tối đa <strong class="red--text">{{currentCity.service.maxRange}} km</strong>
+				Phạm vi giao hàng của dofuu tối đa <strong class="red--text">{{maxRange}}  km</strong>
 			</div>
 			<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
 		</v-card-text>
@@ -307,7 +306,8 @@ export default {
 			loadingLocation:false,
 			disabled: true,
 			menuTime: false,
-			dialog:false
+			dialog:false,
+			maxRange: 20
 		}
 	},
 	methods: {
@@ -532,7 +532,7 @@ export default {
 			// Find start time of store in current day
 			day.times.filter(item => {
 				if(parseInt(item.from.replace(regex, ''),10) > parseInt(now.format('HH:mm').replace(regex, ''),10)) {
-					hs = time.from
+					hs = item.from
 				} else {
 					hs = now.format('HH:mm')
 				}
@@ -606,7 +606,6 @@ export default {
 					});
 				})
 				
-				
 				if(vm.user.address != null) {
 					setTimeout(() => {
 						vm.calculateRoute(vm.user.address)
@@ -621,6 +620,7 @@ export default {
 				const distance = numeral(val.slice(0,-3)).value()
 				if(distance > this.currentCity.service.maxRange) {
 					this.dialog = true
+					this.maxRange = this.currentCity.service.maxRange
 				} else {
 					if(this.currentCity.service.deliveryActived) {
 

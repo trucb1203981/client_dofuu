@@ -156,7 +156,7 @@
 				</v-card>			
 			</v-flex>
 		</v-layout>
-		<vue-dialog :store.sync="store"></vue-dialog>
+		<vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
 		<!-- RIGHT NAVBAR MOBILE -->
 		<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" right class="hidden-lg-only hidden-md-only">
 			<v-toolbar	color="red"	dark extended flat>

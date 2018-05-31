@@ -26,7 +26,9 @@ class StoreController extends Controller
         $offset    = $request->offset;
         
         $city = City::where('city_slug', '=', $citySlug)->with(['stores' => function($query) use ($keywords, $pageSize) {
-            return $query->where('store_show', '=', 1)->whereHas('type', function($queryChild) use ($keywords) {
+            return $query
+            ->where('store_show', '=', 1)
+            ->whereHas('type', function($queryChild) use ($keywords) {
                 $queryChild->where('type_name', 'like', '%'.$keywords.'%');
             })
             ->limit($pageSize)
@@ -41,7 +43,7 @@ class StoreController extends Controller
 
         return response($res, 200);
     }
-    //SEARCH STORE BY PLACE 
+    //SEARCH STORE BY PRODUCT 
     public function searchStoreByProduct(Request $request) {
         $keywords = $request->keywords;
         $citySlug = $request->citySlug;
@@ -52,14 +54,16 @@ class StoreController extends Controller
 
             return $query
             ->where('store_show', '=', 1)
-            ->whereHas('products', function($queryChild) use ($keywords) {
-                $queryChild->where('name', 'like', '%'.$keywords.'%');
-                $queryChild->orWhere('_name', 'like', '%'.$keywords.'%');
-            })
-            ->orWhereHas('catalogues', function($queryChild) use ($keywords) {
-                $queryChild->where('catalogue', 'like', '%'.$keywords.'%');
-                $queryChild->orWhere('_catalogue', 'like', '%'.$keywords.'%');
-            })
+            ->where(function($query) use($keywords) {
+                $query->whereHas('products', function($queryChild) use ($keywords) {
+                    $queryChild->where('name', 'like', '%'.$keywords.'%');
+                    $queryChild->orWhere('_name', 'like', '%'.$keywords.'%');
+                });
+                $query->orWhereHas('catalogues', function($queryChild) use ($keywords) {
+                    $queryChild->where('catalogue', 'like', '%'.$keywords.'%');
+                    $queryChild->orWhere('_catalogue', 'like', '%'.$keywords.'%');
+                });
+            })            
             ->limit($pageSize)
             ->get();
 
@@ -82,11 +86,11 @@ class StoreController extends Controller
         $city     = City::where('city_slug', '=', $citySlug)->with(['stores' => function($query) use ($keywords, $pageSize) {
 
             return $query
+            ->where('store_show', '=', 1)
             ->where(function($queryChild) use ($keywords) {
                 $queryChild->where('store_name', 'like',  '%'.$keywords.'%');  
-                $queryChild->where('store_show', '=', 1);
+                $queryChild->orWhere('store_address', 'like', '%'.$keywords.'%');
             })
-            ->orWhere('store_address', 'like', '%'.$keywords.'%')
             ->limit($pageSize)
             ->get();
 
@@ -108,20 +112,19 @@ class StoreController extends Controller
         $offset   = $request->offset;
         $city     = City::where('city_slug', '=', $citySlug)->with(['stores' => function($query) use ($keywords, $pageSize) {
 
-            return $query
-            ->where(function($queryChild) use ($keywords) {
-                $queryChild->where('store_name', 'like',  '%'.$keywords.'%');
-                $queryChild->where('store_show', '=', 1);
+            return $query->where('store_show', '=', 1)
+            ->where(function($query) use ($keywords) {
+                $query->where('store_name', 'like',  '%'.$keywords.'%');
+                $query->orWhere('store_address', 'like', '%'.$keywords.'%');
+                $query->orWhereHas('products', function($queryChild) use ($keywords) {
+                    $queryChild->where('name', 'like', '%'.$keywords.'%');
+                    $queryChild->orWhere('_name', 'like', '%'.$keywords.'%');
+                });
+                $query->orWhereHas('catalogues', function($queryChild) use ($keywords) {
+                    $queryChild->where('catalogue', 'like', '%'.$keywords.'%');
+                    $queryChild->orWhere('_catalogue', 'like', '%'.$keywords.'%');
+                });
             })
-            ->orWhereHas('products', function($queryChild) use ($keywords) {
-                $queryChild->where('name', 'like', '%'.$keywords.'%');
-                $queryChild->orWhere('_name', 'like', '%'.$keywords.'%');
-            })
-            ->orWhereHas('catalogues', function($queryChild) use ($keywords) {
-                $queryChild->where('catalogue', 'like', '%'.$keywords.'%');
-                $queryChild->orWhere('_catalogue', 'like', '%'.$keywords.'%');
-            })
-            ->orWhere('store_address', 'like', '%'.$keywords.'%')
             ->limit($pageSize)
             ->get();
 

@@ -38,7 +38,7 @@
 
 											<v-flex xs12 md12>
 												<v-layout row wrap>
-													<v-flex :bind="$vuetify.breakpoint.mdAndUp ? xs8 : xs10">
+													<v-flex :bind="$vuetify.breakpoint.mdAndUp ? 'xs8' : 'xs10'">
 														<v-text-field prepend-icon="place" placeholder="Địa chỉ nhận" v-model="editedItem.address" id="auto-complete" ref="autocomplete"></v-text-field>
 													</v-flex>
 													<!-- DESKTOP -->

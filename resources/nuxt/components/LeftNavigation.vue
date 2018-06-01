@@ -7,6 +7,7 @@
 			<v-text-field
 			slot="extension"
 			solo-inverted
+			flat
 			class="mx-3"
 			v-model="keywords"
 			color="red accent-2"

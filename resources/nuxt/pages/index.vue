@@ -1,9 +1,9 @@
 <template>
 	<v-container grey-lighten-4 lighten-2 fluid grid-list-lg v-scroll="onScroll">
 		<v-layout grey-lighten-4 row wrap v-if="!loading">
-			<v-flex xs12 sm6 md9>
+			<v-flex xs12 md9>
 				<v-layout column> 
-					<v-flex xs12 sm12 md12  v-if="deal.stores.length>0">
+					<v-flex xs12 md12  v-if="deal.stores.length>0">
 						<!-- START DEAL STORES -->
 						<v-card flat class="pb-2" >					
 							<v-layout grey lighten-4 row wrap class="elevation-1" >
@@ -14,7 +14,7 @@
 									</v-toolbar-title>
 									<v-icon color="red">whatshot</v-icon>
 								</v-toolbar>					
-								<v-flex xs12 sm6 md3 :class="{'d-flex': $vuetify.breakpoint.mdAndUp, 'order-xs2': $vuetify.breakpoint.smAndDown}" class="pa-0">
+								<v-flex xs12 md3 :class="{'d-flex': $vuetify.breakpoint.mdAndUp, 'order-xs2': $vuetify.breakpoint.smAndDown}" class="pa-0">
 									<v-card flat tile>
 										<v-tabs v-model="deal.tabs" grow slider-color="yellow accent-3">
 											<v-tab @click="loadDistrict(0, 'deal')">
@@ -64,7 +64,7 @@
 									</v-card>	
 								</v-flex>
 
-								<v-flex xs12 sm6 md9>
+								<v-flex xs12 md9>
 									<v-content>
 										<v-layout row wrap >
 											<v-flex  xs12 md4 d-flex v-for="(item, i) in deal.stores " :key="i">
@@ -119,7 +119,7 @@
 						</v-card><!-- END DEAL STORE -->
 					</v-flex>
 
-					<v-flex  xs12 sm12 md12 >
+					<v-flex  xs12 md12 >
 						<v-card flat ><!-- START ALL STORE -->					
 							<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
 								<v-toolbar color="white" flat dense>
@@ -127,7 +127,7 @@
 										TẤT CẢ
 									</v-toolbar-title>
 								</v-toolbar>					
-								<v-flex :class="{'d-flex': $vuetify.breakpoint.mdAndUp, 'order-xs2': $vuetify.breakpoint.smAndDown}" xs12 sm6 md3  class="pa-0">
+								<v-flex :class="{'d-flex': $vuetify.breakpoint.mdAndUp, 'order-xs2': $vuetify.breakpoint.smAndDown}" xs12 md3  class="pa-0">
 									<v-card flat tile>
 										<v-tabs v-model="all.tabs" grow slider-color="yellow accent-3">
 											<v-tab @click="loadDistrict(0, 'all')">
@@ -177,12 +177,12 @@
 									</v-card>	
 								</v-flex>
 
-								<v-flex xs12 sm6 md9 order-xs1>
+								<v-flex xs12 md9 order-xs1>
 									<v-content>
 										<v-layout row wrap >
 											<v-flex  xs12 md4 d-flex v-for="(item, i) in all.stores " :key="i">
 												<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" width="200px" hover ripple >
-													<v-card-media class="white--text" height="150px" :src="image(item.avatar)">
+													<v-card-media class="white--text" :height="$vuetify.breakpoint.mdAndUp ? '150px' : '250px' " :src="image(item.avatar)">
 														<v-container fill-height fluid>
 															<v-layout fill-height >
 																<v-flex xs12>
@@ -234,7 +234,7 @@
 				</v-layout>
 			</v-flex> 
 
-			<v-flex xs12 sm6 md3 :class="{'mt-4': $vuetify.breakpoint.xsOnly}">
+			<v-flex xs12 md3 :class="{'mt-4': $vuetify.breakpoint.mdAndDown}">
 				<v-card color="grey lighten-3" >
 					<v-layout column wrap >
 						<v-flex :d-flex="$vuetify.breakpoint.xsOnly" class="pt-0 pb-0">

@@ -17,6 +17,11 @@ export default {
 			});
 		}
 	},
+	watch: {
+		'address': function(val) {
+			console.log(val)
+		}
+	},
 	mounted() {
 		this.autoComplete()
 	}

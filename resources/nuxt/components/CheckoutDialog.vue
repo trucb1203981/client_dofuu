@@ -24,6 +24,7 @@
 							<v-flex d-flex>
 								<v-card  :bind="$vuetify.breakpoint.mdAndUp ? `height='370'`: ''">
 									<v-card-text>
+										{{editedItem.address}}
 										<v-layout row wrap>
 											<v-flex xs12 md6>
 												<v-text-field prepend-icon="person" label="Họ tên" v-model="editedItem.name"></v-text-field>
@@ -36,7 +37,8 @@
 											<v-flex xs12 md12>
 												<v-layout row wrap>
 													<v-flex xs8>
-														<vue-autocomplete v-model="editedItem.address" :address="editedItem.address" @place_changed="setPlace" ref="autocomplete"></vue-autocomplete>
+														<v-text-field prepend-icon="place" placeholder="Địa chỉ nhận" v-model="editedItem.address" id="auto-complete" ref="autocomplete"></v-text-field>
+														<!-- <vue-autocomplete v-model="editedItem.address" :address="editedItem.address" @place_changed="setPlace" ref="autocomplete"></vue-autocomplete> -->
 													</v-flex>
 													<v-flex xs4>
 														<v-btn small :loading="loadingLocation" color="primary" dark @click="currentLocation" >
@@ -311,6 +313,7 @@ export default {
 		}
 	},
 	methods: {
+		//CHECK COUPON
 		checkCoupon: async function() {
 			var vm = this
 			if(vm.code == null) {
@@ -336,22 +339,41 @@ export default {
 			}
 			
 		},
+		autoComplete() {
+			var vm           = this
+			var flag 		 = false
+			var input        = document.getElementById('auto-complete')
+			var autocomplete = new google.maps.places.Autocomplete(input)
+			autocomplete.addListener('place_changed', function() {
+				var place = autocomplete.getPlace()
+				if(!place.geometry) {
+					var geocoder = new google.maps.Geocoder();
+					geocoder.geocode({address: input.value}, function(results, status) {
+						if(status === 'OK') {
+							vm.calculateRoute({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()})
+						}
+					})
+					return
+				}
+				vm.setPlace(place)
+			})
+		},
 		setPlace(place) {
 			this.place = place
 			if(this.place) {
 				
-				this.position = {
+				this.position 	= {
 					lat: this.place.latitude,
 					lng: this.place.longitude
 				}
 
-				this.center = {
+				this.center 	= {
 					lat: this.place.latitude,
 					lng: this.place.longitude
 				}
 				this.editedItem.address = this.place.formatted_address
-				this.editedItem.lat = this.place.geometry.location.lat()
-				this.editedItem.lng = this.place.geometry.location.lng()
+				this.editedItem.lat     = this.place.geometry.location.lat()
+				this.editedItem.lng     = this.place.geometry.location.lng()
 				this.calculateRoute({lat: this.place.geometry.location.lat(), lng: this.place.geometry.location.lng()})
 			}
 		},
@@ -385,7 +407,8 @@ export default {
 						origins: [response.request.origin.location],
 						destinations: [response.request.destination.location],
 						travelMode: 'DRIVING'
-					}, function(res, status) {
+					},async function(res, status) {
+						var leg            = response.routes[ 0 ].legs[ 0 ];
 						if (status === 'OK') {
 							var originList      = res.originAddresses
 							var destinationList = res.destinationAddresses
@@ -398,29 +421,36 @@ export default {
 									distance    = element.distance.text
 									duration    = element.duration.text
 								}
-								if (numeral(distance.slice(0,-3)).value() > vm.currentCity.service.maxRange) {
-									directionsDisplay.setMap(null)
-									var map = new google.maps.Map(document.getElementById('map'), {
-										zoom: 17,
-										center: {lat:vm.store.lat, lng:vm.store.lng}
-									});
-									var marker = new google.maps.Marker({
-										position: {lat:vm.store.lat, lng:vm.store.lng},
-										map: map,
-										title: 'Hello World!'
-									});
-									vm.matrix.distance = distance
-									vm.matrix.duration = duration
-									vm.disabled           = true
-									vm.editedItem.address = null
-								} else {
-									var leg            = response.routes[ 0 ].legs[ 0 ];
-									vm.matrix.distance = distance
-									vm.matrix.duration = duration
-									vm.editedItem.lat  = leg.end_location.lat()
-									vm.editedItem.lng  = leg.end_location.lng()
+								var arrayDistance = distance.split(' ')
+								if(distance.split(' ')[1] == 'm') {
+									arrayDistance[0]  = await numeral(distance.split(' ')[0]).value() / 1000
+									distance          = await arrayDistance.join(' ')
+									vm.editedItem.lat = leg.end_location.lat()
+									vm.editedItem.lng = leg.end_location.lng()
 									directionsDisplay.setDirections(response);
+								} else {
+									if(numeral(distance.split(' ')[0]).value() > vm.currentCity.service.maxRange)
+									{
+										directionsDisplay.setMap(null)
+										var map = new google.maps.Map(document.getElementById('map'), {
+											zoom: 17,
+											center: {lat:vm.store.lat, lng:vm.store.lng}
+										});
+										var marker = new google.maps.Marker({
+											position: {lat:vm.store.lat, lng:vm.store.lng},
+											map: map,
+											title: 'Hello World!'
+										});
+										vm.disabled           = true
+										vm.editedItem.address = null	
+									} else {
+										vm.editedItem.lat  = leg.end_location.lat()
+										vm.editedItem.lng  = leg.end_location.lng()
+										directionsDisplay.setDirections(response);
+									}
 								}
+								vm.matrix.distance = distance
+								vm.matrix.duration = duration
 							}
 						}					
 					})
@@ -432,15 +462,14 @@ export default {
 			})
 		},
 		currentLocation: function() {
-			var geocoder = new google.maps.Geocoder();
-
-			var vm = this
+			var vm             = this
+			var geocoder       = new google.maps.Geocoder();
 			vm.loadingLocation = true
 			if(navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(async function(position){
 					vm.editedItem.lat = position.coords.latitude
 					vm.editedItem.lng = position.coords.longitude
-					var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+					var latlng        = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 					await geocoder.geocode({'location': latlng}, function(results, status) {
 						if(status == 'OK') {
 							vm.editedItem.address = results[0].formatted_address
@@ -480,7 +509,7 @@ export default {
 				'store': this.store,
 				'city': this.city,
 				'estimateTime': this.intendTime,
-				'distance': numeral(this.matrix.distance.slice(0, -3)).value(),
+				'distance': numeral(this.matrix.distance.split(' ')[0]).value(),
 				'paymentMethod': 1
 			}
 			if(this.coupon.secret != null) {
@@ -593,13 +622,14 @@ export default {
 		'show': function(val) {
 			if(val) {
 				var vm = this
+				vm.autoComplete()
 				setTimeout(() => {
-					var map = new google.maps.Map(document.getElementById('map'), {
+					var map 	= new google.maps.Map(document.getElementById('map'), {
 						zoom: 17,
 						center: {lat:vm.store.lat, lng:vm.store.lng}
 					});
 
-					var marker = new google.maps.Marker({
+					var marker 	= new google.maps.Marker({
 						position: {lat:vm.store.lat, lng:vm.store.lng},
 						map: map,
 						title: 'Hello World!'
@@ -616,10 +646,10 @@ export default {
 			} 
 		},
 		'matrix.distance': function(val) {
+			var distance = parseFloat(val.split(' ')[0])
 			if(val) {
-				const distance = numeral(val.slice(0,-3)).value()
 				if(distance > this.currentCity.service.maxRange) {
-					this.dialog = true
+					this.dialog   = true
 					this.maxRange = this.currentCity.service.maxRange
 				} else {
 					if(this.currentCity.service.deliveryActived) {
@@ -633,17 +663,17 @@ export default {
 							} else if(item.from <= distance && item.to >= distance && this.currentCity.service.maxRange >= distance && this.currentCity.service.minRange < distance){
 
 								this.deliveryPrice = Math.floor(parseFloat(item.price)*distance)
-
 							}
 						})
 
 					} else {
-
 						this.deliveryPrice = 0
-
 					}
 				}				
 			}
+		},
+		'editedItem.address': function(val) {
+
 		},
 		'user': function(val) {
 			if(val) {

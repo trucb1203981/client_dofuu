@@ -1,6 +1,6 @@
 <template>
 	<v-app standalone class="grey lighten-2" >
-		</vue-navigation>
+		<vue-toolbar/>
 		<v-content>
 			<nuxt/>
 		</v-content>
@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import Navigation from '~/components/Navigation.vue'
+import Toolbar from '~/components/Toolbar.vue'
 import { mapState } from "vuex";
 export default {
 	components: {
-		'vue-navigation' : Navigation
+		'vue-toolbar' : Toolbar
 	},
 	asyncData({store}) {
 		if(process.server) {

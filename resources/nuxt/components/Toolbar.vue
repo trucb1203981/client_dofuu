@@ -11,6 +11,7 @@
 			</v-btn>		
 		</v-system-bar>
 		<v-toolbar extended dense color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0">
+			
 			<v-toolbar-title class="red--text text-accent-2" :style="$vuetify.breakpoint.lgAndUp ? 'width: 170px': 'width: 100px'">
 				<v-list-tile :exact="false" active-class="red--text" :to="{path: '/'}">
 					DOFUU
@@ -35,11 +36,12 @@
 				:close-on-content-click="false"
 				min-width="240px"
 				max-width="240px"
-				:nudge-bottom="50">
+				:nudge-bottom="50"
+				class="hidden-sm-and-down">
 				<v-list slot="activator" dense>
 					<v-list-tile avatar @click="">
 						<v-avatar size="28">
-							<img :src="image(currentUser.avatar)">
+							<img :src="image(currentUser.image)">
 						</v-avatar>
 						<v-list-tile-content class="pl-2 ellipsis" style="max-width:140px">
 							<v-list-tile-title>
@@ -55,7 +57,7 @@
 					<v-list>
 						<v-list-tile avatar @click="">
 							<v-list-tile-avatar>
-								<img :src="image(currentUser.avatar)" alt="John">
+								<img :src="image(currentUser.image)" alt="John">
 							</v-list-tile-avatar>
 							<v-list-tile-content>
 								<v-list-tile-title>{{currentUser.name}}</v-list-tile-title>
@@ -85,6 +87,7 @@
 				</v-card>
 			</v-menu>
 		</v-toolbar-items>	
+		<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up"></v-toolbar-side-icon>
 		<v-toolbar color="white" slot="extension"  dense flat>
 			<v-select flat :items="cities" v-model="cityCurrent" item-value="id" dense light solo-inverted item-text="name" return-object style="max-width:150px" class="ml-3 mr-3" color="red accent-2">
 			</v-select >
@@ -120,7 +123,8 @@ export default {
 			keywords: typeof this.$route.query.q != 'undefined' ? this.$route.query.q : '',
 			stores: [],
 			loading: false,
-			select: []
+			select: [],
+			leftDrawer: true
 		}
 	},
 	computed: {

@@ -6,7 +6,10 @@
 					<v-btn icon @click.native="$store.commit('CLOSE_CHECKOUT')">
 						<v-icon color="grey">close</v-icon>
 					</v-btn>
-					<v-toolbar-title>Xác nhận đơn đặt hàng</v-toolbar-title>
+					<!-- MOBILE -->
+					<v-toolbar-title class="hidden-md-and-up subheading">Xác nhận</v-toolbar-title>
+					<!-- DESKTOP -->
+					<v-toolbar-title class="hidden-sm-and-down">Xác nhận đơn đặt hàng</v-toolbar-title>
 					<v-spacer></v-spacer>
 					<v-btn color="primary" :disabled="editedItem.address == null" @click.prevent="save">
 						Hoàn thành | {{total | formatPrice}}
@@ -24,7 +27,6 @@
 							<v-flex d-flex>
 								<v-card  :bind="$vuetify.breakpoint.mdAndUp ? `height='370'`: ''">
 									<v-card-text>
-										{{editedItem.address}}
 										<v-layout row wrap>
 											<v-flex xs12 md6>
 												<v-text-field prepend-icon="person" label="Họ tên" v-model="editedItem.name"></v-text-field>
@@ -36,18 +38,23 @@
 
 											<v-flex xs12 md12>
 												<v-layout row wrap>
-													<v-flex xs8>
+													<v-flex :bind="$vuetify.breakpoint.mdAndUp ? xs8 : xs10">
 														<v-text-field prepend-icon="place" placeholder="Địa chỉ nhận" v-model="editedItem.address" id="auto-complete" ref="autocomplete"></v-text-field>
-														<!-- <vue-autocomplete v-model="editedItem.address" :address="editedItem.address" @place_changed="setPlace" ref="autocomplete"></vue-autocomplete> -->
 													</v-flex>
-													<v-flex xs4>
+													<!-- DESKTOP -->
+													<v-flex xs4 class="hidden-sm-and-down">
 														<v-btn small :loading="loadingLocation" color="primary" dark @click="currentLocation" >
 															<span>Vị trí hiện tại</span>
+															<v-icon right>gps_fixed</v-icon>
+														</v-btn>														
+													</v-flex>
+													<!-- MOBILE -->													
+													<v-flex xs2 class="hidden-md-and-up">
+														<v-btn :loading="loadingLocation" color="primary" dark @click="currentLocation" icon>
+															<v-icon>gps_fixed</v-icon>
 														</v-btn>
-													</v-flex>													
+													</v-flex>												
 												</v-layout>
-												
-												
 											</v-flex>
 
 											<v-flex xs12 md6>
@@ -126,7 +133,7 @@
 						</v-card>
 					</v-flex>
 				</v-flex>
-				<v-flex md6>
+				<v-flex xs12 md6>
 					<v-flex d-flex>
 						<v-card height="250" flat color="white">
 							<v-toolbar dense flat color="white" class="elevation-0" card>
@@ -182,15 +189,20 @@
 											<strong>{{deliveryPrice | formatPrice}}</strong>
 										</v-list-tile-action>
 									</v-list-tile>
-
-									<v-list-tile class="red lighten-4">
+									
+									<v-list-tile>
 										<v-list-tile-content>
 											<span>Mã khuyến mãi:</span>
 										</v-list-tile-content>					
-										<v-text-field solo flat color="purple" v-model="code" label="Nhập mã"></v-text-field>
+									</v-list-tile>
+									
+									<v-list-tile class="yellow accent-3">		
+										<v-list-tile-content>
+											<v-text-field solo class="my-1" flat color="purple" v-model="code" label="Nhập mã"></v-text-field>
+										</v-list-tile-content>
 										<v-btn small color="primary" @click.stop="checkCoupon()" :loading="loadingCoupon">Áp dụng</v-btn>				
 										<v-list-tile-action>
-											<strong class="red--text">
+											<strong class="red--text text--accent-3">
 												<span v-if="coupon.secret != null">(Giảm {{coupon.discountPercent}}%)</span>
 												{{dealPrice | formatPrice}}			
 											</strong> 

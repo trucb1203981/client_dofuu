@@ -473,6 +473,7 @@ export default {
 				vm.$router.push({name: 'login', query: {redirect: this.$route.path}})
 			})
 		},
+		//SEARCH PRODUCT BY KEYWORD
 		getByKeyWords: function(list, value) {
 			let search = new String(value).toLowerCase()
 			let data   = list
@@ -487,6 +488,7 @@ export default {
 			})
 			return new Array(temp)
 		},
+		//GET ALL PRODUCT BY STORE
 		getProducts: function() {
 			var vm = this
 			return new Promise((resolve, reject) => {

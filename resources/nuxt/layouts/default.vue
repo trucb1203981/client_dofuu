@@ -1,6 +1,7 @@
 <template>
 	<v-app id="inspire"  standalone class="grey lighten-2">
-		<vue-navigation></vue-navigation>
+		<vue-toolbar></vue-toolbar>
+		<vue-left-navigation class="hidden-md-and-up"></vue-left-navigation>
 		<v-content>
 			<nuxt/>
 		</v-content>
@@ -11,12 +12,14 @@
 </template>
 
 <script>
-import Navigation from '@/components/Navigation'
+import Toolbar from '@/components/Toolbar'
+import LeftNavigation from '@/components/LeftNavigation'
 import { mapState } from "vuex";
 import Cookies from 'js-cookie'
 export default {
 	components: {
-		'vue-navigation' : Navigation
+		'vue-left-navigation': LeftNavigation,
+		'vue-toolbar' : Toolbar
 	},
 	created: async function() {
 		this.$store.dispatch("fetchCity").then(response => {

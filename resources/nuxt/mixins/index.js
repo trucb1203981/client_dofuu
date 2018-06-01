@@ -4,7 +4,7 @@ export default {
 	methods: {
 		image(url) {
 			if(url == null) {
-				return baseURL+'/img/noimage.png'
+				return baseURL+'/img/default.png'
 			}
 			return baseURL+url
 		},

@@ -391,7 +391,6 @@ export default {
 	},
 	methods: {
 		showDelivery: function() {
-			console.log(this.showInfoDelivery)
 			this.showInfoDelivery = true
 		},
 		closeDelivery: function() {

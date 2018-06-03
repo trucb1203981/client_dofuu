@@ -99,7 +99,7 @@ class AuthController extends Controller
                 'token'   => hash_hmac('sha256', str_random(40), config('app.key'))
             ]);
             
-            Mail::to($user->email)->send(new ActiveUserMail($user));
+            // Mail::to($user->email)->send(new ActiveUserMail($user));
             return response('Create account Successfully!!!', 201);
         }
         return response('Something went wrong', 500);

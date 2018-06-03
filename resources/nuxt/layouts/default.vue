@@ -37,8 +37,7 @@ export default {
 			}
 		});
 
-		this.$store.dispatch("fetchType");	
-
+		this.$store.dispatch("fetchType");
 	}
 };
 </script>

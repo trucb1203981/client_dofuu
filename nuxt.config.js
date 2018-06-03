@@ -14,7 +14,7 @@ module.exports = laravelNuxt({
 		{ hid: 'description', name: 'description', content: 'Dofuu website' }
 		],
 		link: [
-		{ rel: 'icon', type: 'image/x-icon', href: '/dofuu.png'},
+		{ rel: 'icon', type: 'image/x-icon', href: '/dofuu24x24.png'},
 		{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'}
 		]
 	},

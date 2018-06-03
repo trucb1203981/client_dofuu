@@ -435,8 +435,10 @@ export default {
 								}
 								var arrayDistance = distance.split(' ')
 								if(distance.split(' ')[1] == 'm') {
-									arrayDistance[0]  = await numeral(distance.split(' ')[0]).value() / 1000
-									distance          = await arrayDistance.join(' ')
+
+									arrayDistance[0]  = await numeral(distance.split(' ')[0]).divide(1000).value()
+									arrayDistance[1]  = 'km'
+									distance          = await arrayDistance.join(' ').replace('.', ',')
 									vm.editedItem.lat = leg.end_location.lat()
 									vm.editedItem.lng = leg.end_location.lng()
 									directionsDisplay.setDirections(response);
@@ -461,6 +463,7 @@ export default {
 										directionsDisplay.setDirections(response);
 									}
 								}
+
 								vm.matrix.distance = distance
 								vm.matrix.duration = duration
 							}
@@ -658,11 +661,15 @@ export default {
 			} 
 		},
 		'matrix.distance': function(val) {
-			var distance = parseFloat(val.split(' ')[0])
+			console.log(val)
+			var distance = numeral(val.split(' ')[0]).value()
 			if(val) {
 				if(distance > this.currentCity.service.maxRange) {
 					this.dialog   = true
 					this.maxRange = this.currentCity.service.maxRange
+					this.currentCity.deliveries.forEach(item => {
+						this.deliveryPrice = parseFloat(item.price)*distance
+					})
 				} else {
 					if(this.currentCity.service.deliveryActived) {
 
@@ -673,8 +680,7 @@ export default {
 								this.deliveryPrice = parseFloat(item.price)
 
 							} else if(item.from <= distance && item.to >= distance && this.currentCity.service.maxRange >= distance && this.currentCity.service.minRange < distance){
-
-								this.deliveryPrice = Math.floor(parseFloat(item.price)*distance)
+								this.deliveryPrice = parseFloat(item.price)*distance
 							}
 						})
 

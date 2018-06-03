@@ -65,7 +65,7 @@
 					<v-toolbar	color="red"	dark extended flat>
 						<v-text-field  prepend-icon="search" label="Tìm kiếm món" solo-inverted class="mx-3" v-model="search" flat/>
 
-						<v-tabs icons-and-text mobile-break-point="1264" slot="extension" grow :value="`item-${tabIndex}`"   color="transparent">
+						<v-tabs icons-and-text  slot="extension" grow :value="`item-${tabIndex}`"   color="transparent">
 
 							<v-tabs-slider color="yellow"></v-tabs-slider>
 
@@ -334,8 +334,40 @@ export default {
 		}
 	},
 	methods: {
+		//CHECK DATE
+		checkDayOff: function() {
+			return new Promise((resolve, reject) => {
+				var n = moment().locale('vi').day()
+				var day = this.store.activities.find(day => {
+					if(day.number == n) {
+						return day
+					} else {
+						return false
+					}
+				})
+				if(day) {
+					day.times.forEach(time => {
+						if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.from, 'HH:mm:ss').format('HH:mm') && moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.to, 'HH:mm:ss').format('HH:mm')) {
+							resolve(true)
+						} else {
+							if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
+								this.dialog = true
+								this.message     = 'Quán hiện tại chưa mở cửa'
+							} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
+								this.dialog = true
+								this.message     = 'Quán hiện tại đã đóng cửa'
+							}
+						}
+					})
+				} else {
+					this.dialog = true
+					this.message     = 'Quán hôm nay nghỉ'
+				}			
+			})			
+		},
 		// SCROLLING TO CATALOGUE
 		goTo: function (target) {
+			this.drawer = false
 			this.$vuetify.goTo(target, this.options)
 		},
 		//SET TIMEOUT AT END TIME FOR COUPON
@@ -360,42 +392,22 @@ export default {
 		},
 		// ADD ITEM TO CART
 		addToCart: function (product) {
-			var n = moment().locale('vi').day()
-			var day = this.store.activities.find(day => {
-				if(day.number == n) {
-					return day
-				} else {
-					return false
+			this.checkDayOff().then(response => {
+				if(response) {
+					const productIndex  = this.cart.items.findIndex(item => {
+						return item.id === product.id
+					})
+					if (productIndex > -1) {
+						this.cart.items[productIndex].qty++
+					} else {
+						product.qty = 1
+						this.cart.items.push(product)
+					}
+					this.$store.commit('FETCH_CART', this.cart)
+					window.localStorage.setItem('cart', JSON.stringify(this.cart))
+					this.$store.commit('CHANGE_TAB', 1)
 				}
 			})
-			if(day) {
-				day.times.forEach(time => {
-					if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.from, 'HH:mm:ss').format('HH:mm') && moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-						const productIndex  = this.cart.items.findIndex(item => {
-							return item.id === product.id
-						})
-						if (productIndex > -1) {
-							this.cart.items[productIndex].qty++
-						} else {
-							product.qty = 1
-							this.cart.items.push(product)
-						}
-						this.$store.commit('FETCH_CART', this.cart)
-						window.localStorage.setItem('cart', JSON.stringify(this.cart))
-					} else {
-						if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
-							this.dialog = true
-							this.message     = 'Quán hiện tại chưa mở cửa'
-						} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-							this.dialog = true
-							this.message     = 'Quán hiện tại đã đóng cửa'
-						}
-					}
-				})
-			} else {
-				this.dialog = true
-				this.message     = 'Quán hôm nay nghỉ'
-			}			
 		},
 		// MINUS ITEM TO CART
 		minusToCart: function (product) {
@@ -445,33 +457,38 @@ export default {
 		//CHECK OUT CART
 		checkOut: async function() {
 			var vm    = this
-			const city = this.$store.getters.getCityBySlug(this.$route.params.city)
-			vm.$store.dispatch('getUser').then(async (response) => {
-				if(response.status == 200) {
-					await vm.$store.dispatch('getCityCurrent', city.id)
-					await vm.getProducts().then(async (response) => {
+			vm.checkDayOff().then(response => {
+				if(response) {
+					// console.log(response)
+					const city = this.$store.getters.getCityBySlug(this.$route.params.city)
+					vm.$store.dispatch('getUser').then(async (response) => {
 						if(response.status == 200) {
-							var array = []
-							await vm.products.find(product => {
-								vm.cart.items.forEach(item => {
-									if(product.id == item.id) {
-										product.qty = item.qty
-										array.push(product)
+							await vm.$store.dispatch('getCityCurrent', city.id)
+							await vm.getProducts().then(async (response) => {
+								if(response.status == 200) {
+									var array = []
+									await vm.products.find(product => {
+										vm.cart.items.forEach(item => {
+											if(product.id == item.id) {
+												product.qty = item.qty
+												array.push(product)
+											}
+										})
+									})
+									var cart = {
+										instance: this.store.id,
+										items: array	
 									}
-								})
+									this.$store.commit('FETCH_CART', cart)
+								}
 							})
-							var cart = {
-								instance: this.store.id,
-								items: array	
-							}
-							this.$store.commit('FETCH_CART', cart)
+							vm.$store.commit('SHOW_CHECKOUT')
 						}
+					}).catch(error => {
+						vm.$router.push({name: 'login', query: {redirect: this.$route.path}})
 					})
-					vm.$store.commit('SHOW_CHECKOUT')
 				}
-			}).catch(error => {
-				vm.$router.push({name: 'login', query: {redirect: this.$route.path}})
-			})
+			})	
 		},
 		//SEARCH PRODUCT BY KEYWORD
 		getByKeyWords: function(list, value) {

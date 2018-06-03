@@ -661,15 +661,14 @@ export default {
 			} 
 		},
 		'matrix.distance': function(val) {
-			console.log(val)
 			var distance = numeral(val.split(' ')[0]).value()
 			if(val) {
 				if(distance > this.currentCity.service.maxRange) {
+					this.currentCity.deliveries.forEach(item => {
+						this.deliveryPrice = item.price*distance
+					})
 					this.dialog   = true
 					this.maxRange = this.currentCity.service.maxRange
-					this.currentCity.deliveries.forEach(item => {
-						this.deliveryPrice = parseFloat(item.price)*distance
-					})
 				} else {
 					if(this.currentCity.service.deliveryActived) {
 

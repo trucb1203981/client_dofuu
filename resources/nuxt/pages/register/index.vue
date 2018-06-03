@@ -156,7 +156,7 @@ export default {
 						if(response.status === 201) {
 							vm.$store.dispatch('alert', {name: 'login', alert: {
 								type: 'success',
-								message: 'Tài khoản đã được tạo thành công. Vui lòng đăng nhập vào hộp thư để kích hoạt tài khoản'
+								message: 'Tài khoản đã được tạo thành công'
 							}})
 							vm.$router.push({name: 'login'})
 						}

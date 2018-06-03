@@ -136,12 +136,38 @@
 										<v-list-tile-content class="align-end">{{subTotal | formatPrice}}</v-list-tile-content>
 									</v-list-tile>
 									<v-list-tile>
-										<v-list-tile-content>
-											<span>Phí vận chuyển: <v-icon size="20" color="primary" @click="">help</v-icon></span>
+										<v-list-tile-content>											
+											<v-menu	:close-on-content-click="false"	v-model="showInfoDelivery" v-if="currentCity != null" top left offset-y>
+												<span slot="activator">Phí vận chuyển: <v-icon size="20" color="primary" v-on:mouseover="showDelivery" v-on:mouseleave="closeDelivery">help</v-icon></span>
+												<v-card v-show="$vuetify.breakpoint.mdAndUp">
+													<v-toolbar dense flat class="elevation-0">
+														<v-avatar size="24px" tile>
+															<img src="~/static/dofuu24x24.png">
+														</v-avatar>
+														<v-toolbar-title>
+															Thông báo
+														</v-toolbar-title>
+													</v-toolbar>
+													<v-card-text>
+														<v-list> 
+															<v-list-tile>
+																<v-list-tile-content><span>Phí vận chuyển tối thiểu của đơn đặt hàng: <strong class="red--text">{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
+															</v-list-tile>
+															<v-list-tile>
+																<v-list-tile-content><span>Phí vận chuyển sẽ tính theo khoảng cách: <strong class="red--text">{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
+															</v-list-tile>
+															<v-list-tile>
+																<v-list-tile-content><strong>Phí vận chuyển có thể thay đổi tùy theo thời điểm</strong></v-list-tile-content>
+																<v-list-tile-content class="align-end"></v-list-tile-content>
+															</v-list-tile>
+														</v-list>
+													</v-card-text>
+												</v-card>
+											</v-menu>
 										</v-list-tile-content>
-										<v-list-tile-action class="align-end">
-											<span>  {{0 | formatPrice}} </span>
-										</v-list-tile-action>
+										<v-list-tile-content class="align-end" v-if="currentCity != null">
+											{{currentCity.deliveries[1].price | formatPrice}}/km
+										</v-list-tile-content>
 									</v-list-tile>
 								</v-list>
 							</v-flex>
@@ -230,13 +256,39 @@
 							</v-list-tile>
 							<v-list-tile>
 								<v-list-tile-content>
-									<span>Phí vận chuyển: <v-icon size="20" color="primary" @click="">help</v-icon></span>
+									<span>Phí vận chuyển: <v-icon size="20" color="primary" @click="showInfoDelivery = true">help</v-icon></span>
 								</v-list-tile-content>
-								<v-list-tile-action class="align-end">
-									<span>  {{0 | formatPrice}} </span>
-								</v-list-tile-action>
+								<v-list-tile-content class="align-end" v-if="currentCity != null">
+									{{currentCity.deliveries[1].price | formatPrice}}/km
+								</v-list-tile-content>
 							</v-list-tile>
 						</v-list>
+						<v-dialog v-model="showInfoDelivery" max-width="500px" v-if="currentCity != null && $vuetify.breakpoint.smAndDown">
+							<v-card>
+								<v-toolbar dense flat class="elevation-0">
+									<v-avatar size="24px" tile>
+										<img src="~/static/dofuu24x24.png">
+									</v-avatar>
+									<v-toolbar-title>
+										Thông báo
+									</v-toolbar-title>
+								</v-toolbar>
+								<v-card-text>
+									<v-list> 
+										<v-list-tile>
+											<v-list-tile-content><span>Phí vận chuyển tối thiểu của đơn đặt hàng: <strong class="red--text">{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
+										</v-list-tile>
+										<v-list-tile>
+											<v-list-tile-content><span>Phí vận chuyển sẽ được tính theo khoảng cách: <strong class="red--text">{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
+										</v-list-tile>
+										<v-list-tile>
+											<v-list-tile-content><strong>Phí vận chuyển có thể thay đổi tùy theo thời điểm</strong></v-list-tile-content>
+											<v-list-tile-content class="align-end"></v-list-tile-content>
+										</v-list-tile>
+									</v-list>
+								</v-card-text>
+							</v-card>
+						</v-dialog>
 					</v-flex>
 				</v-layout>
 				<v-divider></v-divider>
@@ -258,6 +310,9 @@
 		<v-dialog v-model="dialog" max-width="400">
 			<v-card>
 				<v-toolbar dense color="transparent" class="elevation-0">
+					<v-avatar size="24px" tile>
+						<img src="~/static/dofuu24x24.png">
+					</v-avatar>
 					<v-toolbar-title>
 						Thông báo
 					</v-toolbar-title>
@@ -330,10 +385,18 @@ export default {
 			drawer: true,
 			dialog: false,
 			message:'',
-			products: []
+			products: [],
+			showInfoDelivery: false
 		}
 	},
 	methods: {
+		showDelivery: function() {
+			console.log(this.showInfoDelivery)
+			this.showInfoDelivery = true
+		},
+		closeDelivery: function() {
+			this.showInfoDelivery = false
+		},
 		//CHECK DATE
 		checkDayOff: function() {
 			return new Promise((resolve, reject) => {
@@ -522,15 +585,16 @@ export default {
 	},
 	computed: {
 		...mapState({
-			offsetTop: state => state.offsetTop,
-			tabIndex: state  => state.storeStore.tabIndex,
-			tabs: state      => state.storeStore.headers,
-			cart: state      => Object.assign({}, state.cartStore.cart),
-			isAuth: state    => state.authStore.isAuth,
-			show: state      => state.cartStore.show,
-			store: state     => state.storeStore.store,
-			loading: state   => state.storeStore.loading,
-			rightDrawer: state => state.storeStore.rightDrawer
+			offsetTop: state   => state.offsetTop,
+			tabIndex: state    => state.storeStore.tabIndex,
+			tabs: state        => state.storeStore.headers,
+			cart: state        => Object.assign({}, state.cartStore.cart),
+			isAuth: state      => state.authStore.isAuth,
+			show: state        => state.cartStore.show,
+			store: state       => state.storeStore.store,
+			loading: state     => state.storeStore.loading,
+			rightDrawer: state => state.storeStore.rightDrawer,
+			currentCity: state => state.cityStore.currentCity
 		}),
 		options: function() {
 			return {

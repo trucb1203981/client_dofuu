@@ -241,8 +241,11 @@
 <v-dialog v-model="dialog" max-width="400">
 	<v-card>
 		<v-toolbar dense flat class="elevation-0">
+			<v-avatar size="24px">
+				<img src="~/static/dofuu24x24.png">
+			</v-avatar>
 			<v-toolbar-title>
-				<v-icon>notifications_active</v-icon>Thông báo
+				Thông báo
 			</v-toolbar-title>
 		</v-toolbar>
 		<v-divider></v-divider>
@@ -635,8 +638,8 @@ export default {
 	},
 	watch: {
 		'show': function(val) {
+			var vm = this
 			if(val) {
-				var vm = this
 				vm.autoComplete()
 				setTimeout(() => {
 					var map 	= new google.maps.Map(document.getElementById('map'), {
@@ -658,7 +661,9 @@ export default {
 				} else {
 
 				}	
-			} 
+			} else {
+				this.deliveryPrice = 0
+			}
 		},
 		'matrix.distance': function(val) {
 			var distance = numeral(val.split(' ')[0]).value()

@@ -9,7 +9,7 @@ export const getHeader = function(){
 }
 
 // export const baseURL 			= 'http://api.dofuu.com'
-export const baseURL 			= 'https://dofuu.xyz'
+export const baseURL 			= 'http://www.dofuu.com' || 'https://dofuu.com' || 'https://www.dofuu.com' || 'http://dofuu.com' 
 
 export const fetchCityURL       = '/api/FetchCities'
 export const getCityHasDealURL  = '/api/GetCityInformationHasDeal'

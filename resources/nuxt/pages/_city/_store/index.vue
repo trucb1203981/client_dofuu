@@ -31,7 +31,7 @@
 					</v-alert>
 				</v-card>
 				<v-content v-if="menu" v-for="(data, index) in menu" :key="index">
-					<v-subheader v-if="data.products.length>0"  :id="'item_'+data.id"><span >{{data.name | upperCase }} ({{data._name | upperCase}})</span></v-subheader>
+					<v-subheader v-if="data.products.length>0"  :id="'item_'+data.id"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
 					<v-card hover class="mb-4" v-for="(item, i) in data.products" :key="i">	
 						<v-layout row wrap>
 							<v-flex xs12 md5 d-flex>
@@ -41,7 +41,7 @@
 							<v-flex xs12 md7 d-flex>
 								<v-card-text>
 									<h3 class="title">{{item.name}}</h3>
-									<span class="grey--text">{{item._name}}</span><br>
+									<span class="grey--text" v-if="item._name != null">{{item._name}}</span><br>
 									<span v-if="item.description">Mô tả: {{item.description}}</span><br>
 									<span class="grey--text">Đã được đặt <strong class="black--text">{{item.count}}</strong> lần</span><br>
 								</v-card-text>										

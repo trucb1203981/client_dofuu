@@ -477,6 +477,7 @@ export default {
     	},
     },
     created: async function() {
+    	const query = {did:0, tid:0, page:0}
     	if(Cookies.get('flag_c') != null || typeof Cookies.get('flag_c') != 'undefined') {
     		await setTimeout(() => {
     			this.getCityHasDeal(Cookies.get('flag_c'))	
@@ -486,6 +487,15 @@ export default {
     			this.getCity(Cookies.get('flag_c'))
     		}, 300)
 
+    		await setTimeout(() => {
+    			this.fetchStoreWithDeal(query)
+    		}, 600)
+
+    		await setTimeout(() => {
+    			this.fetchStore(query)
+    		}, 600)
+
+    		this.loading = false
     	} else {
     		await setTimeout(() => {
     			this.getCityHasDeal(10001)
@@ -493,19 +503,19 @@ export default {
 
     		await setTimeout(() => {
     			this.getCity(10001)
-    		})			
+    		}, 300)			
+    		await setTimeout(() => {
+    			this.fetchStoreWithDeal(query)
+    		}, 600)
+
+    		await setTimeout(() => {
+    			this.fetchStore(query)
+    		}, 600)
+
+    		this.loading = false
     	}
-    	const query = {did:0, tid:0, page:0}
-    	await setTimeout(() => {
-    		this.fetchStoreWithDeal(query)
-    	}, 300)
-
-    	await setTimeout(() => {
-    		this.fetchStore(query)
-    	}, 300)	
-
-    	this.loading = false
-    }
+    	
+    },
 };
 </script>
 

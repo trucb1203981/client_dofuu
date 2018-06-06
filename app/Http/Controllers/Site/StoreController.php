@@ -246,7 +246,6 @@ class StoreController extends Controller
         $page        = (int)$request->page;
         $now         = Carbon::now()->toDateTimeString();
         $flag_c      = $request->cookie('flag_c')!=null ? $request->cookie('flag_c') : $this->currentCityID;
-        
         if($type_id == 0 && $district_id == 0) {
 
             $store = Store::where(function($query) use ($flag_c, $now) {

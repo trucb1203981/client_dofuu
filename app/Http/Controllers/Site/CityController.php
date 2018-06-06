@@ -32,7 +32,7 @@ class CityController extends Controller
         ];
         
         if(!is_null($request->cookie('flag_c'))) {
-            return response($res, 200)->withCookie(cookie('flag_c', $request->cookie('flag_c'), 43200, '/', '', '', false));   
+            return response($res, 200);   
         }
         return response($res, 200);
     }
@@ -139,14 +139,14 @@ class CityController extends Controller
             }])->get();
 
             $res = [
-                'city'      => new CityResource($city),
+                'city'      => new CityResource($city->load('service', 'deliveries')),
                 'type'      => 'success',
                 'message'   => 'Get information successfully!!!',
                 'districts' => $districts,
                 'types'     => $types
             ];
 
-            return response($res, 200)->withCookie(cookie('flag_c', $cid, 43200, '/', '', '', false));
+            return response($res, 200)->withCookie(cookie('flag_c', $city->id, 43200, '/', '', '', false));
         }
         return response(['Something went wrong'], 500);
     }
@@ -176,14 +176,14 @@ class CityController extends Controller
             }])->get();
             
             $res = [
-                'city'      => new CityResource($city),
+                'city'      => new CityResource($city->load('service', 'deliveries')),
                 'type'      => 'success',
                 'message'   => 'Get information successfully!!!',
                 'districts' => $districts,
                 'types'     => $types
             ];
 
-            return response($res, 200)->withCookie(cookie('flag_c', $cid, 43200, '/', '', '', false));
+            return response($res, 200)->withCookie(cookie('flag_c', $city->id, 43200, '/', '', '', false));
         }
     }
 

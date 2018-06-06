@@ -22,7 +22,8 @@ class TypeController extends Controller
             'messsage' => 'Get types successfully!!!',
             'data'     => TypeResource::collection($types)
     	];
-    	return response($res)->withCookie(cookie('flag_c', $flag_c, 43200, '/', '', '', false));
+        return response($res);
+    	// return response($res)->withCookie(cookie('flag_c', $flag_c, 43200, '/', '', '', false));
     }
 
     /**

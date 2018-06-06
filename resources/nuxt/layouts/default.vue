@@ -22,16 +22,24 @@ export default {
 		'vue-toolbar' : Toolbar
 	},
 	created: async function() {
-		this.$store.dispatch("fetchCity").then(response => {
+		await this.$store.dispatch("fetchCity").then(response => {
 			if(response.status == 200) {
 				if(typeof this.$route.params.city != 'undefined') {
 					const city = this.$store.getters.getCityBySlug(this.$route.params.city)
 					this.$store.dispatch('getCityCurrent', city.id)
 				} else {
 					if(typeof Cookies.get('flag_c') != 'undefined') {
-						this.$store.dispatch('getCityCurrent', Cookies.get('flag_c'))
+
+						setTimeout(() => {
+							this.$store.dispatch('getCityCurrent', Cookies.get('flag_c'))
+						}, 300)
+						
 					} else {
-						this.$store.dispatch('getCityCurrent', 10001)
+
+						setTimeout(() => {
+							this.$store.dispatch('getCityCurrent', 10001)
+						}, 300)
+						
 					}
 				}
 			}

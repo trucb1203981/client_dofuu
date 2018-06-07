@@ -37,10 +37,10 @@
 						<v-card flat tile color="transparent">
 							<v-card-media :src="image(store.avatar)" height="200">
 								<v-content class="text-md-right">
-									<v-tooltip top>
+									<!-- <v-tooltip top>
 										<v-icon slot="activator" :color="store.status_color">radio_button_checked</v-icon>
 										<span>{{store.status}}</span>
-									</v-tooltip>
+									</v-tooltip> -->
 								</v-content>
 							</v-card-media>
 						</v-card>
@@ -79,7 +79,7 @@
 											<span v-for="(time, index) in item.times">
 												{{time.from}} - {{time.to}} 
 											</span>	
-											<span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span>
+											<!-- <span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span> -->
 										</span>
 
 									</v-list-tile-title>

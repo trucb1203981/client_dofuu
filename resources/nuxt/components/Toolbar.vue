@@ -88,32 +88,13 @@
 				</v-card>
 			</v-menu>
 		</v-toolbar-items>	
-		
-		<!-- 
-		<v-toolbar color="white" slot="extension"  dense flat>
-			<v-select flat :items="cities" v-model="cityCurrent" item-value="id" dense light solo-inverted item-text="name" return-object style="max-width:150px" class="ml-3 mr-3" color="red accent-2">
-			</v-select >
-			<v-toolbar-items>
-				<v-menu bottom offset-y>
-					<v-btn slot="activator" flat>Danh mục
-						<v-icon right>expand_more</v-icon>
-					</v-btn>
-					<v-list v-if="currentCity != null">
-						<v-list-tile nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
-							<v-list-tile-title>Tất cả</v-list-tile-title>
-						</v-list-tile>
-						
-						<v-list-tile v-for="(item, index) in types" :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
-							<v-list-tile-title>{{ item.name }}</v-list-tile-title>
-						</v-list-tile>
-					</v-list>
-				</v-menu>
-			</v-toolbar-items>
-		</v-toolbar> -->
 	</v-toolbar>
-	<v-tabs v-if="currentCity != null" fixed-tabs show-arrows>
-		<v-tab :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
-			Tất cả
+	<v-tabs v-if="currentCity != null && types.length > 0" fixed-tabs show-arrows slider-color="red">
+		<v-tab nuxt :to="{path: '/'}">
+			<v-icon left color="red accent-3">home</v-icon> <span>Trang chủ </span>
+		</v-tab>
+		<v-tab nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
+			<v-icon left>apps</v-icon>Tất cả
 		</v-tab>
 		<v-tab v-for="(item, index) in types" :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
 			<v-icon left>{{item.icon}}</v-icon>{{ item.name }}
@@ -196,9 +177,6 @@ export default {
 			}
 			return 		
 		}
-	},
-	created() {
-
 	}
 }	
 </script>

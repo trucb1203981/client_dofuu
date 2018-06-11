@@ -5,7 +5,7 @@
 				<v-container fill-height>
 					<v-layout row wrap justify-center align-center>
 						<v-flex xs4 d-flex>
-							<v-progress-circular :size="50" indeterminate color="primary"></v-progress-circular>
+							<v-progress-circular :size="50" indeterminate color="g"></v-progress-circular>
 						</v-flex>
 					</v-layout>					
 				</v-container>
@@ -35,34 +35,38 @@
 				<v-flex xs12 md3>
 					<v-container>
 						<v-card flat tile color="transparent">
+							<v-toolbar color="grey lighten-3" dense flat class="elevation-0">
+							</v-toolbar>
 							<v-card-media :src="image(store.avatar)" height="200">
-								<v-content class="text-md-right">
-									<!-- <v-tooltip top>
-										<v-icon slot="activator" :color="store.status_color">radio_button_checked</v-icon>
-										<span>{{store.status}}</span>
-									</v-tooltip> -->
-								</v-content>
+								<v-layout column class="media">
+									<v-card-title>
+										<v-spacer></v-spacer>
+										<v-tooltip top v-if="store.verified">
+											<v-avatar
+											slot="activator"
+											size="22"
+											color="white"
+											>
+											<v-icon color="green darken-3">verified_user</v-icon>
+										</v-avatar>	
+										<!-- 	<v-btn slot="activator" icon>
+												<v-icon  color="green darken-3">verified_user</v-icon>
+											</v-btn> -->
+											<span>Chứng nhận hợp tác cùng Dofuu</span>
+										</v-tooltip>									
+									</v-card-title>
+								</v-layout>			
 							</v-card-media>
+							<v-toolbar color="grey lighten-3" dense flat class="elevation-0">
+								<v-tooltip top>
+									<v-toolbar-title slot="activator" class="text-xs-center">
+										{{store.name}}
+									</v-toolbar-title>
+									<span>{{store.name}}</span>
+								</v-tooltip>
+							</v-toolbar>
 						</v-card>
 						<v-list avatar dense>
-							<v-list-tile>
-								<v-list-tile-content>
-									<v-list-tile-title class="title">
-										<v-tooltip top>
-											<span slot="activator">{{store.name}}</span>
-											<span>{{store.name}}</span>
-										</v-tooltip>
-									</v-list-tile-title>
-								</v-list-tile-content>
-								<v-list-tile-action>
-									<v-tooltip top>
-										<v-icon slot="activator" color="primary" v-if="store.verified" >
-											verified_user
-										</v-icon> 	
-										<span>Chứng nhận hợp tác với dofuu</span>
-									</v-tooltip>
-								</v-list-tile-action>
-							</v-list-tile>
 							<v-list-tile>
 								<v-list-tile-content>
 									<v-list-tile-title>{{store.address}}
@@ -79,9 +83,7 @@
 											<span v-for="(time, index) in item.times">
 												{{time.from}} - {{time.to}} 
 											</span>	
-											<!-- <span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span> -->
 										</span>
-
 									</v-list-tile-title>
 								</v-list-tile-content>
 							</v-list-tile>

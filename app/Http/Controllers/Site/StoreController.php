@@ -183,11 +183,11 @@ class StoreController extends Controller
         if($typeId == 0) {
             $store = Store::whereHas('district', function($query) use ($cityId) {
                 $query->where('city_id', '=', $cityId);
-            })->where('store_show', 1)->limit($pageSize)->offset($offset)->get();
+            })->where('store_show', 1)->orderBy('priority', 'desc')->limit($pageSize)->offset($offset)->get();
         } else {
             $store = Store::whereHas('district', function($query) use ($cityId, $typeId) {
                 $query->where('city_id', '=', $cityId);
-            })->where('store_show', 1)->where('type_id', '=', $typeId)->limit($pageSize)->offset($offset)->get();
+            })->where('store_show', 1)->where('type_id', '=', $typeId)->orderBy('priority', 'desc')->limit($pageSize)->offset($offset)->get();
         }
 
         $res = [

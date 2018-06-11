@@ -10,14 +10,13 @@
 
 								<v-toolbar color="white" flat dense>
 									<v-icon color="red">whatshot</v-icon>
-									<v-toolbar-title class="red--text text--accent-2">
+									<v-toolbar-title class="red--text text--accent-3">
 										HOT DEALS 
 									</v-toolbar-title>									
 									<!-- START DISTRICT IN DEAL STORE -->
 									<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
 										<v-btn slot="activator" flat>Khu vực<v-icon right>arrow_drop_down</v-icon></v-btn>
 										<v-list dense>
-
 											<v-list-tile @click="loadDistrict(0, 'deal')" :class="{'red--text text--accent-2 bold' : deal.list_flag == 0}" >
 												<v-list-tile-action>
 													<v-icon color="red">whatshot</v-icon>
@@ -87,8 +86,8 @@
 									<v-content>
 										<v-layout row wrap >
 											<v-flex  xs12 md3 d-flex v-for="(item, i) in deal.stores " :key="i">
-												<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" width="200px" hover ripple >
-													<v-card-media class="white--text" height="150px" :src="image(item.avatar)">
+												<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}"  hover ripple >
+													<v-card-media class="white--text" :height="$vuetify.breakpoint.mdAndUp ? '150px' : '250px' " :src="image(item.avatar)">
 														<v-container fill-height fluid>
 															<v-layout fill-height >
 																<v-flex xs12>
@@ -142,7 +141,7 @@
 						<v-card flat ><!-- START ALL STORE -->					
 							<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
 								<v-toolbar color="white" flat dense>
-									<v-toolbar-title class="red--text text--accent-2">
+									<v-toolbar-title class="red--text text--accent-3">
 										TẤT CẢ
 									</v-toolbar-title>
 									<!-- START DISTRICT IN ALL STORE -->
@@ -249,8 +248,11 @@
 										<div class="text-xs-center" v-if="all.pagination.last_page>1">
 											<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>
 										</div>
+										<v-card-actions>
+											<v-btn v-if="currentCity != null && all.stores.length > 0" color="grey lighten-2" block :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}" >Xem thêm <v-icon right>arrow_forward</v-icon> </v-btn>
+										</v-card-actions>
 									</v-content>
-								</v-flex>
+								</v-flex>								
 							</v-layout>
 						</v-card><!-- END ALL STORE -->
 					</v-flex>
@@ -365,8 +367,8 @@ export default {
 		getCityHasDeal: function(id) {
 			axios.get('/api/GetCityInformationHasDeal'+'/'+id, {withCredentials: true}).then(response => {
 				if(response.status == 200) {
-					this.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
-					this.$store.commit('UPDATE_CITY', response.data.city)
+					// this.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
+					// this.$store.commit('UPDATE_CITY', response.data.city)
 					this.deal.districts = response.data.districts
 					this.deal.types     = response.data.types
 					let count = 0
@@ -501,27 +503,33 @@ export default {
     	}),
     	city: function() {
     		return this.$store.getters.getCityByID(this.currentCity)
-    	},
+    	}
+    },
+    watch: {
+    	'currentCity': async function(val) {
+    		console.log(val)
+    		const query = {did:0, tid:0, page:0}
+    		if(val) {	
+    			await this.fetchStoreWithDeal(query)
+    			this.fetchStore(query)
+    		}
+    	}
     },
     created: async function() {
     	const query = {did:0, tid:0, page:0}
     	if(Cookies.get('flag_c') != null || typeof Cookies.get('flag_c') != 'undefined') {
     		setTimeout(async () => {
-    			await this.getCityHasDeal(Cookies.get('flag_c'))
     			await this.getCity(Cookies.get('flag_c'))
-    			await this.fetchStoreWithDeal(query)
-    			this.fetchStore(query)
-
-    		},300)
+    			await this.getCityHasDeal(Cookies.get('flag_c'))
+    			
+    		},100)
 
     		this.loading = false
     	} else {
     		setTimeout(async () => {
-    			await this.getCityHasDeal(10001)
     			await this.getCity(10001)
-    			await this.fetchStoreWithDeal(query)
-    			this.fetchStore(query)
-    		}, 300)
+    			await this.getCityHasDeal(10001)
+    		}, 100)
 
     		this.loading = false
     	}

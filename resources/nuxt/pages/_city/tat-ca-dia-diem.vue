@@ -1,5 +1,5 @@
 <template>
-	<v-container grid-list-lg v-scroll="onScroll">
+	<v-container grid-list-lg v-scroll="onScroll" v-if="stores.length > 0">
 		<v-card flat >				
 			<v-toolbar color="white" flat dense>
 				<v-toolbar-title>

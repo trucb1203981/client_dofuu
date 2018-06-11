@@ -32,13 +32,13 @@ export default {
 
 						setTimeout(() => {
 							this.$store.dispatch('getCityCurrent', Cookies.get('flag_c'))
-						}, 300)
+						}, 100)
 						
 					} else {
 
 						setTimeout(() => {
 							this.$store.dispatch('getCityCurrent', 10001)
-						}, 300)
+						}, 100)
 						
 					}
 				}

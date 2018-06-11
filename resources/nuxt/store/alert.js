@@ -1,5 +1,3 @@
-
-
 const state = {
 	name: '',
 	alert: {

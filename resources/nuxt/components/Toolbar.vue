@@ -1,22 +1,19 @@
 <template>
 	<v-card flat>
-		<v-system-bar window color="red accent-2 white--text">
-			<v-icon color="white">alarm</v-icon>
-			<span class="px-1">6:00</span>
-			<span> - </span>
-			<span class="px-1">22:00</span>
-			<v-spacer></v-spacer>
-			<v-btn v-if="!isAuth" flat nuxt :to="{path: '/login', query: {redirect: $route.path}}" class="white--text text-accent-2">
-				ĐĂNG NHẬP
-			</v-btn>		
+		<v-system-bar status color="red darken-4" dark>
+			<span v-if="currentCity != null">				
+				{{currentCity.service.startTime | formatTime}} - {{currentCity.service.endTime | formatTime}}
+			</span>
 		</v-system-bar>
-		<v-toolbar extended dense color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0">
-			
-			<v-toolbar-title class="red--text text-accent-2" :style="$vuetify.breakpoint.lgAndUp ? 'width: 170px': 'width: 100px'">
-				<v-list-tile :exact="false" active-class="red--text" :to="{path: '/'}">
-					DOFUU
-				</v-list-tile>  
+		<v-toolbar color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0">
+			<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up"></v-toolbar-side-icon>
+			<v-toolbar-title class="red--text text-accent-2 pt-2" :style="$vuetify.breakpoint.lgAndUp ? 'width: 200px': 'width: 200px'">		
+				<router-link :to="{path: '/'}">					
+					<img src="/logo_page.png" alt="" >	
+					<!-- <img src="/dofuu40x40.png" alt="" class="hidden-md-and-up">	 -->
+				</router-link>
 			</v-toolbar-title>
+
 			<v-text-field solo
 			light
 			v-model="keywords"
@@ -26,8 +23,12 @@
 			@keyup.enter="search"
 			:append-icon="'search'"
 			:append-icon-cb="search"
-			></v-text-field>
-			<v-spacer class="hidden-sm-and-down"></v-spacer>
+			class="hidden-sm-and-down"></v-text-field>			
+			<v-spacer ></v-spacer>
+			<v-btn v-if="!isAuth" flat nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="red accent-3" outline small>
+				<v-icon left>input</v-icon> <span>ĐĂNG NHẬP</span>
+			</v-btn>
+
 			<v-toolbar-items>
 				<v-menu id="menu"
 				v-if="isAuth && currentUser != null"
@@ -87,7 +88,8 @@
 				</v-card>
 			</v-menu>
 		</v-toolbar-items>	
-		<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up"></v-toolbar-side-icon>
+		
+		<!-- 
 		<v-toolbar color="white" slot="extension"  dense flat>
 			<v-select flat :items="cities" v-model="cityCurrent" item-value="id" dense light solo-inverted item-text="name" return-object style="max-width:150px" class="ml-3 mr-3" color="red accent-2">
 			</v-select >
@@ -107,8 +109,16 @@
 					</v-list>
 				</v-menu>
 			</v-toolbar-items>
-		</v-toolbar>
+		</v-toolbar> -->
 	</v-toolbar>
+	<v-tabs v-if="currentCity != null" fixed-tabs show-arrows>
+		<v-tab :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
+			Tất cả
+		</v-tab>
+		<v-tab v-for="(item, index) in types" :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
+			<v-icon left>{{item.icon}}</v-icon>{{ item.name }}
+		</v-tab>
+	</v-tabs>
 </v-card>
 </template>
 

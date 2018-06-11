@@ -20,6 +20,8 @@ class ServiceResource extends JsonResource
             'maxAmount'       => $this->max_amount,
             'minRange'        => $this->min_range,
             'maxRange'        => $this->max_range,
+            'startTime'       => $this->start_time,
+            'endTime'         => $this->end_time,
         ];
     }
 }

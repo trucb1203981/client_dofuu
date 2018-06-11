@@ -5,7 +5,6 @@ Vue.use(VueGoogleMaps, {
 	load: {
 		key: 'AIzaSyANKviRikWWh8f9fbGuzh68I2Gl4T8yEEE',
 		libraries: 'places', 
-
 		v: '3.31',
 		language:'vi',
 		region: 'VN',

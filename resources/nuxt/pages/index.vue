@@ -1,7 +1,7 @@
 <template>
-	<v-container grey-lighten-4 lighten-2 fluid grid-list-lg v-scroll="onScroll">
+	<v-container grey-lighten-4 lighten-2  grid-list-lg v-scroll="onScroll">
 		<v-layout grey-lighten-4 row wrap v-if="!loading">
-			<v-flex xs12 md9>
+			<v-flex xs12>
 				<v-layout column> 
 					<v-flex xs12 md12  v-if="deal.stores.length>0">
 						<!-- START DEAL STORES -->
@@ -9,65 +9,84 @@
 							<v-layout grey lighten-4 row wrap class="elevation-1" >
 
 								<v-toolbar color="white" flat dense>
+									<v-icon color="red">whatshot</v-icon>
 									<v-toolbar-title class="red--text text--accent-2">
 										HOT DEALS 
-									</v-toolbar-title>
-									<v-icon color="red">whatshot</v-icon>
-								</v-toolbar>					
-								<v-flex xs12 md3 :class="{'d-flex': $vuetify.breakpoint.mdAndUp, 'order-xs2': $vuetify.breakpoint.smAndDown}" class="pa-0">
-									<v-card flat tile>
-										<v-tabs v-model="deal.tabs" grow slider-color="yellow accent-3">
-											<v-tab @click="loadDistrict(0, 'deal')">
-												Khu vực
-											</v-tab>
-											<v-tab @click="loadType(0, 'deal')">
-												Danh mục
-											</v-tab>
-										</v-tabs>
-										<v-list v-if="deal.tabs==0" class="pt-0 scroll-y" dense style="min-height:424px">
+									</v-toolbar-title>									
+									<!-- START DISTRICT IN DEAL STORE -->
+									<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+										<v-btn slot="activator" flat>Khu vực<v-icon right>arrow_drop_down</v-icon></v-btn>
+										<v-list dense>
+
 											<v-list-tile @click="loadDistrict(0, 'deal')" :class="{'red--text text--accent-2 bold' : deal.list_flag == 0}" >
+												<v-list-tile-action>
+													<v-icon color="red">whatshot</v-icon>
+												</v-list-tile-action>
 												<v-list-tile-content>
 													<v-list-tile-title>Tất cả</v-list-tile-title>
 												</v-list-tile-content>
 												<v-list-tile-action>
-													<v-subheader>{{deal.count}} <v-icon color="red">whatshot</v-icon></v-subheader>
+													<v-avatar color="red accent-3" size="20">
+														<span class="white--text">{{deal.count}}</span>
+													</v-avatar>
 												</v-list-tile-action>
 											</v-list-tile>
+
 											<v-list-tile  v-for="(item, i) in deal.districts" :key="i" @click="loadDistrict(item.id, 'deal')" :class="{'red--text text--accent-2': item.id == deal.list_flag}" >
+												<v-list-tile-action>
+													<v-icon color="red">whatshot</v-icon>
+												</v-list-tile-action>
 												<v-list-tile-content>
 													<v-list-tile-title>{{item.district_name}}</v-list-tile-title>
 												</v-list-tile-content>
 												<v-list-tile-action>
-													<v-subheader>{{item.stores_count}} <v-icon color="red">whatshot</v-icon></v-subheader>
+													<v-avatar color="red accent-3" size="20">
+														<span class="white--text">{{item.stores_count}}</span>
+													</v-avatar>
 												</v-list-tile-action>
 											</v-list-tile>
+
 										</v-list>
-										<v-list v-if="deal.tabs==1" class="pt-0 scroll-y" dense style="min-height:424px">
+									</v-menu> <!-- END DISTRICT IN ALL STORE -->
+									<!-- START TYPE IN ALL STORE -->
+									<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+										<v-btn slot="activator" flat>Danh mục<v-icon right>arrow_drop_down</v-icon></v-btn>
+										<v-list dense>
 											<v-list-tile @click="loadType(0, 'deal')" :class="{'red--text text--accent-2' : deal.list_flag == 0}" >
+												<v-list-tile-action>
+													<v-icon color="red">whatshot</v-icon>
+												</v-list-tile-action>
 												<v-list-tile-content>
 													<v-list-tile-title>Tất cả</v-list-tile-title>
 												</v-list-tile-content>
 												<v-list-tile-action>
-													<v-subheader>{{deal.count}} <v-icon color="red">whatshot</v-icon></v-subheader>
+													<v-avatar color="red accent-3" size="20">
+														<span class="white--text">{{deal.count}}</span>
+													</v-avatar>
 												</v-list-tile-action>
 											</v-list-tile>
 
 											<v-list-tile  v-for="(item, i) in deal.types" :key="i" @click="loadType(item.id, 'deal')" :class="{'red--text text--accent-2': item.id == deal.list_flag}">
+												<v-list-tile-action>
+													<v-icon color="red">whatshot</v-icon>
+												</v-list-tile-action>
 												<v-list-tile-content>
 													<v-list-tile-title>{{ item.type_name }}</v-list-tile-title>
 												</v-list-tile-content>
 												<v-list-tile-action>
-													<v-subheader>{{item.stores_count}} <v-icon color="red">whatshot</v-icon></v-subheader>
+													<v-avatar color="red accent-3" size="20">
+														<span class="white--text">{{item.stores_count}}</span>
+													</v-avatar>
 												</v-list-tile-action>
 											</v-list-tile>
 										</v-list>
-									</v-card>	
-								</v-flex>
+									</v-menu><!-- END TYPE IN ALL STORE -->
+								</v-toolbar>					
 
-								<v-flex xs12 md9>
+								<v-flex xs12>
 									<v-content>
 										<v-layout row wrap >
-											<v-flex  xs12 md4 d-flex v-for="(item, i) in deal.stores " :key="i">
+											<v-flex  xs12 md3 d-flex v-for="(item, i) in deal.stores " :key="i">
 												<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" width="200px" hover ripple >
 													<v-card-media class="white--text" height="150px" :src="image(item.avatar)">
 														<v-container fill-height fluid>
@@ -126,24 +145,18 @@
 									<v-toolbar-title class="red--text text--accent-2">
 										TẤT CẢ
 									</v-toolbar-title>
-								</v-toolbar>					
-								<v-flex :class="{'d-flex': $vuetify.breakpoint.mdAndUp, 'order-xs2': $vuetify.breakpoint.smAndDown}" xs12 md3  class="pa-0">
-									<v-card flat tile>
-										<v-tabs v-model="all.tabs" grow slider-color="yellow accent-3">
-											<v-tab @click="loadDistrict(0, 'all')">
-												Khu vực
-											</v-tab>
-											<v-tab @click="loadType(0, 'all')">
-												Danh mục
-											</v-tab>
-										</v-tabs>
-										<v-list v-if="all.tabs==0" class="pt-0 scroll-y" dense style="min-height:424px">
-											<v-list-tile @click="loadDistrict(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}" >
+									<!-- START DISTRICT IN ALL STORE -->
+									<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+										<v-btn slot="activator" flat>Khu vực<v-icon right>arrow_drop_down</v-icon></v-btn>
+										<v-list dense>
+											<v-list-tile @click="loadDistrict(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}">
 												<v-list-tile-content>
 													<v-list-tile-title>Tất cả</v-list-tile-title>
 												</v-list-tile-content>
 												<v-list-tile-action>
-													<v-subheader>{{all.count}}</v-subheader>
+													<v-avatar color="red accent-3" size="20">
+														<span class="white--text">{{all.count}}</span>
+													</v-avatar>
 												</v-list-tile-action>
 											</v-list-tile>
 											<v-list-tile  v-for="(item, i) in all.districts" :key="i" @click="loadDistrict(item.id, 'all')" :class="{'red--text text--accent-2': item.id == all.list_flag}" >
@@ -151,17 +164,25 @@
 													<v-list-tile-title>{{item.district_name}}</v-list-tile-title>
 												</v-list-tile-content>
 												<v-list-tile-action>
-													<v-subheader>{{item.stores_count}}</v-subheader>
+													<v-avatar color="red accent-3" size="20">
+														<span class="white--text">{{item.stores_count}}</span>
+													</v-avatar>
 												</v-list-tile-action>
 											</v-list-tile>
 										</v-list>
-										<v-list v-if="all.tabs==1" class="pt-0 scroll-y" dense style="min-height:424px">
+									</v-menu> <!-- END DISTRICT IN ALL STORE -->
+									<!-- START TYPE IN ALL STORE -->
+									<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+										<v-btn slot="activator" flat>Danh mục<v-icon right>arrow_drop_down</v-icon></v-btn>
+										<v-list dense>
 											<v-list-tile @click="loadType(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}" >
 												<v-list-tile-content>
 													<v-list-tile-title>Tất cả</v-list-tile-title>
 												</v-list-tile-content>
 												<v-list-tile-action>
-													<v-subheader>{{all.count}}</v-subheader>
+													<v-avatar color="red accent-3" size="20">
+														<span class="white--text">{{all.count}}</span>
+													</v-avatar>
 												</v-list-tile-action>
 											</v-list-tile>
 
@@ -170,18 +191,20 @@
 													<v-list-tile-title>{{ item.type_name }}</v-list-tile-title>
 												</v-list-tile-content>
 												<v-list-tile-action>
-													<v-subheader>{{item.stores_count}}</v-subheader>
+													<v-avatar color="red accent-3" size="20">
+														<span class="white--text">{{item.stores_count}}</span>
+													</v-avatar>
 												</v-list-tile-action>
 											</v-list-tile>
 										</v-list>
-									</v-card>	
-								</v-flex>
+									</v-menu><!-- END TYPE IN ALL STORE -->
+								</v-toolbar>					
 
-								<v-flex xs12 md9 order-xs1>
+								<v-flex xs12 order-xs1>
 									<v-content>
 										<v-layout row wrap >
-											<v-flex  xs12 md4 d-flex v-for="(item, i) in all.stores " :key="i">
-												<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" width="200px" hover ripple >
+											<v-flex  xs12 md3 d-flex v-for="(item, i) in all.stores " :key="i">
+												<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" hover ripple >
 													<v-card-media class="white--text" :height="$vuetify.breakpoint.mdAndUp ? '150px' : '250px' " :src="image(item.avatar)">
 														<v-container fill-height fluid>
 															<v-layout fill-height >
@@ -234,7 +257,7 @@
 				</v-layout>
 			</v-flex> 
 
-			<v-flex xs12 md3 :class="{'mt-4': $vuetify.breakpoint.mdAndDown}">
+			<!-- <v-flex xs12 md3 :class="{'mt-4': $vuetify.breakpoint.mdAndDown}">
 				<v-card color="grey lighten-3" >
 					<v-layout column wrap >
 						<v-flex :d-flex="$vuetify.breakpoint.xsOnly" class="pt-0 pb-0">
@@ -252,7 +275,7 @@
 						</v-flex>
 					</v-layout>
 				</v-card>
-			</v-flex>
+			</v-flex> -->
 		</v-layout>
 
 		<v-btn v-if="!endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollDown">
@@ -277,33 +300,33 @@ export default {
 	async asyncData({ store }) {
 		return {
 			deal: {
-				tabs: null,
+				tabs: 0,
 				list_flag: 0,
 				stores: [],
 				districts: [],
 				types: [],
 				pagination: {},
-				pageSize: 6,
+				pageSize: 8,
 				count:0,
 			},
 			all: {
-				tabs: null,
+				tabs: 0,
 				list_flag: 0,
 				stores: [],
 				districts: [],
 				types: [],
 				pagination: {},
-				pageSize: 6,
+				pageSize: 8,
 				count: 0
 			},
 			new: {
-				tabs: null,
+				tabs: 0,
 				list_flag: 0,
 				stores: [],
 				districts: [],
 				types: [],
 				pagination: {},
-				pageSize: 6,
+				pageSize: 8,
 				count: 0
 			},
 			loading: true,
@@ -371,6 +394,7 @@ export default {
 			const _t = new String(type).toLowerCase();
 			switch(_t) {
 				case 'all':
+				this.all.tabs = 0
 				if(this.all.list_flag != id) {
 					this.all.list_flag = id
 					const query = {did:id, tid:0, page:0}
@@ -379,6 +403,7 @@ export default {
 				break;
 
 				case 'deal':
+				this.deal.tabs = 1
 				if(this.deal.list_flag != id) {
 					this.deal.list_flag = id
 					const query = {did:id, tid:0, page:0}
@@ -396,6 +421,7 @@ export default {
 			const _t = new String(type).toLowerCase();
 			switch(_t) {
 				case 'all':
+				this.all.tabs = 1
 				if(this.all.list_flag != id) {
 					this.all.list_flag = id
 					const query = {did:0, tid:id, page:0}
@@ -404,6 +430,7 @@ export default {
 				break;
 
 				case 'deal':
+				this.deal.tabs = 1
 				if(this.deal.list_flag != id) {
 					this.deal.list_flag = id
 					const query = {did:0, tid:id, page:0}
@@ -479,38 +506,22 @@ export default {
     created: async function() {
     	const query = {did:0, tid:0, page:0}
     	if(Cookies.get('flag_c') != null || typeof Cookies.get('flag_c') != 'undefined') {
-    		await setTimeout(() => {
-    			this.getCityHasDeal(Cookies.get('flag_c'))	
-    		}, 300)
-
-    		await setTimeout(() => {
-    			this.getCity(Cookies.get('flag_c'))
-    		}, 300)
-
-    		await setTimeout(() => {
-    			this.fetchStoreWithDeal(query)
-    		}, 600)
-
-    		await setTimeout(() => {
+    		setTimeout(async () => {
+    			await this.getCityHasDeal(Cookies.get('flag_c'))
+    			await this.getCity(Cookies.get('flag_c'))
+    			await this.fetchStoreWithDeal(query)
     			this.fetchStore(query)
-    		}, 600)
+
+    		},300)
 
     		this.loading = false
     	} else {
-    		await setTimeout(() => {
-    			this.getCityHasDeal(10001)
-    		}, 300)
-
-    		await setTimeout(() => {
-    			this.getCity(10001)
-    		}, 300)			
-    		await setTimeout(() => {
-    			this.fetchStoreWithDeal(query)
-    		}, 600)
-
-    		await setTimeout(() => {
+    		setTimeout(async () => {
+    			await this.getCityHasDeal(10001)
+    			await this.getCity(10001)
+    			await this.fetchStoreWithDeal(query)
     			this.fetchStore(query)
-    		}, 600)
+    		}, 300)
 
     		this.loading = false
     	}

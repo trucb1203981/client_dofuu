@@ -8,10 +8,10 @@
 		<v-toolbar color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0">
 			<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up"></v-toolbar-side-icon>
 			<v-toolbar-title class="red--text text-accent-2 pt-2" :style="$vuetify.breakpoint.lgAndUp ? 'width: 200px': 'width: 200px'">		
-				<router-link :to="{path: '/'}">					
+				<a href="/">					
 					<img src="/logo_page.png" alt="" >	
 					<!-- <img src="/dofuu40x40.png" alt="" class="hidden-md-and-up">	 -->
-				</router-link>
+				</a>
 			</v-toolbar-title>
 
 			<v-text-field solo
@@ -90,7 +90,7 @@
 		</v-toolbar-items>	
 	</v-toolbar>
 	<v-tabs v-if="currentCity != null && types.length > 0" fixed-tabs show-arrows slider-color="red">
-		<v-tab nuxt :to="{path: '/'}">
+		<v-tab nuxt href="/">
 			<v-icon left color="red accent-3">home</v-icon> <span>Trang chủ </span>
 		</v-tab>
 		<v-tab nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">

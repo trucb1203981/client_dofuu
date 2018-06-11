@@ -507,7 +507,6 @@ export default {
     },
     watch: {
     	'currentCity': async function(val) {
-    		console.log(val)
     		const query = {did:0, tid:0, page:0}
     		if(val) {	
     			await this.fetchStoreWithDeal(query)

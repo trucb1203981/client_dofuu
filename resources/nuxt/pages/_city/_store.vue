@@ -13,8 +13,7 @@
 		</v-dialog>
 		<v-content v-show="!loading">
 			<v-toolbar :fixed="offsetTop>offsetTab" color="white" class="elevation-0 scroll-y"  flat dense style="max-height: 400px" tabs  v-if="store != null"> 
-
-				<v-btn flat :to="{path: '/'}" icon>
+				<v-btn flat href="/" icon>
 					<v-icon>arrow_back</v-icon>
 				</v-btn>
 				<v-toolbar-title class="red--text text-accent-2 hidden-sm-and-down" style="width: 300px">
@@ -35,8 +34,19 @@
 				<v-flex xs12 md3>
 					<v-container>
 						<v-card flat tile color="transparent">
-							<v-toolbar color="grey lighten-3" dense flat class="elevation-0">
-							</v-toolbar>
+							<!-- <v-toolbar color="red darken-3" dense flat class="elevation-0">
+							</v-toolbar> -->
+							<v-system-bar status color="red darken-3">
+								<v-spacer></v-spacer>
+								<div class="white--text">
+									<v-icon color="white">alarm</v-icon>
+									<span v-for="(item, i) in store.activities" v-if="i==0"> 
+										<span v-for="(time, index) in item.times">
+											{{time.from}} - {{time.to}} 
+										</span>	
+									</span>
+								</div>
+							</v-system-bar>
 							<v-card-media :src="image(store.avatar)" height="200">
 								<v-layout column class="media">
 									<v-card-title>
@@ -49,60 +59,55 @@
 											>
 											<v-icon color="green darken-3">verified_user</v-icon>
 										</v-avatar>	
-										<!-- 	<v-btn slot="activator" icon>
-												<v-icon  color="green darken-3">verified_user</v-icon>
-											</v-btn> -->
-											<span>Chứng nhận hợp tác cùng Dofuu</span>
-										</v-tooltip>									
-									</v-card-title>
-								</v-layout>			
-							</v-card-media>
-							<v-toolbar color="grey lighten-3" dense flat class="elevation-0">
-								<v-tooltip top>
-									<v-toolbar-title slot="activator" class="text-xs-center">
-										{{store.name}}
-									</v-toolbar-title>
-									<span>{{store.name}}</span>
-								</v-tooltip>
-							</v-toolbar>
-						</v-card>
-						<v-list avatar dense>
-							<v-list-tile>
-								<v-list-tile-content>
-									<v-list-tile-title>{{store.address}}
-									</v-list-tile-title>
-								</v-list-tile-content>
-							</v-list-tile>
-						</v-list>
-						<v-divider></v-divider>
-						<v-list  avatar dense>
-							<v-list-tile>
-								<v-list-tile-content>
-									<v-list-tile-title><v-icon>alarm</v-icon>
-										<span v-for="(item, i) in store.activities" v-if="i==0"> 
-											<span v-for="(time, index) in item.times">
-												{{time.from}} - {{time.to}} 
-											</span>	
-										</span>
-									</v-list-tile-title>
-								</v-list-tile-content>
-							</v-list-tile>
-							<v-list-tile>
-								<v-list-tile-content>
-									<v-list-tile-title>
-										<v-icon>access_time</v-icon> Chuẩn bị: {{store.prepareTime}} phút
-									</v-list-tile-title>
-								</v-list-tile-content>
-							</v-list-tile>
-						</v-list>
-					</v-container>	
-				</v-flex>
-				<v-flex xs12 md9 d-flex>
-					<nuxt-child :key="$route.params.store" :store.sync="store"/>
-				</v-flex>		
-			</v-layout>			
-		</v-content>
-	</div>
+										<span>Chứng nhận hợp tác cùng Dofuu</span>
+									</v-tooltip>									
+								</v-card-title>
+							</v-layout>			
+						</v-card-media>
+						<v-toolbar dense flat color="red darken-3" dark class="elevation-0">
+							<v-tooltip top>
+								<v-toolbar-title slot="activator" class="text-xs-center">
+									{{store.name}}
+								</v-toolbar-title>
+								<span>{{store.name}}</span>
+							</v-tooltip>
+						</v-toolbar>
+					</v-card>
+					<v-list avatar dense>
+						<v-list-tile>
+							<v-list-tile-avatar>
+								<v-avatar
+								slot="activator"
+								size="22"
+								color="white"
+								>
+								<v-icon color="primary">place</v-icon>
+							</v-avatar>	
+						</v-list-tile-avatar>
+						<v-list-tile-content>
+							<v-list-tile-title>{{store.address}}
+							</v-list-tile-title>
+						</v-list-tile-content>
+					</v-list-tile>
+				</v-list>
+				<v-divider></v-divider>
+				<v-list  avatar dense>
+					<v-list-tile>
+						<v-list-tile-content>
+							<v-list-tile-title>
+								<v-icon>access_time</v-icon> Chuẩn bị: {{store.prepareTime}} phút
+							</v-list-tile-title>
+						</v-list-tile-content>
+					</v-list-tile>
+				</v-list>
+			</v-container>	
+		</v-flex>
+		<v-flex xs12 md9 d-flex>
+			<nuxt-child :key="$route.params.store" :store.sync="store"/>
+		</v-flex>		
+	</v-layout>			
+</v-content>
+</div>
 </template>
 
 <script>

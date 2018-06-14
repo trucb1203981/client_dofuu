@@ -13,7 +13,7 @@ return [
     */
    
     'supportsCredentials' => false,
-    'allowedOrigins' => ['https://www.dofuu.com', 'https://admin.dofuu.com', 'https://employee.dofuu.com', 'https://*.dofuu.com'],
+    'allowedOrigins' => ['https://www.dofuu.com', 'https://admin.dofuu.com', 'https://employee.dofuu.com', 'https://*.dofuu.com', 'http://localhost:8000'],
     'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['*'],
     'allowedMethods' => ['*'],

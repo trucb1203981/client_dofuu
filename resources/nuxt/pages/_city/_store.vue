@@ -34,8 +34,6 @@
 				<v-flex xs12 md3>
 					<v-container>
 						<v-card flat tile color="transparent">
-							<!-- <v-toolbar color="red darken-3" dense flat class="elevation-0">
-							</v-toolbar> -->
 							<v-system-bar status color="red darken-3">
 								<v-spacer></v-spacer>
 								<div class="white--text">
@@ -73,7 +71,7 @@
 							</v-tooltip>
 						</v-toolbar>
 					</v-card>
-					<v-list avatar dense>
+					<v-list avatar dense three-line subheader>
 						<v-list-tile>
 							<v-list-tile-avatar>
 								<v-avatar
@@ -85,27 +83,41 @@
 							</v-avatar>	
 						</v-list-tile-avatar>
 						<v-list-tile-content>
-							<v-list-tile-title>{{store.address}}
-							</v-list-tile-title>
+							<v-list-tile-title><h4>Địa chỉ</h4></v-list-tile-title>
+							<v-list-tile-sub-title>
+								<h4>{{store.address}}</h4>
+							</v-list-tile-sub-title>
 						</v-list-tile-content>
 					</v-list-tile>
 				</v-list>
 				<v-divider></v-divider>
 				<v-list  avatar dense>
 					<v-list-tile>
-						<v-list-tile-content>
-							<v-list-tile-title>
-								<v-icon>access_time</v-icon> Chuẩn bị: {{store.prepareTime}} phút
-							</v-list-tile-title>
-						</v-list-tile-content>
-					</v-list-tile>
-				</v-list>
-			</v-container>	
-		</v-flex>
-		<v-flex xs12 md9 d-flex>
-			<nuxt-child :key="$route.params.store" :store.sync="store"/>
-		</v-flex>		
-	</v-layout>			
+						<v-list-tile-avatar>
+							<v-avatar
+							slot="activator"
+							size="22"
+							color="white"
+							>
+							<v-icon color="green darken-3">access_time</v-icon>
+						</v-avatar>	
+					</v-list-tile-avatar>
+					<v-list-tile-content>
+						<v-list-tile-title>
+							<h4>Chuẩn bị</h4>
+						</v-list-tile-title>
+						<v-list-tile-sub-title>
+							<h4>{{store.prepareTime}} phút</h4>
+						</v-list-tile-sub-title>
+					</v-list-tile-content>
+				</v-list-tile>
+			</v-list>
+		</v-container>	
+	</v-flex>
+	<v-flex xs12 md9 d-flex>
+		<nuxt-child :key="$route.params.store" :store.sync="store"/>
+	</v-flex>		
+</v-layout>			
 </v-content>
 </div>
 </template>

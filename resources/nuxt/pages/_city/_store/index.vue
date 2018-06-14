@@ -221,7 +221,7 @@
 			</v-card>			
 		</v-flex>
 	</v-layout>
-	<vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
+
 	<!-- RIGHT NAVBAR MOBILE START -->
 	<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" right class="hidden-lg-only hidden-md-only">
 		<v-toolbar	color="red"	dark extended flat>
@@ -350,6 +350,7 @@
 		</v-badge>
 	</v-btn>
 	<!-- RIGHT NAVBAR MOBILE END -->
+	<!-- DIALOG ALERT START-->
 	<v-dialog v-model="dialog" max-width="400">
 		<v-card>
 			<v-toolbar dense color="transparent" class="elevation-0">
@@ -381,6 +382,8 @@
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
+	<!-- DIALOG ALERT END-->
+	<vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
 </v-container>
 </template>
 
@@ -392,6 +395,7 @@ import axios from 'axios'
 import {getStoreURL, getHeader} from '@/config'
 import index from '@/mixins/index'
 import {mapState} from 'vuex'
+import { Carousel, Slide } from 'vue-carousel';
 const CheckoutDialog = () => ({
   // The component to load (should be a Promise)
   component: import('@/components/CheckoutDialog'),
@@ -404,7 +408,7 @@ const CheckoutDialog = () => ({
 export default {
 	mixins: [index],
 	components: {
-		'vue-dialog' :CheckoutDialog
+		'vue-dialog' :CheckoutDialog,
 	},
 	asyncData() {
 		return {

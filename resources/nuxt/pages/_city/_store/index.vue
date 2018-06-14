@@ -395,7 +395,6 @@ import axios from 'axios'
 import {getStoreURL, getHeader} from '@/config'
 import index from '@/mixins/index'
 import {mapState} from 'vuex'
-import { Carousel, Slide } from 'vue-carousel';
 const CheckoutDialog = () => ({
   // The component to load (should be a Promise)
   component: import('@/components/CheckoutDialog'),

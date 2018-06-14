@@ -17,6 +17,8 @@ use App\Models\OrderStatus;
 use App\Models\City;
 use App\Models\Role;
 use App\Models\User;
+use App\Mail\OrderMail;
+use Mail;
 use DateTime;
 use Carbon\Carbon;
 use Cookie;
@@ -27,9 +29,10 @@ class CartController extends Controller
 		$this->employee = Role::where('name', 'Employee')->first();
 		$this->shipper  = Role::where('name', 'Shipper')->first();
 		$this->status   = OrderStatus::where('order_status_name', 'Hủy')->first();
-		$this->middleware('auth:api');
+		$this->middleware('auth:api')->except('checkCoupon');
 	}
 
+	//CANCEL ORDER
 	public function cancelOrder(Request $request) {
 		$orderId = $request->id;
 		$userId  = $request->owner['id'];
@@ -65,6 +68,7 @@ class CartController extends Controller
 		return response($res, 500);
 		
 	}
+
 	//GET ORDER DETAILS
 	public function getOrderDetail(Request $request) {
 		if($request->filled('orderId')) {
@@ -77,6 +81,7 @@ class CartController extends Controller
 			return response($res);
 		}
 	}
+
 	//GET ORDERS 
 	public function orderByFilter(Request $request) {
 		$fromDate = $request->fromDate;
@@ -103,12 +108,13 @@ class CartController extends Controller
 		return response($res, 200);
 	}
 
-	//Check Coupon
+	//CHECK COUPON
 	public function checkCoupon(Request $request) {
 		$coupon  = $request->coupon;
 		$storeID = $request->storeID;
 		$now     = Carbon::now()->toDateTimeString();
-		if($request->filled('cityID', 'coupon', 'districtID', 'storeID', 'subTotal' , 'deliveryPrice')) {
+		if($request->filled('cityID', 'coupon', 'districtID', 'storeID', 'subTotal')) {
+			
 			$coupon = Coupon::whereHas('stores', function($query) use ($storeID) {
 				$query->where('ec_stores.id', '=', $storeID);
 			})->where(function($query) use ($coupon, $now) {
@@ -118,16 +124,18 @@ class CartController extends Controller
 				$query->where('started_at', '<=', $now);
 				$query->where('ended_at', '>=', $now);
 			})->first();
+
 			if(!is_null($coupon)) {
 				$res = [
 					'type'      => 'success',
 					'message'   => 'Check coupon successfully!!!',
 					'data'		=> new CouponResource($coupon),
-					'secret'    => $coupon->token
 				];
+
 				return response($res, 200)->withCookie(cookie('flag_c', $request->cityID, 43200, '/', '', '', false));
 			}
 		}
+
 		$res = [
 			'type'      => 'error',
 			'message'   => 'Coupon đã hết hạn sử dụng!!!',
@@ -135,7 +143,8 @@ class CartController extends Controller
 		];
 		return response($res, 200)->withCookie(cookie('flag_c', $request->cityID, 43200, '/', '', '', false));
 	}
-	//Check out
+
+	//CHECK OUT
 	public function checkOut(Request $request) {
 		$now = Carbon::now()->toDateTimeString();
 		if($request->filled('confirmed', 'name', 'phone', 'address', 'date', 'time', 'memo', 'total', 'subTotal', 'userId', 'paymentMethod', 'distance','items', 'city', 'store')) {
@@ -160,7 +169,7 @@ class CartController extends Controller
 					$order->phone           = $request->phone;
 					$order->date            = $request->date;
 					$order->time            = $request->time;
-					$order->delivery_price  = $this->deliveryPrice($request->distance, $CID);
+					$order->delivery_price  = (float)$this->deliveryPrice($request->distance, $CID);
 					$order->subtotal_amount = $this->subTotal($SID, $request->items);
 					if($request->filled('secret')) {
 						$coupon = Coupon::whereHas('stores', function($query) use ($store) {
@@ -177,7 +186,7 @@ class CartController extends Controller
 
 							$order->coupon         = $coupon->coupon;
 							$order->secret         = $coupon->token;
-							$order->discount_total = $this->discountTotal($order->subtotal_amount, $order->delivery_price, $coupon->discount_percent);
+							$order->discount_total = $this->discountTotal($order->subtotal_amount, $coupon->discount_percent);
 							$order->amount         = $this->total($order->subtotal_amount, $order->delivery_price, $coupon->discount_percent);
 
 						} else {
@@ -194,14 +203,15 @@ class CartController extends Controller
 					$order->store_id        = $request->store['id'];
 					$order->created_at 		= new DateTime;
 					$order->save();
-
+					
 					foreach($request->items as $data) {
 						$order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['price'], 'total' => ((int)$data['qty'] * (float)$data['price']) ]]);
 					}
 					//Notify to employee in City
 					$users = User::where('role_id', '=', $this->employee->id)->get();
 					foreach($users as $user) {
-						$user->notify(new CheckoutNotification($order));   
+						$user->notify(new CheckoutNotification($order)); 
+						Mail::to('trucnguyen.dofuu@gmail.com')->send(new OrderMail($order));					
 					}					
 					$res = [
 						'type'    => 'success',
@@ -236,6 +246,12 @@ class CartController extends Controller
 			return (int)0;
 		}
 	}
+
+	// CALCULATE DEAL DELIVERY PRICE
+	public function dealDelivery() {
+
+	}
+
 	//CALCULATE SUBTOTAL
 	public function subTotal($cityId, $items) {
 		$items    = $items;
@@ -251,14 +267,17 @@ class CartController extends Controller
 		}
 		return (float)$subTotal;
 	}
+
 	//CALCULATE TOTAL
 	public function total($subTotal, $deliveryPrice, $discount = 0) {
-		return ((float)$subTotal + (float)$deliveryPrice) - ((float)$subTotal + (float)$deliveryPrice)*((int)$discount/100);
+		return (float)$subTotal + (float)$deliveryPrice - $this->discountTotal($subTotal, $discount);
 	}
+
 	//CALCULATE DEAL
-	public function discountTotal($subTotal, $deliveryPrice, $discount = 0) {
-		return ((float)$subTotal + (float)$deliveryPrice)*((int)$discount/100);
+	public function discountTotal($subTotal, $discount = 0) {
+		return ((float)$subTotal * (int)$discount/100);
 	}
+
 	//GET PRODUCT BY STORE
 	public function getProductByStore(Request $request) {
 		$store = Store::where('id', '=', $request->storeId)->first();

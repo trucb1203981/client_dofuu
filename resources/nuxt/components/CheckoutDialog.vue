@@ -76,8 +76,8 @@
 												></v-text-field>
 												<v-date-picker v-model="editedItem.date" scrollable locale="vn-vi">
 													<v-spacer></v-spacer>
-													<v-btn flat color="primary" @click="modal = false" >Cancel</v-btn>
-													<v-btn flat color="primary" @click="$refs.dialog.save(editedItem.date)">OK</v-btn>
+													<v-btn flat color="primary" @click="modal = false" >Hủy</v-btn>
+													<v-btn flat color="primary" @click="$refs.dialog.save(editedItem.date)">Chọn</v-btn>
 												</v-date-picker>
 											</v-dialog>
 										</v-flex>
@@ -113,8 +113,8 @@
 											:min="minTime"
 											:max="maxTime" actions>
 											<v-spacer></v-spacer>
-											<v-btn flat color="primary" @click="modal2 = false">Cancel</v-btn>
-											<v-btn flat color="primary" @click="$refs.menu.save(editedItem.time)">OK</v-btn></v-time-picker>
+											<v-btn flat color="primary" @click="menuTime = false">Hủy</v-btn>
+											<v-btn flat color="primary" @click="$refs.menu.save(editedItem.time)">Chọn</v-btn></v-time-picker>
 										</v-menu>										
 									</v-flex>
 
@@ -136,23 +136,40 @@
 				<v-flex xs12 md6>
 					<v-flex d-flex>
 						<v-card height="250" flat color="white">
-							<v-toolbar dense flat color="white" class="elevation-0" card>
+							<v-toolbar dense extended flat color="white" class="elevation-0" card>
+								
 								<v-toolbar-title>
 									Chi tiết đơn hàng
 								</v-toolbar-title>
+
+								<v-list slot="extension" class="px-4">									
+									<v-list-tile avatar>
+										<v-list-tile-content>
+											<v-list-tile-title>Mặt hàng</v-list-tile-title>
+										</v-list-tile-content>
+										<v-list-tile-avatar>
+											SL
+										</v-list-tile-avatar>										
+										<v-list-tile-action class="mr-2">
+											Số tiền
+										</v-list-tile-action>
+									</v-list-tile>
+								</v-list>
 							</v-toolbar>
+							
 							<v-divider></v-divider>
-							<v-card-text class="scroll-y" style="max-height:200px">
-								<v-list subheader>
-									<v-list-tile avatar v-for="item in cart.items" :key="item.name" @click="">
+							
+							<v-card-text class="scroll-y" style="max-height:150px">
+								<v-list>
+									<v-list-tile avatar v-for="item in cart.items" :key="item.name">
+										<v-list-tile-content>
+											<v-list-tile-title>{{item.name}}</v-list-tile-title>
+										</v-list-tile-content>
 										<v-list-tile-avatar>
 											<v-avatar class="red" size="18">
 												<span class="white--text">{{item.qty}}</span>
 											</v-avatar>
-										</v-list-tile-avatar>
-										<v-list-tile-content>
-											<v-list-tile-title>{{item.name}}</v-list-tile-title>
-										</v-list-tile-content>
+										</v-list-tile-avatar>										
 										<v-list-tile-action>
 											<strong>{{item.price | subPrice(item.qty)}}</strong>
 										</v-list-tile-action>
@@ -164,7 +181,7 @@
 					</v-flex>
 
 					<v-flex d-flex>
-						<v-card height="370">
+						<v-card height="374">
 							<v-card-text>
 								<v-list>
 									<v-list-tile>
@@ -173,11 +190,28 @@
 										</v-list-tile-content>
 										<v-list-tile-content>
 											<v-list-tile-title></v-list-tile-title>
+											<v-list-tile-title></v-list-tile-title>
 										</v-list-tile-content>
-										<v-list-tile-action >
-											<strong>{{subTotal | formatPrice}}</strong>
+										<v-list-tile-content>
+											<v-list-tile-title class="text-xs-right"><h4 :style="coupon !=null ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h4></v-list-tile-title>
+											<v-list-tile-title class="text-xs-right" v-if="coupon != null"><h4 class="red--text">{{dealPrice | formatPrice}}</h4></v-list-tile-title>
+										</v-list-tile-content>
+									</v-list-tile>
+
+									<v-list-tile>
+										<v-list-tile-action>
+											<span>Khuyến mãi:</span>
+										</v-list-tile-action>
+										<v-list-tile-content>
+											<v-chip color="yellow" small text-color="red" v-if="coupon != null">
+												<h4>{{coupon.coupon}}</h4>
+											</v-chip>
+										</v-list-tile-content>
+										<v-list-tile-action>										
+											<h4 class="red--text">-{{discount}}%</h4>
 										</v-list-tile-action>
 									</v-list-tile>
+
 									<v-list-tile>
 										<v-list-tile-content>
 											<span>Phí vận chuyển: <strong class="red--text">{{matrix.distance}}</strong> <v-icon>help</v-icon></span>
@@ -188,30 +222,12 @@
 										<v-list-tile-action>
 											<strong>{{deliveryPrice | formatPrice}}</strong>
 										</v-list-tile-action>
-									</v-list-tile>
-									
-									<v-list-tile>
-										<v-list-tile-content>
-											<span>Mã khuyến mãi:</span>
-										</v-list-tile-content>					
-									</v-list-tile>
-									
-									<v-list-tile class="yellow accent-3">		
-										<v-list-tile-content>
-											<v-text-field solo class="my-1" flat color="purple" v-model="code" label="Nhập mã"></v-text-field>
-										</v-list-tile-content>
-										<v-btn small color="primary" @click.stop="checkCoupon()" :loading="loadingCoupon">Áp dụng</v-btn>				
-										<v-list-tile-action>
-											<strong class="red--text text--accent-3">
-												<span v-if="coupon.secret != null">(Giảm {{coupon.discountPercent}}%)</span>
-												{{dealPrice | formatPrice}}			
-											</strong> 
-										</v-list-tile-action>
-									</v-list-tile>
+									</v-list-tile>									
 								</v-list>
-								<span v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
 							</v-card-text>
+
 							<v-divider></v-divider>
+							
 							<v-card-text>
 								<v-list>
 									<v-list-tile>
@@ -226,7 +242,7 @@
 											Phương thức thanh toán:
 										</v-list-tile-content>
 										<v-list-tile-content></v-list-tile-content>
-										<v-list-tile-action>Tiền mặt</v-list-tile-action>
+										<v-list-tile-action><h4>Tiền mặt</h4></v-list-tile-action>
 									</v-list-tile>
 								</v-list>
 							</v-card-text>
@@ -283,7 +299,6 @@ export default {
 	props: ['store'],
 	data() {
 		return {
-			code: null,
 			editedItem: {
 				name: '',
 				phone: '',
@@ -309,16 +324,7 @@ export default {
 				duration:'0 phút'
 			},
 			deliveryPrice: 0,
-			coupon: {
-				secret: null
-			},
-			datestring: formatDate(new Date().toISOString().substr(0, 10)),
-			alert: {
-				show: false,
-				message: '',
-				type: 'error'
-			},
-			loadingCoupon: false,
+			datestring: formatDate(new Date().toISOString().substr(0, 10)),			
 			loadingCheckout: false,
 			loadingLocation:false,
 			disabled: true,
@@ -328,32 +334,6 @@ export default {
 		}
 	},
 	methods: {
-		//CHECK COUPON
-		checkCoupon: async function() {
-			var vm = this
-			if(vm.code == null) {
-				vm.alert = Object.assign({}, {show: true, message: 'Vui lòng nhập mã giảm giá', type: 'error'})
-			} else {
-				const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id, 'deliveryPrice': this.deliveryPrice})
-				vm.loadingCoupon = await !vm.loadingCoupon
-				await setTimeout(function() {
-					axios.post('/api/Dofuu/CheckCouponCode', data, {headers: getHeader(), withCredentials:true}).then(response => {
-						if(response.data.type === 'success') {
-							vm.coupon = response.data.data
-							vm.coupon = Object.assign(vm.coupon, {'secret': response.data.secret})
-						}
-						vm.alert = Object.assign({}, {show: true, message: response.data.message, type: 'error'})
-					})
-				},300)
-				setTimeout(() => {
-					vm.loadingCoupon = !vm.loadingCoupon
-				}, 500)
-				setTimeout(() => {
-					vm.alert = Object.assign({}, {show: false, message: '', type: 'error'})
-				},3000)			
-			}
-			
-		},
 		autoComplete() {
 			var vm           = this
 			var flag 		 = false
@@ -362,11 +342,8 @@ export default {
 			autocomplete.addListener('place_changed', function() {
 				var place = autocomplete.getPlace()
 				if(!place.geometry) {
-					var geocoder = new google.maps.Geocoder();
-					geocoder.geocode({address: input.value}, function(results, status) {
-						if(status === 'OK') {
-							vm.calculateRoute({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()})
-						}
+					vm.geocoder('address', input.value).then(response => {
+						vm.calculateRoute({lat: response[0].geometry.location.lat(), lng: response[0].geometry.location.lng()})
 					})
 					return
 				}
@@ -414,7 +391,6 @@ export default {
 			directionsService.route(request, function(response, status) {
 				if (status === 'OK') 
 				{				
-					directionsDisplay.setDirections(response);
 					var response = response
 					var service  = new google.maps.DistanceMatrixService()
 					service.getDistanceMatrix(
@@ -476,24 +452,34 @@ export default {
 				} else {
 					window.alert('Directions request failed due to ' + status);
 				}
-				var leg   = response.routes[ 0 ].legs[ 0 ];
 			})
 		},
-		currentLocation: function() {
+		geocoder: function(type, location) {
+			return new Promise((resolve, reject) => {
+				var geocoder = new google.maps.Geocoder()
+				if(type === 'latlng') {
+					geocoder.geocode({'location': {lat: location.lat, lng: location.lng}}, function(results, status) {
+						if(status === 'OK') {
+							resolve(results)
+						}
+					})
+				} else {
+					geocoder.geocode({address: location}, function(results, status) {
+						if(status == 'OK') {
+							resolve(results)
+						}
+					})
+				}
+			})
+		},
+		currentLocation: async function() {
 			var vm             = this
-			var geocoder       = new google.maps.Geocoder();
-			vm.loadingLocation = true
+			vm.loadingLocation = await true
 			if(navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(async function(position){
-					vm.editedItem.lat = position.coords.latitude
-					vm.editedItem.lng = position.coords.longitude
-					var latlng        = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-					await geocoder.geocode({'location': latlng}, function(results, status) {
-						if(status == 'OK') {
-							vm.editedItem.address = results[0].formatted_address
-							vm.calculateRoute({lat: position.coords.latitude, lng: position.coords.longitude})
-						}
-
+					await vm.geocoder('latlng', {lat: position.coords.latitude, lng: position.coords.longitude}).then(response => {
+						vm.editedItem.address = response[0].formatted_address.slice(0, -10)
+						vm.calculateRoute({lat: position.coords.latitude, lng: position.coords.longitude})
 					})
 					vm.loadingLocation = false
 				})
@@ -506,10 +492,12 @@ export default {
 			return v == 0 || v == 15 || v == 30 || v == 45
 		},
 		save: function() {
+
 			var cart = {
 				instance: this.store.id,
 				items: []
 			}
+
 			var data = {
 				'userId':this.user.id,
 				'confirmed': true,
@@ -525,14 +513,13 @@ export default {
 				'subTotal': this.subTotal,
 				'total': this.total,
 				'store': this.store,
-				'city': this.city,
+				'city': this.currentCity,
 				'estimateTime': this.intendTime,
 				'distance': numeral(this.matrix.distance.split(' ')[0]).value(),
-				'paymentMethod': 1
+				'paymentMethod': 1,
+				'coupon': this.coupon
 			}
-			if(this.coupon.secret != null) {
-				data = Object.assign(data, {'coupon': this.coupon, 'secret': this.coupon.secret})
-			}
+
 			axios.post('/api/Dofuu/CheckOut', data, {headers: getHeader(), withCredentials:true}).then(async (response) => {
 				if(response.status == 201) {
 					await window.localStorage.setItem('cart', JSON.stringify(cart))
@@ -544,11 +531,11 @@ export default {
 	},
 	computed: {
 		...mapState({
-			city: state        => state.cityStore.currentCity,
+			user: state        => state.authStore.currentUser,
+			currentCity: state => state.cityStore.currentCity,
 			show : state       => state.cartStore.dialog,
 			cart: state        => state.cartStore.cart,
-			user: state        => state.authStore.currentUser,
-			currentCity: state => state.cityStore.currentCity
+			coupon: state  	   => state.cartStore.coupon
 		}),
 		counts: function() {
 			return this.$store.getters.counts
@@ -557,11 +544,11 @@ export default {
 			return this.$store.getters.subTotal
 		},
 		total: function() {
-			return Math.floor(numeral(this.subTotal).value() + numeral(this.deliveryPrice).value() + (this.dealPrice))
+			return Math.floor(numeral(this.subTotal).value() - numeral(this.subTotal).value()*this.discount/100 + numeral(this.deliveryPrice).value())
 		},
 		dealPrice: function() {
 			if(this.coupon != null) {
-				return -Math.floor(numeral(this.subTotal).value() + numeral(this.deliveryPrice).value())*(numeral(this.coupon.discountPercent).value()/100)
+				return this.subTotal - Math.floor(numeral(this.subTotal).value()*numeral(this.coupon.discountPercent).value()/100)
 			}
 			return 0
 		},
@@ -629,6 +616,9 @@ export default {
 			this.editedItem.time = time.format('HH:mm')
 
 			return totalTime
+		},
+		discount: function() {
+			return this.$store.getters.discount
 		}
 	}, 
 	filters: {
@@ -639,30 +629,35 @@ export default {
 	watch: {
 		'show': function(val) {
 			var vm = this
-			if(val) {
-				vm.autoComplete()
-				setTimeout(() => {
-					var map 	= new google.maps.Map(document.getElementById('map'), {
-						zoom: 17,
-						center: {lat:vm.store.lat, lng:vm.store.lng}
-					});
 
-					var marker 	= new google.maps.Marker({
-						position: {lat:vm.store.lat, lng:vm.store.lng},
-						map: map,
-						title: 'Hello World!'
-					});
-				})
+			if(val) {
+
+				vm.autoComplete()
 				
 				if(vm.user.address != null) {
+					
 					setTimeout(() => {
-						vm.calculateRoute(vm.user.address)
-					}, 500)
-				} else {
+						vm.geocoder('address', vm.user.address).then(response => {
+							vm.editedItem.address = response[0].formatted_address.slice(0, -10)
+							vm.calculateRoute({lat: response[0].geometry.location.lat(), lng: response[0].geometry.location.lng()})
+						})
+					}, 300)
 
-				}	
-			} else {
-				this.deliveryPrice = 0
+				} else {
+					
+					setTimeout(() => {
+						var map 	= new google.maps.Map(document.getElementById('map'), {
+							zoom: 17,
+							center: {lat:vm.store.lat, lng:vm.store.lng}
+						});
+
+						var marker 	= new google.maps.Marker({
+							position: {lat:vm.store.lat, lng:vm.store.lng},
+							map: map
+						});
+					}, 100)
+
+				}
 			}
 		},
 		'matrix.distance': function(val) {

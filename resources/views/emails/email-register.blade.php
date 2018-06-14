@@ -5,11 +5,13 @@
 </head>
 
 <body>
-	<h2>Welcome to the site {{$user['name']}}</h2>
+	<h2>Kính chào {{$user['name']}}</h2>
 	<br/>
-	Your registered email-id is {{$user['email']}} , Please click on the below link to verify your email account
+	Bạn đã đăng ký tài khoản là {{$user['email']}} , Vui lòng chọn đường dẫn bên dưới để kích hoạt tài khoản
 	<br/>
 	<a href="{{url('http://dofuu.com/login/activation/').$user->active->token}}">Verify Email</a>
+	<br/>
+	<h6>Trân trọng</h6>
 </body>
 
 </html>

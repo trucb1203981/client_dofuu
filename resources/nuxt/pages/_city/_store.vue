@@ -16,7 +16,7 @@
 				<v-btn flat href="/" icon>
 					<v-icon>arrow_back</v-icon>
 				</v-btn>
-				<v-toolbar-title class="red--text text-accent-2 hidden-sm-and-down" style="width: 300px">
+				<v-toolbar-title class="red--text text-accent-3 hidden-sm-and-down" style="width: 300px">
 					{{store.name}}
 				</v-toolbar-title>
 				<v-tabs show-arrows>

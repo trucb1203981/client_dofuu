@@ -6,6 +6,7 @@ const state = {
 		instance: 0,
 		items: []
 	},
+	coupon: null,
 	dialog: false
 }
 
@@ -40,6 +41,12 @@ const mutations = {
 	},
 	CLOSE_CHECKOUT(state) {
 		state.dialog = false
+	},
+	ADD_COUPON(state, payload) {
+		state.coupon = payload.data
+	},
+	REMOVE_COUPON(state) {
+		state.coupon = null
 	}
 }
 
@@ -64,9 +71,6 @@ const actions = {
 			}
 
 		}
-	}),
-	checkOut:({commit}, payload) => new Promise((resolve, reject) => {
-
 	})
 }
 const getters = {
@@ -80,6 +84,12 @@ const getters = {
 			return total
 		})
 		return total
+	},
+	total: (state) => {
+
+	},
+	discount: (state) => {
+		return (state.coupon != null && state.coupon.discountPercent > 0) ? state.coupon.discountPercent : 0
 	}
 }
 

@@ -35,7 +35,6 @@
 					<v-container>
 						<v-card flat tile color="transparent">
 							<v-system-bar status color="red darken-3">
-								<v-spacer></v-spacer>
 								<div class="white--text">
 									<v-icon color="white">alarm</v-icon>
 									<span v-for="(item, i) in store.activities" v-if="i==0"> 

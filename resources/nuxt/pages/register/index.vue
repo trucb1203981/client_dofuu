@@ -101,7 +101,7 @@
 						</v-form>
 					</v-card-text>
 					<v-card-actions>
-						<v-btn color="red accent-3" dark block :loading="loading" @click.stop.prevent="register">Đăng ký</v-btn>
+						<v-btn color="red accent-3" dark block :loading="loading" @click.stop.prevent="register" round>Đăng ký</v-btn>
 					</v-card-actions>
 					<v-card-actions>
 						<v-btn color="primary" flat :to="{path: '/login'}">

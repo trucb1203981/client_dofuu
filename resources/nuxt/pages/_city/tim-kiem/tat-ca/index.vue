@@ -11,7 +11,16 @@
 				<v-container>
 					<v-layout row wrap>
 						<v-flex v-if="stores.length>0" xs12 md3 d-flex v-for="(item, i) in stores " :key="i">
+
 							<v-card nuxt :to="{name: 'city-store', params: {city: $route.params.city, store: item.slug}}" width="180px" hover ripple >
+								<v-system-bar status color="red darken-4" dark>
+									<v-icon left>access_time</v-icon>
+									<span v-for="(item, i) in item.activities" v-if="i==0">		
+										<span v-for="(time, i) in item.times">
+											{{time.from}} - {{time.to}} 
+										</span>	
+									</span>
+								</v-system-bar>
 								<v-card-media class="white--text" height="150px" :src="image(item.avatar)">
 									<v-container fill-height fluid>
 										<v-layout fill-height >

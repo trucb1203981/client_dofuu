@@ -11,7 +11,7 @@
 			class="mx-3"
 			v-model="keywords"
 			color="red accent-2"
-			label="Tìm kiếm"
+			label="Tìm kiếm (quán, món, ...)"
 			offset-x
 			@keyup.enter="search"
 			:append-icon="'search'"

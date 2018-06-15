@@ -123,6 +123,7 @@
 							<v-content>
 								<v-layout row wrap >
 									<v-flex  xs12 md3 d-flex v-for="(item, i) in deal.stores " :key="i">
+
 										<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}"  hover ripple >
 											<v-system-bar status color="yellow accent-4">
 												<v-icon left>access_time</v-icon>
@@ -180,6 +181,7 @@
 						</v-flex>
 					</v-layout> 
 				</v-card><!-- END DEAL STORE -->
+
 			</v-flex>
 
 			<v-flex  xs12 md12 >
@@ -250,6 +252,7 @@
 							<v-content>
 								<v-layout row wrap >
 									<v-flex  xs12 md3 d-flex v-for="(item, i) in all.stores " :key="i">
+
 										<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" hover ripple >
 											<v-system-bar status color="red darken-4" dark>
 												<v-icon left>access_time</v-icon>
@@ -310,6 +313,7 @@
 						</v-flex>								
 					</v-layout>
 				</v-card><!-- END ALL STORE -->
+				
 			</v-flex>
 		</v-layout>
 	</v-flex> 

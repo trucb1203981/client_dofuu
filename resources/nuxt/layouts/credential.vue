@@ -4,8 +4,10 @@
 			<v-btn icon :to="{path: '/'}">
 				<v-icon>arrow_back</v-icon>
 			</v-btn>
-			<v-toolbar-title>
-				Dofuu
+			<v-toolbar-title class="red--text text-accent-2 pt-2" :style="$vuetify.breakpoint.lgAndUp ? 'width: 200px': 'width: 200px'">		
+				<a href="/">					
+					<img src="/logo_page.png" alt="" >
+				</a>
 			</v-toolbar-title>
 		</v-toolbar>
 		<v-content>

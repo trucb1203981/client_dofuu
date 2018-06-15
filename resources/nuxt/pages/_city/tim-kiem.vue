@@ -1,6 +1,6 @@
 <template>
 	<v-content>
-		<v-tabs color="grey accent-3" dark slider-color="yellow">
+		<v-tabs color="red" dark slider-color="yellow">
 			<v-tab nuxt :to="{name: 'city-tim-kiem-tat-ca', query: {q: $route.query.q}, params: {city: $route.params.city}}">
 				Tất cả
 			</v-tab>

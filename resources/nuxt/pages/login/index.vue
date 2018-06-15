@@ -40,7 +40,7 @@
 						<nuxt-link :to="{path: '/forget-password'}">Quên mật khẩu?</nuxt-link>
 					</v-card-text>
 					<v-card-actions>
-						<v-btn color="red accent-3" dark block :loading="loading" @click.stop.prevent="login">Đăng nhập</v-btn>
+						<v-btn round color="red accent-3" dark block :loading="loading" @click.stop.prevent="login">Đăng nhập</v-btn>
 					</v-card-actions>
 					<v-card-actions>
 						<v-layout row wrap justify-center>

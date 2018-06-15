@@ -63,12 +63,7 @@
 							</v-layout>			
 						</v-card-media>
 						<v-toolbar dense flat color="red darken-3" dark class="elevation-0">
-							<v-tooltip top>
-								<v-toolbar-title slot="activator" class="text-xs-center">
-									{{store.name}}
-								</v-toolbar-title>
-								<span>{{store.name}}</span>
-							</v-tooltip>
+							<v-subheader class="text-xs-center"><h3>{{store.name}}</h3></v-subheader>
 						</v-toolbar>
 					</v-card>
 					<v-list avatar dense three-line subheader>

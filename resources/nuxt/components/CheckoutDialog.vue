@@ -11,7 +11,7 @@
 
 					<v-toolbar-title class="hidden-sm-and-down">Xác nhận đơn đặt hàng</v-toolbar-title>
 					<v-spacer></v-spacer>
-					<v-btn color="green darken-3 white--text" :disabled="editedItem.address == null" @click.prevent="save" small>
+					<v-btn color="green darken-3 white--text" :disabled="disabledCheckout" @click.prevent="save" small>
 						Hoàn thành | {{total | formatPrice}}
 						<v-icon >chevron_right</v-icon>
 					</v-btn>
@@ -246,7 +246,6 @@
 									</v-list-tile>
 								</v-list>
 							</v-card-text>
-
 						</v-card>
 					</v-flex>
 				</v-flex>
@@ -302,7 +301,7 @@ export default {
 			editedItem: {
 				name: '',
 				phone: '',
-				address: null,
+				address: '',
 				lat: 0,
 				lng: 0,
 				date: new Date().toISOString().substr(0, 10),
@@ -442,7 +441,6 @@ export default {
 										directionsDisplay.setDirections(response);
 									}
 								}
-
 								vm.matrix.distance = distance
 								vm.matrix.duration = duration
 							}
@@ -561,6 +559,13 @@ export default {
 			cart: state        => state.cartStore.cart,
 			coupon: state  	   => state.cartStore.coupon
 		}),
+		disabledCheckout: function() {
+			if(this.editedItem.name.length > 0 && this.editedItem.phone.length > 0 && this.editedItem.address.length > 0 ) {
+				return false
+			} else {
+				return true
+			}
+		},
 		counts: function() {
 			return this.$store.getters.counts
 		},

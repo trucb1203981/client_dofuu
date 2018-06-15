@@ -298,7 +298,7 @@
 									<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>
 								</div>
 								<v-card-actions>
-									<v-btn v-if="currentCity != null && all.stores.length > 0" color="grey lighten-2" block :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}" >Xem thêm <v-icon right>arrow_forward</v-icon> </v-btn>
+									<v-btn v-if="currentCity != null && all.stores.length > 0" color="grey lighten-2" block :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}" round >Xem thêm <v-icon right>arrow_forward</v-icon> </v-btn>
 								</v-card-actions>
 							</v-content>
 						</v-flex>								

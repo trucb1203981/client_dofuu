@@ -11,7 +11,7 @@
 
 					<v-toolbar-title class="hidden-sm-and-down">Xác nhận đơn đặt hàng</v-toolbar-title>
 					<v-spacer></v-spacer>
-					<v-btn color="green darken-3 white--text" :disabled="disabledCheckout" @click.prevent="save" small>
+					<v-btn color="green darken-3 white--text" :disabled="disabledCheckout" @click.prevent="save" small round>
 						Hoàn thành | {{total | formatPrice}}
 						<v-icon >chevron_right</v-icon>
 					</v-btn>

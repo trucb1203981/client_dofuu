@@ -50,7 +50,7 @@
 							</v-flex>
 							<v-flex xs12 md5 d-flex>
 								<v-card-actions>
-									<v-btn block color="red accent-2" dark @click.native="addToCart(item)">
+									<v-btn block color="red accent-2" dark @click.native="addToCart(item)" round>
 										<span>{{item.price | formatPrice}}</span>
 										<v-icon right>add_shopping_cart</v-icon>
 									</v-btn>
@@ -213,7 +213,7 @@
 					</v-layout>
 					<v-divider></v-divider>
 					<v-card-actions>
-						<v-btn block :disabled="!cart || cart.items.length==0" color="red accent-2 white--text" dense @click.native="checkOut">
+						<v-btn block :disabled="!cart || cart.items.length==0" color="red accent-2 white--text" dense @click.native="checkOut" round>
 							Gửi đơn hàng
 						</v-btn>
 					</v-card-actions>
@@ -336,7 +336,7 @@
 			</v-layout>
 			<v-divider></v-divider>
 			<v-card-actions>
-				<v-btn block :disabled="!cart || cart.items.length==0" color="red accent-2 white--text" dense @click.native="checkOut">
+				<v-btn block :disabled="!cart || cart.items.length==0" color="red accent-2 white--text" dense @click.native="checkOut" round>
 					Gửi đơn hàng
 				</v-btn>
 			</v-card-actions>

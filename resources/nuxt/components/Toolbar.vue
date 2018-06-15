@@ -25,8 +25,8 @@
 			:append-icon-cb="search"
 			class="hidden-sm-and-down"></v-text-field>			
 			<v-spacer ></v-spacer>
-			<v-btn v-if="!isAuth" flat nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="red accent-3" outline small>
-				<v-icon left>input</v-icon> <span>ĐĂNG NHẬP</span>
+			<v-btn v-if="!isAuth" nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="red accent-3" :small="$vuetify.breakpoint.mdAndUp" dark :round="$vuetify.breakpoint.mdAndUp" :icon="$vuetify.breakpoint.smAndDown">
+				<v-icon>input</v-icon> <span class="hidden-sm-and-down pl-1">ĐĂNG NHẬP</span>
 			</v-btn>
 
 			<v-toolbar-items>

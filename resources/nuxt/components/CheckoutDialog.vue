@@ -301,7 +301,7 @@ export default {
 			editedItem: {
 				name: '',
 				phone: '',
-				address: '',
+				address: null,
 				lat: 0,
 				lng: 0,
 				date: new Date().toISOString().substr(0, 10),
@@ -560,7 +560,7 @@ export default {
 			coupon: state  	   => state.cartStore.coupon
 		}),
 		disabledCheckout: function() {
-			if(this.editedItem.name.length > 0 && this.editedItem.phone.length > 0 && this.editedItem.address.length > 0 ) {
+			if(this.editedItem.name.length > 0 && this.editedItem.phone.length > 0 && this.editedItem.address == null) {
 				return false
 			} else {
 				return true

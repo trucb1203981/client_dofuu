@@ -211,7 +211,7 @@ class CartController extends Controller
 					$users = User::where('role_id', '=', $this->employee->id)->get();
 					foreach($users as $user) {
 						$user->notify(new CheckoutNotification($order)); 
-						// Mail::to('trucnguyen.dofuu@gmail.com')->send(new OrderMail($order));					
+						Mail::to($user->email)->send(new OrderMail($order));					
 					}					
 					$res = [
 						'type'    => 'success',

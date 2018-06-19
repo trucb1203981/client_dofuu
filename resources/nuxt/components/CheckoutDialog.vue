@@ -11,7 +11,7 @@
 
 					<v-toolbar-title class="hidden-sm-and-down">Xác nhận đơn đặt hàng</v-toolbar-title>
 					<v-spacer></v-spacer>
-					<v-btn color="green darken-3 white--text" :disabled="disabledCheckout" @click.prevent="save" small round>
+					<v-btn color="green darken-3 white--text" :disabled="disabledCheckout" :loading="processCheckout" @click.prevent="save" small round>
 						Hoàn thành | {{total | formatPrice}}
 						<v-icon >chevron_right</v-icon>
 					</v-btn>
@@ -324,7 +324,7 @@ export default {
 			},
 			deliveryPrice: 0,
 			datestring: formatDate(new Date().toISOString().substr(0, 10)),			
-			loadingCheckout: false,
+			processCheckout: false,
 			loadingLocation:false,
 			disabled: true,
 			menuTime: false,
@@ -513,7 +513,7 @@ export default {
 		allowedMinutes: function(v) {			
 			return v == 0 || v == 15 || v == 30 || v == 45
 		},
-		save: function() {
+		save: async function() {
 
 			var cart = {
 				instance: this.store.id,
@@ -541,14 +541,17 @@ export default {
 				'paymentMethod': 1,
 				'coupon': this.coupon
 			}
+			this.processCheckout = await true
 
-			axios.post('/api/Dofuu/CheckOut', data, {headers: getHeader(), withCredentials:true}).then(async (response) => {
+			await axios.post('/api/Dofuu/CheckOut', data, {headers: getHeader(), withCredentials:true}).then(async (response) => {
 				if(response.status == 201) {
-					await window.localStorage.setItem('cart', JSON.stringify(cart))
-					await this.$store.commit('FETCH_CART', cart)
-					this.$store.commit('CLOSE_CHECKOUT')
 				}
+
+				await window.localStorage.setItem('cart', JSON.stringify(cart))
+				await this.$store.commit('FETCH_CART', cart)
+				this.$store.commit('CLOSE_CHECKOUT')
 			})
+			this.processCheckout = false
 		}
 	},
 	computed: {
@@ -560,7 +563,7 @@ export default {
 			coupon: state  	   => state.cartStore.coupon
 		}),
 		disabledCheckout: function() {
-			if(this.editedItem.name.length > 0 && this.editedItem.phone.length > 0 && this.editedItem.address == null) {
+			if(this.editedItem.name.length > 0 && this.editedItem.phone.length > 0 && this.editedItem.address != null) {
 				return false
 			} else {
 				return true

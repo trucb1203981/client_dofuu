@@ -28,6 +28,6 @@ class OrderMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.email-order', ['order' => $this->order]);
+        return $this->subject('Bạn có đơn đặt hàng mã số '.$this->order->id)->view('emails.email-order', ['order' => $this->order]);
     }
 }

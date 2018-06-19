@@ -209,10 +209,11 @@ class CartController extends Controller
 					}
 					//Notify to employee in City
 					$users = User::where('role_id', '=', $this->employee->id)->get();
+					Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($order));
+					
 					foreach($users as $user) {
 						$user->notify(new CheckoutNotification($order)); 
-						Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($order));					
-					}					
+					}						
 					$res = [
 						'type'    => 'success',
 						'message' => 'Check out cart successfully.',

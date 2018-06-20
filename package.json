@@ -5,6 +5,7 @@
         "build": "laravel-nuxt build"
     },
     "dependencies": {
+        "@nuxtjs/google-analytics": "^2.0.2",
         "axios": "^0.18.0",
         "babel-polyfill": "^6.26.0",
         "cookieparser": "^0.1.0",

@@ -23,11 +23,14 @@ module.exports = laravelNuxt({
  	** Css Vuetify
  	*/
  	css: [{src: 'vuetify/dist/vuetify.min.css', lang: 'css'}],
- 	modules: [],
+ 	modules: [['@nuxtjs/google-analytics']],
+ 	'google-analytics': {
+ 		id: 'UA-121049710-1'
+ 	},
 	/*
 	** Plugin 
 	*/
-	plugins: ['~/plugins/vuetify', '~/plugins/filters', '~/plugins/vee-validate', '~/plugins/numeral', '~/plugins/vue-google-map'],
+	plugins: ['~/plugins/vuetify', '~/plugins/filters', '~/plugins/vee-validate', '~/plugins/numeral', '~/plugins/vue-google-map', {src:'~/plugins/ga', ssr:false}],
 	build: {
 		vendor: ['vuetify', 'js-cookie', 'moment', 'vee-validate', 'numeral', 'vue2-google-maps'],
 		extend (config, { isDev, isClient }) {

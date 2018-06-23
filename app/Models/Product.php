@@ -20,5 +20,21 @@ class Product extends Model
 		return $this->belongsTo('App\Models\ProductStatus', 'status_id');
 	}
 
-	
+	public function getHaveSizeAttribute($value) {
+		if($value) {
+			return true;
+		} 
+		return false;
+	}
+
+	public function getHaveToppingAttribute($value) {
+		if($value) {
+			return true;
+		} 
+		return false;
+	}
+
+	public function sizes() {
+		return $this->belongsToMany('App\Models\Size','ec_product_ec_size','product_id', 'size_id')->withPivot(['price']);
+	}
 }

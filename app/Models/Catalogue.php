@@ -12,6 +12,13 @@ class Catalogue extends Model
 
 	protected $hidden = [];
 
+	public function getCatalogueShowAttribute($value) {
+		if($value) {
+			return true;
+		} 
+		return false;
+	}
+
 	public function store() {
 		return $this->belongsTo('App\Models\Store', 'store_id');
 	}

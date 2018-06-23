@@ -71,4 +71,20 @@ class User extends Authenticatable implements AuthenticatableUserContract, Authe
     {
         return 'users.'.$this->id;
     }
+
+    public function getActivedAttribute($value) {
+        if($value) {
+            return true;
+        } 
+        return false;
+
+    }
+
+    public function getBannedAttribute($value) {
+        if($value) {
+            return true;
+        } 
+        return false;
+
+    }
 }

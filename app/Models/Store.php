@@ -25,7 +25,6 @@ class Store extends Model
             return true;
         } 
         return false;
-
     }
 
     public function user() {
@@ -50,6 +49,10 @@ class Store extends Model
 
     public function catalogues() {
         return $this->hasMany('App\Models\Catalogue', 'store_id');
+    }
+
+    public function toppings() {
+        return $this->hasMany('App\Models\Topping', 'store_id');
     }
 
     public function products() {

@@ -79,20 +79,20 @@
 						</v-tab>
 					</v-tabs>
 					<v-card-text v-if="tabIndex==0">
-						<v-list>
-							<v-list-tile v-for="item in store.catalogues" v-if="item.products.length>0" @click="goTo('#item_'+item.id)" :key="item.name">
+						<v-list  class="scroll-y" style="max-height: 400px">
+							<v-list-tile v-for="item in store.catalogues" v-if="item.products.length>0" @click="goTo('#item_'+item.id)" :key="item.name" >
 								<v-list-tile-content>
 									<v-list-tile-title>
-										{{item.name}}
+										{{item.name | upperCase}}
 									</v-list-tile-title>
 									<v-list-tile-sub-title>
-										{{item._name}}
+										{{item._name | upperCase}}
 									</v-list-tile-sub-title>
 								</v-list-tile-content>
 							</v-list-tile>
 						</v-list>
 					</v-card-text>
-					<v-card v-else-if="tabIndex==1" class="transparent">
+					<v-card v-else-if="tabIndex==1" class="transparent" >
 						<v-card-text>
 							<v-data-table
 							v-if="cart && cart.items.length>0" :headers="headers" :items="cart.items" class="elevation-1 scroll-y" hide-actions hide-headers style="max-height:280px; overflow-x:hidden"

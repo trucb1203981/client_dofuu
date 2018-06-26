@@ -22,6 +22,7 @@ class AuthResource extends JsonResource
             'gender'     => $this->gender,
             'address'    => $this->address,
             'image'      => $this->image,
+            'freeShip'   => $this->free_ship,
             'permission' => $this->whenLoaded('role', function() {
                 return [
                     'isPartner'  => $this->role->name === 'Employee' ? true : false,

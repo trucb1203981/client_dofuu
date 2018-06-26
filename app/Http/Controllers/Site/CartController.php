@@ -148,14 +148,13 @@ class CartController extends Controller
 	public function checkOut(Request $request) {
 		$now = Carbon::now()->toDateTimeString();
 		if($request->filled('confirmed', 'name', 'phone', 'address', 'date', 'time', 'memo', 'total', 'subTotal', 'userId', 'paymentMethod', 'distance','items', 'city', 'store')) {
-
-			//Check confirmed
+			// Check confirmed
 			if($request->confirmed) {
 				$CID    = $request->city['id'];
 				$DID    = $request->store['districtId'];
 				$SID    = $request->store['id'];
 				$secret = $request->secret;
-				//Find store has truly
+			// 	//Find store has truly
 				$store  = Store::whereHas('district', function($query) use ($DID, $CID) {
 					$query->where('id', '=', $DID)->where('city_id', '=', $CID);
 				})->where('id', '=', $request->store['id'])->first();
@@ -169,8 +168,9 @@ class CartController extends Controller
 					$order->phone           = $request->phone;
 					$order->date            = $request->date;
 					$order->time            = $request->time;
-					$order->delivery_price  = (float)$this->deliveryPrice($request->distance, $CID);
-					$order->subtotal_amount = $this->subTotal($SID, $request->items);
+					$order->delivery_price  = $request->deliveryPrice;					
+					$order->subtotal_amount = $request->subTotal;
+
 					if($request->filled('secret')) {
 						$coupon = Coupon::whereHas('stores', function($query) use ($store) {
 							$query->where('ec_stores.id', '=', $store->id);
@@ -187,15 +187,16 @@ class CartController extends Controller
 							$order->coupon         = $coupon->coupon;
 							$order->secret         = $coupon->token;
 							$order->discount_total = $this->discountTotal($order->subtotal_amount, $coupon->discount_percent);
-							$order->amount         = $this->total($order->subtotal_amount, $order->delivery_price, $coupon->discount_percent);
+							$order->amount         = $request->total;
 
 						} else {
-							$order->amount 	= $this->total($order->subtotal_amount, $order->delivery_price);
+							$order->amount 	= $request->total;
 						}	
 						
 					} else {
-						$order->amount = $this->total($order->subtotal_amount, $order->delivery_price);
+						$order->amount = $request->total;
 					}
+
 					$order->memo            = $request->memo;
 					$order->payment_id      = $request->paymentMethod;
 					$order->status_id       = 1;
@@ -203,10 +204,15 @@ class CartController extends Controller
 					$order->store_id        = $request->store['id'];
 					$order->created_at 		= new DateTime;
 					$order->save();
-					
+
+					$currentUser 			= auth('api')->user();
+					$currentUser->free_ship = 0;
+					$currentUser->save();
+
 					foreach($request->items as $data) {
-						$order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['price'], 'total' => ((int)$data['qty'] * (float)$data['price']) ]]);
+						$order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['size']['price'], 'total' => $data['subTotal'], 'memo' => $data['memo'], 'toppings' => serialize($data['toppings'])]]);
 					}
+
 					//Notify to employee in City
 					$users = User::where('role_id', '=', $this->employee->id)->get();
 					Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($order));
@@ -214,6 +220,7 @@ class CartController extends Controller
 					foreach($users as $user) {
 						$user->notify(new CheckoutNotification($order)); 
 					}						
+
 					$res = [
 						'type'    => 'success',
 						'message' => 'Check out cart successfully.',
@@ -231,53 +238,53 @@ class CartController extends Controller
 		return response('Something went wrong', 500);
 	}
 
-	//CALCULATE DELIVERY PRICE
-	public function deliveryPrice($distance, $id) {
-		$distance = (float)$distance;
-		$city = City::with('service', 'deliveries')->where('id', '=', $id)->first();
-		if($city->service->delivery_actived) {
-			foreach($city->deliveries as $data) {
-				if($data['from'] <= $distance && $data['to'] >= $distance && $city->service['min_range'] >= $distance) {
-					return $data->pivot['price'];
-				} else if($data['from'] <= $distance && $data['to'] >= $distance && $city->service['max_range'] >= $distance && $city->service['min_range'] < $distance) {
-					return (float)$data->pivot['price']*(float)$distance;
-				}
-			}
-		} else {
-			return (int)0;
-		}
-	}
+	// //CALCULATE DELIVERY PRICE
+	// public function deliveryPrice($distance, $id) {
+	// 	$distance = (float)$distance;
+	// 	$city = City::with('service', 'deliveries')->where('id', '=', $id)->first();
+	// 	if($city->service->delivery_actived) {
+	// 		foreach($city->deliveries as $data) {
+	// 			if($data['from'] <= $distance && $data['to'] >= $distance && $city->service['min_range'] >= $distance) {
+	// 				return $data->pivot['price'];
+	// 			} else if($data['from'] <= $distance && $data['to'] >= $distance && $city->service['max_range'] >= $distance && $city->service['min_range'] < $distance) {
+	// 				return (float)$data->pivot['price']*(float)$distance;
+	// 			}
+	// 		}
+	// 	} else {
+	// 		return (int)0;
+	// 	}
+	// }
 
-	// CALCULATE DEAL DELIVERY PRICE
-	public function dealDelivery() {
+	// // CALCULATE DEAL DELIVERY PRICE
+	// public function dealDelivery() {
 
-	}
+	// }
 
-	//CALCULATE SUBTOTAL
-	public function subTotal($cityId, $items) {
-		$items    = $items;
-		$subTotal = 0;
-		foreach ($items as $item) {
-			$id = $item['id'];
-			$store = Store::with(['products' => function($query) use ($id){
-				return $query->where('ec_products.id', '=', $id);
-			}])->where('id', '=', $cityId)->first();
-			if(count($store->products)>0) {
-				$subTotal = $subTotal + ((int)$item['qty'] * (float)$store->products[0]['price']);
-			}
-		}
-		return (float)$subTotal;
-	}
+	// //CALCULATE SUBTOTAL
+	// public function subTotal($cityId, $items) {
+	// 	$items    = $items;
+	// 	$subTotal = 0;
+	// 	foreach ($items as $item) {
+	// 		$id = $item['id'];
+	// 		$store = Store::with(['products' => function($query) use ($id){
+	// 			return $query->where('ec_products.id', '=', $id);
+	// 		}])->where('id', '=', $cityId)->first();
+	// 		if(count($store->products)>0) {
+	// 			$subTotal = $subTotal + ((int)$item['qty'] * (float)$store->products[0]['price']);
+	// 		}
+	// 	}
+	// 	return (float)$subTotal;
+	// }
 
-	//CALCULATE TOTAL
-	public function total($subTotal, $deliveryPrice, $discount = 0) {
-		return (float)$subTotal + (float)$deliveryPrice - $this->discountTotal($subTotal, $discount);
-	}
+	// //CALCULATE TOTAL
+	// public function total($subTotal, $deliveryPrice, $discount = 0) {
+	// 	return (float)$subTotal + (float)$deliveryPrice - $this->discountTotal($subTotal, $discount);
+	// }
 
-	//CALCULATE DEAL
-	public function discountTotal($subTotal, $discount = 0) {
-		return ((float)$subTotal * (int)$discount/100);
-	}
+	// //CALCULATE DEAL
+	// public function discountTotal($subTotal, $discount = 0) {
+	// 	return ((float)$subTotal * (int)$discount/100);
+	// }
 
 	//GET PRODUCT BY STORE
 	public function getProductByStore(Request $request) {

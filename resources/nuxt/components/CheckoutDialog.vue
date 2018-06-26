@@ -161,9 +161,11 @@
 
 							<v-card-text class="scroll-y" style="max-height:150px">
 								<v-list>
-									<v-list-tile avatar v-for="item in cart.items" :key="item.name">
+									<v-list-tile avatar v-for="(item, i) in cart.items" :key="i">
 										<v-list-tile-content>
 											<v-list-tile-title>{{item.name}}</v-list-tile-title>
+											<v-list-tile-sub-title v-if="item.toppings.length > 0"><span v-for="(topping, i) in item.toppings" :key="i">{{topping.name}} ({{topping.price | formatPrice}}). </span></v-list-tile-sub-title>
+											<v-list-tile-sub-title v-if="item.memo != null">{{item.memo}}</v-list-tile-sub-title>
 										</v-list-tile-content>
 										<v-list-tile-avatar>
 											<v-avatar class="red" size="18">
@@ -171,7 +173,7 @@
 											</v-avatar>
 										</v-list-tile-avatar>										
 										<v-list-tile-action>
-											<strong>{{item.price | subPrice(item.qty)}}</strong>
+											<strong>{{item.subTotal}}</strong>
 										</v-list-tile-action>
 									</v-list-tile>
 								</v-list>
@@ -498,7 +500,11 @@ export default {
 				if(service.deliveryActived) {
 					deliveries.forEach(item => {
 						if(item.from <= distance && item.to >= distance && service.minRange >= distance) {
-							shipPrice = parseFloat(item.price)
+							if(this.user.freeShip) {
+								shipPrice = 0	
+							} else {								
+								shipPrice = parseFloat(item.price)
+							}
 						} else if(item.from <= distance && item.to >= distance && service.maxRange >= distance && service.minRange < distance) {
 							shipPrice = parseFloat(item.price)*distance
 						}
@@ -538,6 +544,7 @@ export default {
 				'city': this.currentCity,
 				'estimateTime': this.intendTime,
 				'distance': numeral(this.matrix.distance.split(' ')[0]).value(),
+				'deliveryPrice': this.deliveryPrice,
 				'paymentMethod': 1,
 				'coupon': this.coupon
 			}

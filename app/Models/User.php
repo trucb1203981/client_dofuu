@@ -80,6 +80,13 @@ class User extends Authenticatable implements AuthenticatableUserContract, Authe
 
     }
 
+    public function getFreeShipAttribute($value) {
+        if($value) {
+            return true;
+        } 
+        return false;
+    }
+
     public function getBannedAttribute($value) {
         if($value) {
             return true;

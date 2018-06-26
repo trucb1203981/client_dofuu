@@ -1,5 +1,5 @@
 <template>
-	<v-container fluid grid-list-lg>
+	<v-container fluid grid-list-lg="$vuetify.breakpoint.mdAndUp" grid-list-xs="$vuetify.breakpoint.smAndDown">
 		<v-layout child-flex wrap v-show="!loading">
 			<v-flex xs12 md8>
 				<!-- CARD DEAL START -->
@@ -32,31 +32,81 @@
 					</v-alert>
 				</v-card><!-- CARD DEAL END -->
 
-				<v-content v-if="menu" v-for="(data, index) in menu" :key="index">
-					<v-subheader v-if="data.products.length>0"  :id="'item_'+data.id"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
-					<v-card hover class="mb-4" v-for="(item, i) in data.products" :key="i">	
+				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index">
+					<v-subheader :id="'item_'+data.id"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
+					<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in data.products" :key="i">
+						<v-card hover ripple class="elevation-1 mb-2" v-on:click.native="openCartDialog(item)">
+							<v-layout row wrap class="px-2">
+								<v-flex xs3 class="text-xs-center">
+									<v-avatar size="80" color="primary">
+										<img :src="image(item.image)" alt="alt">
+									</v-avatar>
+								</v-flex>
+								<v-flex xs9 class="px-0">
+									<v-card-text class="py-0">
+										<v-system-bar status color="transparent" class="px-0">
+											<h4>{{item.name}}</h4>
+											<v-spacer></v-spacer>
+											<v-btn icon small class="ma-0"><v-icon color="success" size="20">add_shopping_cart</v-icon></v-btn>
+										</v-system-bar>	
+										<span class="grey--text">({{item._name}})</span>
+										<v-layout row wrap>
+											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
+												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
+											</v-flex>	
+										</v-layout>
+									</v-card-text>
+								</v-flex>
+							</v-layout>
+						</v-card>
+					</v-flex>
+
+					<v-card v-if="$vuetify.breakpoint.mdAndUp" class="mb-4" v-for="(item, i) in data.products" :key="i">	
+
+						<v-system-bar status color="red darken-3" dark>
+							<v-subheader class="text-xs-center white--text"><h3>{{item.name | upperCase}} <span v-if="item._name != null">({{item._name | upperCase}})</span></h3></v-subheader>
+						</v-system-bar>
+
 						<v-layout row wrap>
-							<v-flex xs12 md5 d-flex>
-								<v-card-media :src="image(item.image)" height="200px">
-								</v-card-media>
+
+							<v-flex xs12 md4 class="text-xs-center">
+								<v-avatar size="120" color="grey lighten-3">
+									<img :src="image(item.image)" alt="alt">
+								</v-avatar>
 							</v-flex>
-							<v-flex xs12 md7 d-flex>
-								<v-card-text>
-									<h3 class="title">{{item.name}}</h3>
-									<span class="grey--text" v-if="item._name != null">{{item._name}}</span><br>
-									<span v-if="item.description">Mô tả: {{item.description}}</span><br>
-									<span class="grey--text">Đã được đặt <strong class="black--text">{{item.count}}</strong> lần</span><br>
-								</v-card-text>										
+
+							<v-flex xs12 md8 d-flex>				
+
+								<v-flex v-for="size in item.sizes" xs4 class="justify-center" :key="size.id">
+									<v-card class="text-xs-center">
+										<v-system-bar status color="grey lighten-3" class="black--text justify-center" dark :class="{'black--text': size.price>0, 'grey--text': size.price == 0}">
+											<span>{{size.name}}</span> 
+										</v-system-bar>
+										<v-card-text>											
+											<h3 v-if="size.price>0"> {{size.price | formatPrice}} </h3>
+											<span v-else class="grey--text">Không</span>
+										</v-card-text>
+									</v-card>
+								</v-flex>								
+
+								<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
+
 							</v-flex>
-							<v-flex xs12 md5 d-flex>
+
+							<v-flex xs12 md4 d-flex>
 								<v-card-actions>
-									<v-btn block color="red accent-2" dark @click.native="addToCart(item)" round>
-										<span>{{item.price | formatPrice}}</span>
+									<v-btn block color="red accent-4" dark @click.native="openCartDialog(item)" round>
+										<span>Đặt món</span>
 										<v-icon right>add_shopping_cart</v-icon>
 									</v-btn>
 								</v-card-actions>
 							</v-flex>
+
 						</v-layout>
+						<v-system-bar status color="grey lighten-4">
+							<v-spacer></v-spacer>
+							<span>Đã được đặt <strong>{{item.count}}</strong></span>
+						</v-system-bar>
 					</v-card>
 				</v-content>
 			</v-flex>
@@ -97,8 +147,8 @@
 							<v-data-table
 							v-if="cart && cart.items.length>0" :headers="headers" :items="cart.items" class="elevation-1 scroll-y" hide-actions hide-headers style="max-height:280px; overflow-x:hidden"
 							>
-							<template slot="items" slot-scope="props">
-								<tr>
+							<template slot="items" slot-scope="props" >
+								<tr :key="props.item.rowId">
 									<td class="text-xs-center">
 										<div>{{props.item.name}}</div>
 										<div><v-btn  outline color="primary" icon @click="props.expanded = ! props.expanded" small><v-icon>edit</v-icon></v-btn></div>
@@ -110,7 +160,7 @@
 											</v-btn>
 										</span>
 										<span class="py-0">												
-											{{props.item.qty}}x
+											{{props.item.qty}}
 										</span>
 										<span class="py-0">
 											<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
@@ -118,13 +168,14 @@
 											</v-btn>
 										</span>											
 									</td>
-									<td>{{props.item.price | formatPrice}}</td>	
+									<td>{{totalProduct(props.item) | formatPrice}}</td>	
 								</tr>
 							</template>
 							<template slot="expand" slot-scope="props">
 								<v-container fluid grid-list-md class="grey lighten-3">			
 									<v-flex d-flex xs12>
 										<v-text-field
+										v-model="props.item.memo"
 										:label="`Ghi chú ${props.item.name}`"
 										></v-text-field>
 									</v-flex>
@@ -155,17 +206,17 @@
 					</v-list-tile>
 
 					<span v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
-					
+
 					<v-divider></v-divider>
 
 					<v-layout row wrap>
 						<v-flex	xs12>
 							<v-list dense two-line> 
-								
+
 								<v-list-tile>
-									
+
 									<v-list-tile-content>Tạm tính:</v-list-tile-content>
-									
+
 									<v-list-tile-content class="align-end">
 										<v-list-tile-title class="text-xs-right"><h3  :style="coupon !=null ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h3></v-list-tile-title>
 										<v-list-tile-title v-if="coupon != null" class="text-xs-right red--text text--accent-3"><h3>{{total | formatPrice}}</h3></v-list-tile-title>
@@ -273,7 +324,7 @@
 								</v-btn>
 							</span>
 							<span class="py-0">												
-								{{props.item.qty}}x
+								{{props.item.qty}}
 							</span>
 							<span class="py-0">
 								<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
@@ -281,13 +332,14 @@
 								</v-btn>
 							</span>											
 						</td>
-						<td>{{props.item.price | formatPrice}}</td>	
+						<td>{{totalProduct(props.item) | formatPrice}}</td>	
 					</tr>
 				</template>
 				<template slot="expand" slot-scope="props">
 					<v-container fluid grid-list-md class="grey lighten-3">			
 						<v-flex d-flex xs12>
 							<v-text-field
+							v-model="props.item.memo"
 							:label="`Ghi chú ${props.item.name}`"
 							></v-text-field>
 						</v-flex>
@@ -427,6 +479,104 @@
 </v-dialog>
 <!-- DIALOG ALERT END-->
 <vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
+<v-dialog v-model="optionDialog" persistent scrollable>
+	<v-card v-if="editedItem != null">
+		<v-toolbar color="red accent-4" dense class="elevation-0" dark flat>
+			<v-toolbar-title class="subheader px-0"> {{editedItem.name}} <span v-if="editedItem._name != null">({{editedItem._name}})</span></v-toolbar-title>
+			<v-spacer></v-spacer>
+			<h3 class="white--text"></h3>
+		</v-toolbar>
+
+		<v-card-text>
+			<v-container fluid grid-list-xs>
+				<v-layout row wrap>
+
+					<v-flex  xs12 md4>
+						<v-card>
+							<v-card-media height="200" color="grey">	
+								<img :src="image(editedItem.image)" :alt="editedItem.name" class="">
+							</v-card-media>
+						</v-card>				
+					</v-flex>
+
+					<v-flex xs12 md8>
+						<v-container class="py-0 my-0">
+							<v-layout row wrap>
+								<v-flex xs12>
+									<v-radio-group v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp">
+										<v-radio color="primary" :value="size" v-for="(size, i) in sizes" :key="i">
+											<span slot="label" class="black--text">{{size.name}} <strong>({{size.price | formatPrice}})</strong></span>
+										</v-radio>
+									</v-radio-group>
+								</v-flex>
+
+								<v-flex xs12>
+									<v-select :items="store.toppings" v-model="editedItem.toppings" label="Topping thêm" multiple max-height="400" hint="Chọn thêm topping" persistent-hint >
+										<template slot="selection" slot-scope="data">
+											<v-chip
+											:selected="data.selected"
+											:key="JSON.stringify(data.item)"
+											close
+											class="chip--select-multi"
+											@input="data.parent.selectItem(data.item)"
+											>
+											{{ data.item.name }}
+										</v-chip>
+									</template>
+									<template slot="item" slot-scope="data">
+										<template>
+											<v-list-tile-content>
+												<v-list-tile-title>{{data.item.name}} <strong>({{data.item.price |formatPrice}})</strong></v-list-tile-title>
+											</v-list-tile-content>
+										</template>
+									</template>
+								</v-select>
+
+								<v-flex xs12>
+									<v-text-field
+									v-model="editedItem.memo"
+									label="Ghi chú" 
+									></v-text-field>
+								</v-flex>
+
+								<v-flex xs12>
+									<div>Số lượng: 
+										<span>
+											<v-btn icon ripple @click.stop="editedItem.qty++" class="ma-0">
+												<v-icon color="green darken-3">add_box</v-icon>
+											</v-btn>
+										</span>
+										<span>												
+											{{editedItem.qty}}
+										</span>
+										<span>
+											<v-btn icon ripple @click.stop="editedItem.qty--"  class="ma-0">
+												<v-icon color="grey" >indeterminate_check_box</v-icon>
+											</v-btn>
+										</span>				
+									</div>
+
+								</v-flex>
+								<v-divider></v-divider>
+								
+							</v-flex>
+						</v-layout>		
+					</v-container>
+
+				</v-flex>
+
+			</v-layout>
+		</v-container>			
+	</v-card-text>
+
+	<v-card-actions>
+		<v-btn color="red" flat @click.native="closeCartDialog" class="mr-5" round small>Hủy bỏ</v-btn>
+		<v-spacer></v-spacer>									
+		<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="processAddCart" small>
+			{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
+	</v-card-actions>
+</v-card>
+</v-dialog>
 </v-container>
 </template>
 
@@ -438,15 +588,16 @@ import axios from 'axios'
 import {getStoreURL, getHeader} from '@/config'
 import index from '@/mixins/index'
 import {mapState} from 'vuex'
-const CheckoutDialog = () => ({
-  // The component to load (should be a Promise)
-  component: import('@/components/CheckoutDialog'),
-  // Delay before showing the loading component. Default: 200ms.
-  delay: 200,
-  // The error component will be displayed if a timeout is
-  // provided and exceeded. Default: Infinity.
-  timeout: 3000
-})
+import CheckoutDialog from '@/components/CheckoutDialog'
+// const CheckoutDialog = () => ({
+//   // The component to load (should be a Promise)
+//   component: import('@/components/CheckoutDialog'),
+//   // Delay before showing the loading component. Default: 200ms.
+//   delay: 200,
+//   // The error component will be displayed if a timeout is
+//   // provided and exceeded. Default: Infinity.
+//   timeout: 3000
+// })
 export default {
 	mixins: [index],
 	components: {
@@ -481,7 +632,7 @@ export default {
 			messageTooltip: '',
 			storeInfo: null,
 			search: '',
-			drawer: true,
+			drawer: false,
 			dialog: false,
 			message:'',
 			products: [],
@@ -494,6 +645,17 @@ export default {
 				message: '',
 				type: 'error'
 			},
+			optionDialog:false,
+			editedItem: {
+				rowId: null, 
+				size: null,
+				memo: null,
+				qty: 1,
+				subTotal: 0,
+				toppings: []
+			},
+			sizes: [],
+			processAddCart: false
 		}
 	},
 	methods: {
@@ -558,17 +720,17 @@ export default {
 							resolve(true)
 						} else {
 							if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
-								this.dialog = true
-								this.message     = 'Quán hiện tại chưa mở cửa'
+								this.dialog  = true
+								this.message = 'Quán hiện tại chưa mở cửa'
 							} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-								this.dialog = true
-								this.message     = 'Quán hiện tại đã đóng cửa'
+								this.dialog  = true
+								this.message = 'Quán hiện tại đã đóng cửa'
 							}
 						}
 					})
 				} else {
-					this.dialog = true
-					this.message     = 'Quán hôm nay nghỉ'
+					this.dialog  = true
+					this.message = 'Quán hôm nay nghỉ'
 				}			
 			})			
 		},
@@ -597,24 +759,61 @@ export default {
 				this.time     = {dd: day, hh: hour, mm: minutes, ss: seconds}
 			}, 1000)
 		},
-		// ADD ITEM TO CART
-		addToCart: function (product) {
-			this.checkDayOff().then(response => {
+		openCartDialog: async function(item) {
+			this.checkDayOff().then(async(response) => {
 				if(response) {
-					const productIndex  = this.cart.items.findIndex(item => {
-						return item.id === product.id
+					var uuid = require("uuid");
+					var rowId = uuid.v4();
+
+					await item.sizes.forEach(size => {
+						if(size.price > 0) {					
+							this.sizes.push(size)
+							if(this.editedItem.size === null) {
+								this.editedItem.size = size
+							}
+						}
 					})
-					if (productIndex > -1) {
-						this.cart.items[productIndex].qty++
-					} else {
-						product.qty = 1
-						this.cart.items.push(product)
-					}
-					this.$store.commit('FETCH_CART', this.cart)
-					window.localStorage.setItem('cart', JSON.stringify(this.cart))
-					this.$store.commit('CHANGE_TAB', 1)
+
+					this.editedItem       = await Object.assign(this.editedItem, item)
+					this.editedItem.rowId = await rowId
+					this.optionDialog     = true
 				}
 			})
+		},
+		closeCartDialog: async function() {
+			this.editedItem   = await {
+				rowId: null, 
+				size: null,
+				memo: null,
+				qty: 1,
+				subTotal: 0,
+				toppings: []
+			}
+			this.sizes        = await []
+			this.optionDialog = false
+		},
+		// ADD ITEM TO CART
+		addToCart: async function (product) {
+			var vm              = this
+			vm.processAddCart = await true
+
+			await setTimeout(async () => {
+				const productIndex  = await vm.cart.items.findIndex(item => {
+					return item.rowId === product.rowId
+				})
+				if (productIndex > -1) {
+					vm.cart.items[productIndex].qty++
+				} else {
+					vm.cart.items.push(product)
+				}
+				await vm.$store.commit('FETCH_CART', vm.cart)
+				await window.localStorage.setItem('cart', JSON.stringify(vm.cart))
+			}, 500)
+			
+			this.processAddCart = false
+			await this.closeCartDialog()
+			this.$store.commit('CHANGE_TAB', 1)
+
 		},
 		// MINUS ITEM TO CART
 		minusToCart: function (product) {
@@ -675,8 +874,7 @@ export default {
 									await vm.products.find(product => {
 										vm.cart.items.forEach(item => {
 											if(product.id == item.id) {
-												product.qty = item.qty
-												array.push(product)
+												array.push(item)
 											}
 										})
 									})
@@ -723,7 +921,23 @@ export default {
 					resolve(response)
 				})
 			})
-		} 
+		},
+		totalProduct: function(product) {
+			if(product != null) {
+				var total        = 0
+				var totalTopping = 0
+				if(product.toppings.length > 0) {
+					product.toppings.forEach(topping => {
+						totalTopping = totalTopping + parseInt(topping.price)
+					})
+				}				
+				if(product.size != null) {					
+					total = parseInt(product.size.price) + totalTopping
+				}
+			}
+			product.subTotal = total*product.qty
+			return total*product.qty
+		}
 	},
 	computed: {
 		...mapState({
@@ -764,11 +978,12 @@ export default {
 			return Math.floor(numeral(this.subTotal).value() + (this.dealPrice))
 		},
 		menu: function () {
-			if(this.store.catalogues) {
-				return this.getByKeyWords(this.store.catalogues, this.search)
-
+			if(this.store.catalogues.length>0) { 
+				if(this.store.catalogues) {
+					return this.getByKeyWords(this.store.catalogues, this.search)
+				}
 			}
-		}
+		},
 	},
 	watch: {
 		'loading': function(val) {

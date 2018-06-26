@@ -78,12 +78,17 @@ const getters = {
 		return (state.cart.items.length>0) ? state.cart.items.length : 0
 	},
 	subTotal: (state) => {
-		let total = 0
-		state.cart.items.forEach(item => {
-			total = total + (parseFloat(item.price) * parseInt(item.qty))					
+		
+		let total        = 0
+		
+		if(state.cart.items.length>0) {
+			state.cart.items.forEach(item => {
+				total = total + item.subTotal
+			})
 			return total
-		})
-		return total
+		}
+
+		return 0
 	},
 	total: (state) => {
 

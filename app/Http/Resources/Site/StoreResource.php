@@ -60,6 +60,9 @@ class StoreResource extends JsonResource
             }),
             'type'          => $this->whenLoaded('type', function() {
                 return new TypeResource($this->type);
+            }),
+            'toppings'      => $this->whenLoaded('toppings', function() {
+                return ToppingResource::collection($this->toppings);
             })
         ];
     }

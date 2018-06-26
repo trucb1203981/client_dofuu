@@ -1,5 +1,5 @@
 <template>
-	<v-container grey-lighten-4 lighten-2  grid-list-lg v-scroll="onScroll">
+	<v-container grey-lighten-4 lighten-2  grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
 		<v-layout grey-lighten-4 row wrap v-if="!loading">
 			<v-flex xs12>
 				<v-layout column> 
@@ -187,7 +187,7 @@
 			<v-flex  xs12 md12 >
 				<v-card flat ><!-- START ALL STORE -->					
 					<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
-						<v-toolbar color="white" flat dense  extension-height="30px">
+						<v-toolbar color="white" flat dense  extension-height="30px" class="mb-1">
 							<v-toolbar-title class="red--text text--accent-3">
 								TẤT CẢ
 							</v-toolbar-title>
@@ -249,9 +249,47 @@
 						</v-toolbar>					
 
 						<v-flex xs12 order-xs1>
-							<v-content>
-								<v-layout row wrap >
-									<v-flex  xs12 md3 d-flex v-for="(item, i) in all.stores " :key="i">
+							<v-content class="pb-0">
+								<v-layout row wrap>
+									<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown"  xs12 v-for="(item, i) in all.stores" :key="i">
+										<v-card :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" ripple>
+											<v-system-bar status color="red darken-4" dark>
+												<v-icon left>access_time</v-icon>
+												<span v-for="(item, i) in item.activities" v-if="i==0">		
+													<span v-for="(time, i) in item.times">
+														{{time.from}} - {{time.to}} 
+													</span>	
+												</span>
+												<v-spacer></v-spacer>
+												<span>{{item.type.name}}</span>
+											</v-system-bar>
+											<v-layout row wrap>
+												<v-flex xs3 class="text-xs-center">
+													<v-avatar size="80" color="primary" tile>
+														<img :src="image(item.avatar)" alt="alt">
+													</v-avatar>
+												</v-flex>
+												<v-flex xs9>
+													<v-card-text>
+														<div style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"> <strong>{{item.name}}</strong></div>
+														<v-tooltip top>									
+															<div slot="activator" class="grey--text body-1" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
+															<span>{{item.address}}</span>
+														</v-tooltip>
+													</v-card-text>
+												</v-flex>
+											</v-layout>	
+											<v-system-bar status color="grey lighten-5">
+												<v-spacer></v-spacer>
+												<v-icon left>timer</v-icon>
+												<span>		
+													{{item.prepareTime}}p
+												</span>
+											</v-system-bar>										
+										</v-card>
+									</v-flex>
+
+									<v-flex v-if="$vuetify.breakpoint.mdAndUp"  xs12 md3 d-flex v-for="(item, i) in all.stores" :key="i">
 
 										<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" hover ripple >
 											<v-system-bar status color="red darken-4" dark>
@@ -307,13 +345,13 @@
 									<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>
 								</div>
 								<v-card-actions>
-									<v-btn v-if="currentCity != null && all.stores.length > 0" color="grey lighten-2" block :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}" round >Xem thêm <v-icon right>arrow_forward</v-icon> </v-btn>
+									<v-btn v-if="currentCity != null && all.stores.length > 0" color="grey lighten-2" block :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}" round small >Xem thêm <v-icon right>arrow_forward</v-icon> </v-btn>
 								</v-card-actions>
 							</v-content>
 						</v-flex>								
 					</v-layout>
 				</v-card><!-- END ALL STORE -->
-				
+
 			</v-flex>
 		</v-layout>
 	</v-flex> 

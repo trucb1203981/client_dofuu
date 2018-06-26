@@ -46,13 +46,14 @@ class AuthController extends Controller
         }
         
         $user = auth('api')->user();
+
         if($user->role_id != $this->admin->id) {
-            if($user->actived === 1) {
-                if($user->banned !== 1) {
+            if($user->actived) {
+                if(!$user->banned) {
                     if($user->role_id === $this->partner->id) {
-                        return $this->respondWithToken($token, 1440*1000);
+                        return $this->respondWithToken($token, 1000);
                     } else {
-                        return $this->respondWithToken($token, 604800*1000);
+                        return $this->respondWithToken($token, 1000);
                     }
                 } else {
                     auth('api')->logout();
@@ -136,13 +137,14 @@ class AuthController extends Controller
         if($user->actived) {
             if ($user->role_id == $this->customer->id) {
                 $data = [
-                    'id'      => $user->id,
-                    'name'    => $user->name,
-                    'email'   => $user->email,
-                    'image'   => $user->image,
-                    'address' => $user->address,
-                    'phone'   => $user->phone,
-                    'type'    => 'Customer'
+                    'id'       => $user->id,
+                    'name'     => $user->name,
+                    'email'    => $user->email,
+                    'image'    => $user->image,
+                    'address'  => $user->address,
+                    'phone'    => $user->phone,
+                    'freeShip' => $user->free_ship,
+                    'type'     => 'Customer'
                 ];
 
             } else if ($user->role_id == $this->partner->id) {
@@ -153,6 +155,7 @@ class AuthController extends Controller
                     'image'      => $user->image,
                     'address'    => $user->address,
                     'phone'      => $user->phone,
+                    'freeShip'   => $user->free_ship,
                     'isPartner'  => true,
                     'type'       => 'Partner',
                     'have_store' => $user->have_store == 1 ? true : false,
@@ -165,6 +168,7 @@ class AuthController extends Controller
                     'image'      => $user->image,
                     'address'    => $user->address,
                     'phone'      => $user->phone,
+                    'freeShip'   => $user->free_ship,
                     'type'       => 'Admin',
                     'isEmployee' => true
                 ];

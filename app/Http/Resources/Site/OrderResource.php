@@ -39,13 +39,16 @@ class OrderResource extends JsonResource
             'statusColor'     => $this->status->color,
             'orderNotes'      => unserialize($this->note),
             'items'           => $this->whenLoaded('products', function() {
+                foreach($this->products as $product) {
+                    $product->pivot->toppings = unserialize($product->pivot->toppings);
+                }
                 return $this->products;
             }),
             'payment'         => $this->whenLoaded('payment', function() {
                 return new PaymentResource($this->payment);
             }),
             'store'           => $this->whenLoaded('store', function() {
-                return new StoreResource($this->store);
+                return new StoreResource($this->store->load('district'));
             }),
             'shipper'         => $this->whenLoaded('shipper', function() {
                 return new AuthResource($this->shipper);

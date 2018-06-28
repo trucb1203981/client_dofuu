@@ -19,7 +19,8 @@ class DistrictResource extends JsonResource
             'name' => $this->district_name,
             'slug' => $this->district_slug,
             'lat'  => $this->lat,
-            'lng'  => $this->lng
+            'lng'  => $this->lng,
+            'city' => new CityResource($this->city)
         ];
     }
 }

@@ -13,7 +13,7 @@
 		</v-dialog>
 		<v-content v-show="!loading">
 			<v-toolbar :fixed="offsetTop>offsetTab" color="white" class="elevation-0 scroll-y"  flat dense style="max-height: 400px" tabs  v-if="store != null"> 
-				<v-btn flat href="/" icon>
+				<v-btn flat :to="{path: '/'}" icon>
 					<v-icon>arrow_back</v-icon>
 				</v-btn>
 				<v-toolbar-title class="red--text text-accent-3 hidden-sm-and-down" style="width: 300px">

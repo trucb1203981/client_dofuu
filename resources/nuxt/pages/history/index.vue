@@ -92,7 +92,7 @@
 							<td><strong>{{ props.item.id }}</strong></td>
 							
 							<td>
-								<div><strong>{{ props.item.store.name }}</strong></div>
+								<div><strong><nuxt-link :to="{name: 'city-store', params: {city: props.item.store.district.city.slug, store: props.item.store.slug}}">{{ props.item.store.name }}</nuxt-link></strong></div>
 								<div>{{ props.item.store.address }}</div>
 							</td>
 
@@ -113,12 +113,14 @@
 							
 							<td class="text-md-left">
 								<div class="success--text" v-if="props.item.statusId == orderStatus('Thành công')"><strong>{{props.item.statusName}}</strong></div>
-								<div v-else-if="props.item.statusId != orderStatus('Thành công')">
-									<v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text">
-										Hủy
+								<div v-if="disableCancelOrder(props.item.statusName)">
+									{{ disableCancelOrder(props.item.statusName) }}
+									<v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text" round>
+										Hủy 
 										<v-icon small right>block</v-icon>
 									</v-btn>
 								</div>
+								<h4 v-if="props.item.statusId != orderStatus('Thành công')">{{props.item.statusName}}</h4>
 							</td>
 							
 							<td>
@@ -178,8 +180,10 @@
 					<template slot="items" slot-scope="props">
 						<td>
 							{{props.item.name}}
+							<h4 v-if="props.item.pivot.toppings.length > 0">Phần thêm: <span v-for="topping in props.item.pivot.toppings">{{topping.name}} ({{topping.price | formatPrice}}). </span></h4>
+							<div v-if="props.item.pivot.memo != null">Ghi chú: {{props.item.pivot.memo}}</div>
 						</td>
-						<td>
+						<td class="text-xs-center">
 							{{props.item.pivot.quantity}}
 						</td>
 						<td>
@@ -413,7 +417,9 @@
 						<v-flex xs5 offset-xs1>
 							<div class="primary--text">
 								<strong>
-									{{order.store.name}}
+									<nuxt-link :to="{name: 'city-store', params: {city: order.store.district.city.slug, store: order.store.slug}}">
+										{{order.store.name}}
+									</nuxt-link>
 								</strong>
 							</div>
 							<div>
@@ -426,7 +432,7 @@
 						</v-flex>
 						<v-flex xs5 offset-xs1>
 							<strong>
-								{{order.name}}
+								{{order.name}}							
 							</strong>
 						</v-flex>
 
@@ -628,6 +634,30 @@ export default {
 					this.cancelDialog = false
 				}
 			})
+		},
+		disableCancelOrder: function(status) {
+			const _s = new String(status).toLowerCase();
+
+			switch(_s) {
+				case 'chờ xử lý': 
+				return true
+				break;
+				case 'đang xử lý':
+				return true
+				break;
+				case 'xác nhận':
+				return false
+				break;
+				case 'đang giao':
+				return false
+				break;
+				case 'thành công':
+				return false
+				break;
+				case 'hủy': 
+				return false
+				break;
+			}
 		},
 		//CHANGE TAB DETAILS
 		changeTab(index) {

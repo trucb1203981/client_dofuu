@@ -43,14 +43,14 @@
 
 						<v-toolbar color="white" flat dense  extension-height="30px">
 							<v-icon color="red">whatshot</v-icon>
-							<v-toolbar-title class="red--text text--accent-3">
-								HOT DEALS 
+							<v-toolbar-title class="red--text text--accent-3" id="deal-store">
+								<h5>HOT DEALS</h5>
 							</v-toolbar-title>									
 							
 							<v-toolbar-items slot="extension">
 								<!-- START DISTRICT IN DEAL STORE -->
 								<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
-									<v-btn slot="activator" flat>Khu vực<v-icon right>arrow_drop_down</v-icon></v-btn>
+									<v-btn slot="activator" flat><h5>Khu vực</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
 									<v-list dense>
 										<v-list-tile @click="loadDistrict(0, 'deal')" :class="{'red--text text--accent-2 bold' : deal.list_flag == 0}" >
 											<v-list-tile-action>
@@ -84,7 +84,7 @@
 								</v-menu> <!-- END DISTRICT IN ALL STORE -->
 								<!-- START TYPE IN ALL STORE -->
 								<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
-									<v-btn slot="activator" flat>Danh mục<v-icon right>arrow_drop_down</v-icon></v-btn>
+									<v-btn slot="activator" flat><h5>Danh mục</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
 									<v-list dense>
 										<v-list-tile @click="loadType(0, 'deal')" :class="{'red--text text--accent-2' : deal.list_flag == 0}" >
 											<v-list-tile-action>
@@ -473,6 +473,7 @@ export default {
 
 				case 'deal':
 				if (this.deal.tabs == 0) {
+					this.$vuetify.goTo('#deal-store', {duration: 300,  easing: 'easeInOutCubic', offset: 0})
 					const query = {did: this.deal.list_flag, tid: 0, page: page}	
 					this.fetchStoreWithDeal(query)
 				} else if (this.deal.tabs == 1) {

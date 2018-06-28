@@ -493,7 +493,7 @@
 			<v-spacer></v-spacer>
 			<h3 class="white--text"></h3>
 		</v-toolbar>
-
+		 
 		<v-card-text>
 			<v-container fluid grid-list-xs>
 				<v-layout row wrap>
@@ -575,7 +575,7 @@
 			</v-layout>
 		</v-container>			
 	</v-card-text>
-
+	<v-divider></v-divider>
 	<v-card-actions>
 		<v-btn color="red" flat @click.native="closeCartDialog" class="mr-5" round small>Hủy bỏ</v-btn>
 		<v-spacer></v-spacer>									

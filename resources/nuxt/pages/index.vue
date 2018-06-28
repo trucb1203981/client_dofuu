@@ -188,13 +188,13 @@
 				<v-card flat ><!-- START ALL STORE -->					
 					<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
 						<v-toolbar color="white" flat dense  extension-height="30px" class="mb-1">
-							<v-toolbar-title class="red--text text--accent-3">
-								TẤT CẢ
+							<v-toolbar-title class="red--text text--accent-3" id="all-store">
+								<h5>TẤT CẢ</h5>
 							</v-toolbar-title>
 							<!-- START DISTRICT IN ALL STORE -->
 							<v-toolbar-items slot="extension">
 								<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
-									<v-btn slot="activator" flat>Khu vực<v-icon right>arrow_drop_down</v-icon></v-btn>
+									<v-btn slot="activator" flat> <h5>Khu vực</h5> <v-icon right>arrow_drop_down</v-icon></v-btn>
 									<v-list dense>
 										<v-list-tile @click="loadDistrict(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}">
 											<v-list-tile-content>
@@ -220,7 +220,7 @@
 								</v-menu> <!-- END DISTRICT IN ALL STORE -->
 								<!-- START TYPE IN ALL STORE -->
 								<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
-									<v-btn slot="activator" flat>Danh mục<v-icon right>arrow_drop_down</v-icon></v-btn>
+									<v-btn slot="activator" flat><h5>Danh mục</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
 									<v-list dense>
 										<v-list-tile @click="loadType(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}" >
 											<v-list-tile-content>
@@ -462,6 +462,7 @@ export default {
 			switch (_t) {
 				case 'all': 
 				if (this.all.tabs == 0) {
+					this.$vuetify.goTo('#all-store', {duration: 300,  easing: 'easeInOutCubic', offset: 0})
 					const query = {did: this.all.list_flag, tid: 0, page: page}	
 					this.fetchStore(query)
 				} else if (this.all.tabs == 1) {

@@ -19,13 +19,11 @@
 						</v-avatar>
 					</v-flex>
 					<v-flex xs9>
-						<v-card-text>
-							<div style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"> <strong>{{item.name}}</strong></div>
-							<v-tooltip top>									
-								<div slot="activator" class="grey--text body-1" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
-								<span>{{item.address}}</span>
-							</v-tooltip>
-						</v-card-text>
+						<div style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"> <strong>{{item.name}}</strong></div>
+						<v-tooltip top>									
+							<div slot="activator" class="grey--text body-1" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
+							<span>{{item.address}}</span>
+						</v-tooltip>
 					</v-flex>
 				</v-layout>	
 				<v-system-bar status color="grey lighten-5">

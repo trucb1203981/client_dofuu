@@ -93,7 +93,7 @@
 	</v-toolbar>
 	<v-tabs v-if="currentCity != null && types.length > 0" fixed-tabs show-arrows slider-color="red">
 		<v-tab nuxt href="/">
-			<v-icon left color="red accent-3">home</v-icon> <h5>Trang chủ </h5>
+			<v-icon left color="red accent-3" size="20">home</v-icon> <h5>Trang chủ </h5>
 		</v-tab>
 		<v-tab nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
 			<v-icon left size="20">apps</v-icon> <h5>Tất cả</h5>

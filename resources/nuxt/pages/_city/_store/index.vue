@@ -87,10 +87,12 @@
 
 									<v-flex xs12 md8 class="px-0">				
 
-										<v-layout row wrap>
-											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
-												<div><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
+										<v-layout row wrap class="pr-2">
+											<v-flex v-for="(size, i) in item.sizes" xs4 class="pa-0 text-xs-center" :key="i" v-if="size.price >0">
+												<div class="caption">{{size.name}}:</div>
+												<div><strong>{{size.price | formatPrice}}</strong></div>
 											</v-flex>
+											
 											<v-flex xs12 md12>
 												<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
 											</v-flex>	

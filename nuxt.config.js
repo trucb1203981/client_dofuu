@@ -1,7 +1,7 @@
 const laravelNuxt = require("laravel-nuxt");
 
 module.exports = laravelNuxt({
-	mode: 'spa',
+	// mode: 'spa',
 	router: {
 		middleware: ['check-auth', 'navigation']
 	},

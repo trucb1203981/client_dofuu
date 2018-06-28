@@ -77,7 +77,7 @@
 									<h6 class="px-0 caption">{{item._name | upperCase}}</h6>
 								</v-system-bar>
 
-								<v-layout row wrap>
+								<v-layout row wrap class="px-2">
 
 									<v-flex xs12 md4 class="text-xs-center">
 										<v-avatar size="80" color="grey lighten-3">
@@ -85,7 +85,7 @@
 										</v-avatar>
 									</v-flex>
 
-									<v-flex xs12 md8 d-flex>				
+									<v-flex xs12 md8 class="px-0">				
 
 										<v-layout row wrap>
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
@@ -107,7 +107,7 @@
 				</v-content>
 			</v-flex>
 			<!-- RIGHT NAVBAR DESKTOP -->
-			<v-flex xs12 md4  ref="target_navbar_right" class="hidden-sm-and-down">
+			<v-flex offset-md-8 xs12 md4  ref="target_navbar_right" class="hidden-sm-and-down">
 				<v-card :class="{'card--sticky' : offsetTop>offsetNavbarRight-50 && !$vuetify.breakpoint.xsOnly}" style="z-index:4">
 					<v-tabs icons-and-text grow :value="`item-${tabIndex}`" color="">
 

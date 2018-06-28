@@ -89,15 +89,15 @@
 											<span>{{size.name}}</span> 
 										</v-system-bar>
 										<v-card-text>											
-											<h3 v-if="size.price>0"> {{size.price | formatPrice}} </h3>
+											<h4 v-if="size.price>0"> {{size.price | formatPrice}} </h4>
 											<span v-else class="grey--text">Không</span>
 										</v-card-text>
 									</v-card>
-								</v-flex>		
-							</v-flex>
+								</v-flex>
 
-							<v-flex xs12>
-								<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
+								<v-flex xs12 md8>
+									<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
+								</v-flex>
 							</v-flex>
 
 							<v-flex xs12 md4 d-flex>

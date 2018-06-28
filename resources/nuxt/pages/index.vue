@@ -345,18 +345,22 @@ export default {
 		},
 		//GET DISTRICT AND TYPE BY CITY ID
 		getCity: function(id) {
-			axios.get('/api/GetCityInformation'+'/'+id, {withCredentials:true}).then(response => {
-				if(response.status == 200) {
-					this.all.districts = response.data.districts
-					this.all.types     = response.data.types
-					let count          = 0
-					this.all.districts.forEach(item => {
-						count = count + parseFloat(item.stores_count)					
-						return count
-					})
-					this.all.count = count
-				}
-			})
+			var vm = this
+			return new Promise((resolve, reject) => {
+				axios.get('/api/GetCityInformation'+'/'+id, {withCredentials:true}).then(response => {
+					if(response.status == 200) {
+						vm.all.districts = response.data.districts
+						vm.all.types     = response.data.types
+						let count          = 0
+						vm.all.districts.forEach(item => {
+							count = count + parseFloat(item.stores_count)					
+							return count
+						})
+						vm.all.count = count
+					}
+					resolve(response)
+				})
+			})			
 		},
 		//FETCH STORE
 		fetchStore: function(data) {
@@ -512,20 +516,14 @@ export default {
     		return this.$store.getters.getCityByID(this.currentCity)
     	}
     },
-    watch: {
-    	'currentCity': async function(val) {
-    		const query = {did:0, tid:0, page:0}
-    		if(val) {	
-    			await this.fetchStoreWithDeal(query)
-    			this.fetchStore(query)
-    		}
-    	}
-    },
     created: async function() {
     	const query = {did:0, tid:0, page:0}
     	if(Cookies.get('flag_c') != null || typeof Cookies.get('flag_c') != 'undefined') {
     		setTimeout(async () => {
-    			await this.getCity(Cookies.get('flag_c'))
+    			await this.getCity(Cookies.get('flag_c')).then(response => {
+    				this.fetchStoreWithDeal(query)
+    				this.fetchStore(query)		
+    			})
     			await this.getCityHasDeal(Cookies.get('flag_c'))
     			
     		},100)
@@ -533,7 +531,10 @@ export default {
     		this.loading = false
     	} else {
     		setTimeout(async () => {
-    			await this.getCity(10001)
+    			await this.getCity(10001).then(response => {
+    				this.fetchStoreWithDeal(query)
+    				this.fetchStore(query)
+    			})
     			await this.getCityHasDeal(10001)
     		}, 100)
 

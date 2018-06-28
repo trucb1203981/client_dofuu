@@ -7,10 +7,10 @@
 		</v-system-bar>
 		<v-toolbar color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0">
 			<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up"></v-toolbar-side-icon>
-			<v-toolbar-title class="red--text text-accent-2 pt-2" :style="$vuetify.breakpoint.lgAndUp ? 'width: 200px': 'width: 200px'">		
+
+			<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 200px': 'width: 200px'">		
 				<a href="/">					
-					<img src="/logo_page.png" alt="" >	
-					<!-- <img src="/dofuu40x40.png" alt="" class="hidden-md-and-up">	 -->
+					<img src="/logo_page.png" alt="dofuu-logo">
 				</a>
 			</v-toolbar-title>
 
@@ -23,10 +23,12 @@
 			@keyup.enter="search"
 			:append-icon="'search'"
 			:append-icon-cb="search"
-			class="hidden-sm-and-down"></v-text-field>			
-			<v-spacer ></v-spacer>
-			<v-btn v-if="!isAuth" nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="red accent-3" :small="$vuetify.breakpoint.mdAndUp" dark :round="$vuetify.breakpoint.mdAndUp" :icon="$vuetify.breakpoint.smAndDown">
-				<v-icon>input</v-icon> <span class="hidden-sm-and-down pl-1">ĐĂNG NHẬP</span>
+			single-line></v-text-field>		
+
+			<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
+
+			<v-btn v-if="!isAuth" nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="blue" small dark :round="$vuetify.breakpoint.mdAndUp" :icon="$vuetify.breakpoint.smAndDown">
+				<v-icon>person</v-icon> <span class="hidden-sm-and-down pl-1">ĐĂNG NHẬP</span>
 			</v-btn>
 
 			<v-toolbar-items>
@@ -91,13 +93,13 @@
 	</v-toolbar>
 	<v-tabs v-if="currentCity != null && types.length > 0" fixed-tabs show-arrows slider-color="red">
 		<v-tab nuxt href="/">
-			<v-icon left color="red accent-3">home</v-icon> <span>Trang chủ </span>
+			<v-icon left color="red accent-3">home</v-icon> <h5>Trang chủ </h5>
 		</v-tab>
 		<v-tab nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
-			<v-icon left>apps</v-icon>Tất cả
+			<v-icon left size="20">apps</v-icon> <h5>Tất cả</h5>
 		</v-tab>
 		<v-tab v-for="(item, index) in types" :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
-			<v-icon left>{{item.icon}}</v-icon>{{ item.name }}
+			<v-icon left size="20">{{item.icon}}</v-icon> <h5>{{ item.name }}</h5>
 		</v-tab>
 	</v-tabs>
 </v-card>

@@ -1,68 +1,42 @@
 <template>
-	<v-container grid-list-lg v-scroll="onScroll" >
-		<v-card flat >				
-			<v-toolbar color="white" flat dense v-show="!loading">
-				<v-toolbar-title>
-					ĐỊA ĐIỂM {{currentType.name.toUpperCase()}}
-				</v-toolbar-title>
-			</v-toolbar>					
-			<v-container>
-				<v-layout row wrap>
-					<v-flex v-if="stores.length>0" xs12 md3 d-flex v-for="(item, i) in stores " :key="i">
-						<v-card nuxt :to="{name: 'city-store', params: {city: $route.params.city, store: item.slug}}" width="180px" hover ripple >
-							<v-card-media class="white--text" height="150px" :src="image(item.avatar)">
-								<v-container fill-height fluid>
-									<v-layout fill-height >
-										<v-flex xs12>
-											<v-tooltip top>
-												<v-icon slot="activator" :color="item.color" v-if="status(item.status) == 1">
-													sentiment_very_satisfied
-												</v-icon>
-												<span>{{item.status}}</span>
-											</v-tooltip>
-											<v-tooltip top>
-												<v-icon slot="activator" :color="item.color" v-if="status(item.status) == 2">
-													sentiment_neutral
-												</v-icon>
-												<span>{{item.status}}</span>
-											</v-tooltip>
-										</v-flex>
-									</v-layout>
-								</v-container>
-							</v-card-media>
-
-							<v-card-actions>
-								<div class="subheading grey--text">
-									{{item.type.name}}
-								</div>		
-							</v-card-actions>
-							<v-divider light></v-divider>
-							<v-card-text >
-								<v-tooltip top>												
-									<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"><strong >{{item.name}}</strong>
-									</div>
-									<span>{{item.name}}</span>
-								</v-tooltip>
-								<v-tooltip top>												
-									<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
-									<span>{{item.address}}</span>
-								</v-tooltip>
-							</v-card-text>
-						</v-card>
-					</v-flex>
-				</v-layout>
-			</v-container>
-		</v-card>
+	<v-container grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll" v-if="stores.length > 0">
+		<v-layout row wrap>
+			<v-flex xs12>
+				<v-card flat >		
+					<v-layout grey lighten-4 fill-height row wrap class="elevation-1">		
+						<v-toolbar color="white" flat dense v-show="!loading">
+							<v-toolbar-title>
+								ĐỊA ĐIỂM {{currentType.name.toUpperCase()}}
+							</v-toolbar-title>
+						</v-toolbar>					
+						<v-flex xs12>
+							<v-content>
+								<!-- STORE LIST -->
+								<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>
+								<!-- STORE GRID -->
+								<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+							</v-content>
+						</v-flex>			
+					</v-layout>
+				</v-card>
+			</v-flex>
+		</v-layout>
 	</v-container>
 </template>
 
 <script>
+import StoreList from '@/components/StoreList'
+import StoreGrid from '@/components/StoreGrid'
 import axios from 'axios'
 import {getHeader} from '@/config'
 import index from "@/mixins/index.js";
 
 export default {
 	mixins: [index],
+	components: {
+		'vue-store-list': StoreList,
+		'vue-store-grid': StoreGrid
+	},
 	data() {
 		return {
 			stores: [],

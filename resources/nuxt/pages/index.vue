@@ -250,100 +250,15 @@
 
 						<v-flex xs12 order-xs1>
 							<v-content class="pb-0">
-								<v-layout row wrap>
-									<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown"  xs12 v-for="(item, i) in all.stores" :key="i">
-										<v-card :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" ripple>
-											<v-system-bar status color="red darken-4" dark>
-												<v-icon left>access_time</v-icon>
-												<span v-for="(item, i) in item.activities" v-if="i==0">		
-													<span v-for="(time, i) in item.times">
-														{{time.from}} - {{time.to}} 
-													</span>	
-												</span>
-												<v-spacer></v-spacer>
-												<span>{{item.type.name}}</span>
-											</v-system-bar>
-											<v-layout row wrap>
-												<v-flex xs3 class="text-xs-center">
-													<v-avatar size="80" color="primary" tile>
-														<img :src="image(item.avatar)" alt="alt">
-													</v-avatar>
-												</v-flex>
-												<v-flex xs9>
-													<v-card-text>
-														<div style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"> <strong>{{item.name}}</strong></div>
-														<v-tooltip top>									
-															<div slot="activator" class="grey--text body-1" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
-															<span>{{item.address}}</span>
-														</v-tooltip>
-													</v-card-text>
-												</v-flex>
-											</v-layout>	
-											<v-system-bar status color="grey lighten-5">
-												<v-spacer></v-spacer>
-												<v-icon left>timer</v-icon>
-												<span>		
-													{{item.prepareTime}}p
-												</span>
-											</v-system-bar>										
-										</v-card>
-									</v-flex>
-
-									<v-flex v-if="$vuetify.breakpoint.mdAndUp"  xs12 md3 d-flex v-for="(item, i) in all.stores" :key="i">
-
-										<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" hover ripple >
-											<v-system-bar status color="red darken-4" dark>
-												<v-icon left>access_time</v-icon>
-												<span v-for="(item, i) in item.activities" v-if="i==0">		
-													<span v-for="(time, i) in item.times">
-														{{time.from}} - {{time.to}} 
-													</span>	
-												</span>
-											</v-system-bar>
-											<v-card-media class="white--text" :height="$vuetify.breakpoint.mdAndUp ? '150px' : '250px' " :src="image(item.avatar)">
-												<v-container fill-height fluid>
-													<v-layout fill-height >
-														<v-flex xs12>
-															<v-tooltip top>
-																<v-icon slot="activator" :color="item.color" v-if="status(item.status) == 1">
-																	sentiment_very_satisfied
-																</v-icon>
-																<span>{{item.status}}</span>
-															</v-tooltip>
-															<v-tooltip top>
-																<v-icon slot="activator" :color="item.color" v-if="status(item.status) == 2">
-																	sentiment_neutral
-																</v-icon>
-																<span>{{item.status}}</span>
-															</v-tooltip>
-														</v-flex>
-													</v-layout>
-												</v-container>
-											</v-card-media>
-
-											<v-card-actions>
-												<div class="subheading grey--text">
-													{{item.type.name}}
-												</div>		
-											</v-card-actions>
-											<v-divider light></v-divider>
-											<v-card-text >
-												<v-tooltip top>												
-													<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"><strong >{{item.name}}</strong>
-													</div>
-													<span>{{item.name}}</span>
-												</v-tooltip>
-												<v-tooltip top>												
-													<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
-													<span>{{item.address}}</span>
-												</v-tooltip>
-											</v-card-text>
-										</v-card>
-									</v-flex>
-								</v-layout>
+								<!-- STORE LIST -->
+								<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list>
+								<!-- STORE GRID -->
+								<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid>
+								
 								<div class="text-xs-center" v-if="all.pagination.last_page>1">
 									<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>
 								</div>
+								
 								<v-card-actions>
 									<v-btn v-if="currentCity != null && all.stores.length > 0" color="grey lighten-2" block :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}" round small >Xem thêm <v-icon right>arrow_forward</v-icon> </v-btn>
 								</v-card-actions>
@@ -356,45 +271,32 @@
 		</v-layout>
 	</v-flex> 
 
-			<!-- <v-flex xs12 md3 :class="{'mt-4': $vuetify.breakpoint.mdAndDown}">
-				<v-card color="grey lighten-3" >
-					<v-layout column wrap >
-						<v-flex :d-flex="$vuetify.breakpoint.xsOnly" class="pt-0 pb-0">
-							<v-card height="100%" flat tile>
-								<v-toolbar color="red accent-2" flat dense>
-									<v-toolbar-title class="white--text">
-										Bán Chạy
-									</v-toolbar-title>
-								</v-toolbar>
-								<v-divider></v-divider>
-								<v-card-text>
+</v-layout>
 
-								</v-card-text>
-							</v-card>
-						</v-flex>
-					</v-layout>
-				</v-card>
-			</v-flex> -->
-		</v-layout>
-
-		<v-btn v-if="!endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollDown">
-			<v-icon dark>expand_more</v-icon>
-		</v-btn>
-		<v-btn v-if="endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollTop">
-			<v-icon dark>expand_less</v-icon>
-		</v-btn>
-	</v-container>
+<v-btn v-if="!endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollDown">
+	<v-icon dark>expand_more</v-icon>
+</v-btn>
+<v-btn v-if="endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollTop">
+	<v-icon dark>expand_less</v-icon>
+</v-btn>
+</v-container>
 </template>
 
 <script>
 import axios from 'axios'
 import index from "@/mixins/index.js";
+import StoreList from '@/components/StoreList'
+import StoreGrid from '@/components/StoreGrid'
 import {getCityHasDealURL, getStoreHasDealURL} from '@/config.js'
 import { mapState } from "vuex";
 import Cookies from "js-cookie";
 export default {
 	mixins: [index],
 	middleware: ["home"],
+	components: {
+		'vue-store-list': StoreList,
+		'vue-store-grid': StoreGrid
+	},
 	// Async Data
 	async asyncData({ store }) {
 		return {

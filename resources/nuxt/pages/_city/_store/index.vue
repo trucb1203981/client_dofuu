@@ -35,7 +35,7 @@
 				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index">
 					
 					<v-subheader :id="'item_'+data.id"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
-
+					<!-- MOBILE PRODUCT LIST-->
 					<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in data.products" :key="i">
 						<v-card hover ripple class="elevation-1 mb-2" v-on:click.native="openCartDialog(item)">
 							<v-layout row wrap class="px-2">
@@ -66,55 +66,44 @@
 							</v-layout>
 						</v-card>
 					</v-flex>
+					<!-- DESKTOP PRODUCT LIST-->
+					<v-layout row wrap>
+						<v-flex md6  v-for="(item, i) in data.products" :key="i" v-if="$vuetify.breakpoint.mdAndUp">
+							<v-card hover ripple class="mb-2"v-on:click.native="openCartDialog(item)">	
 
-					<v-card v-if="$vuetify.breakpoint.mdAndUp" class="mb-4" v-for="(item, i) in data.products" :key="i">	
+								<v-system-bar status color="red darken-3" dark height="40">
+									<h5 class="white--text">{{item.name | upperCase}}</h5>
+									<v-spacer></v-spacer>
+									<h6 class="px-0 caption">{{item._name | upperCase}}</h6>
+								</v-system-bar>
 
-						<v-system-bar status color="red darken-3" dark>
-							<v-subheader class="text-xs-center white--text"><h3>{{item.name | upperCase}} <span v-if="item._name != null">({{item._name | upperCase}})</span></h3></v-subheader>
-						</v-system-bar>
+								<v-layout row wrap>
 
-						<v-layout row wrap>
+									<v-flex xs12 md4 class="text-xs-center">
+										<v-avatar size="80" color="grey lighten-3">
+											<img :src="image(item.image)" alt="alt">
+										</v-avatar>
+									</v-flex>
 
-							<v-flex xs12 md4 class="text-xs-center">
-								<v-avatar size="120" color="grey lighten-3">
-									<img :src="image(item.image)" alt="alt">
-								</v-avatar>
-							</v-flex>
+									<v-flex xs12 md8 d-flex>				
 
-							<v-flex xs12 md8 d-flex>				
-
-								<v-flex v-for="size in item.sizes" xs4 class="justify-center" :key="size.id">
-									<v-card class="text-xs-center">
-										<v-system-bar status color="grey lighten-3" class="black--text justify-center" dark :class="{'black--text': size.price>0, 'grey--text': size.price == 0}">
-											<span>{{size.name}}</span> 
-										</v-system-bar>
-										<v-card-text>											
-											<h4 v-if="size.price>0"> {{size.price | formatPrice}} </h4>
-											<span v-else class="grey--text">Không</span>
-										</v-card-text>
-									</v-card>
-								</v-flex>
-
-								<v-flex xs12 md8>
-									<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
-								</v-flex>
-							</v-flex>
-
-							<v-flex xs12 md4 d-flex>
-								<v-card-actions>
-									<v-btn block color="red accent-4" dark @click.native="openCartDialog(item)" round>
-										<span>Đặt món</span>
-										<v-icon right>add_shopping_cart</v-icon>
-									</v-btn>
-								</v-card-actions>
-							</v-flex>
-
-						</v-layout>
-						<v-system-bar status color="grey lighten-4">
-							<v-spacer></v-spacer>
-							<span>Đã được đặt <strong>{{item.count}}</strong></span>
-						</v-system-bar>
-					</v-card>
+										<v-layout row wrap>
+											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
+												<div><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
+											</v-flex>
+											<v-flex xs12 md12>
+												<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
+											</v-flex>	
+										</v-layout>										
+									</v-flex>
+								</v-layout>
+							<!-- 	<v-system-bar status color="grey lighten-4">
+									<v-spacer></v-spacer>
+									<span>Đã được đặt <strong>{{item.count}}</strong></span>
+								</v-system-bar> -->
+							</v-card>
+						</v-flex>
+					</v-layout>										
 				</v-content>
 			</v-flex>
 			<!-- RIGHT NAVBAR DESKTOP -->
@@ -493,7 +482,7 @@
 			<v-spacer></v-spacer>
 			<h3 class="white--text"></h3>
 		</v-toolbar>
-		 
+
 		<v-card-text>
 			<v-container fluid grid-list-xs>
 				<v-layout row wrap>

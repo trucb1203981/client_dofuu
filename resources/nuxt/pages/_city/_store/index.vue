@@ -33,7 +33,9 @@
 				</v-card><!-- CARD DEAL END -->
 
 				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index">
+					
 					<v-subheader :id="'item_'+data.id"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
+
 					<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in data.products" :key="i">
 						<v-card hover ripple class="elevation-1 mb-2" v-on:click.native="openCartDialog(item)">
 							<v-layout row wrap class="px-2">
@@ -49,7 +51,8 @@
 											<v-spacer></v-spacer>
 											<v-btn icon small class="ma-0"><v-icon color="success" size="20">add_shopping_cart</v-icon></v-btn>
 										</v-system-bar>	
-										<span class="grey--text" v-if="item._name != null">({{item._name}})</span>
+										
+										<span class="grey--text" v-if="item._name !== null">({{item._name}})</span>
 										<v-layout row wrap>
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
 												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
@@ -87,10 +90,11 @@
 											<span v-else class="grey--text">Không</span>
 										</v-card-text>
 									</v-card>
-								</v-flex>								
+								</v-flex>		
+							</v-flex>
 
+							<v-flex xs12>
 								<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
-
 							</v-flex>
 
 							<v-flex xs12 md4 d-flex>
@@ -135,7 +139,7 @@
 									<v-list-tile-title>
 										{{item.name | upperCase}}
 									</v-list-tile-title>
-									<v-list-tile-sub-title>
+									<v-list-tile-sub-title v-if="item._name != null">
 										{{item._name | upperCase}}
 									</v-list-tile-sub-title>
 								</v-list-tile-content>
@@ -574,8 +578,8 @@
 		<v-spacer></v-spacer>									
 		<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="processAddCart" small>
 			{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
-	</v-card-actions>
-</v-card>
+		</v-card-actions>
+	</v-card>
 </v-dialog>
 </v-container>
 </template>

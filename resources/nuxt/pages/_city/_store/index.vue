@@ -49,7 +49,7 @@
 											<v-spacer></v-spacer>
 											<v-btn icon small class="ma-0"><v-icon color="success" size="20">add_shopping_cart</v-icon></v-btn>
 										</v-system-bar>	
-										<span class="grey--text">({{item._name}})</span>
+										<span class="grey--text" v-if="item._name != null">({{item._name}})</span>
 										<v-layout row wrap>
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
 												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>

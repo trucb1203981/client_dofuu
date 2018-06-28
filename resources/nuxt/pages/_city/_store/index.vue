@@ -47,18 +47,21 @@
 								<v-flex xs9 class="px-0">
 									<v-card-text class="py-0">
 										<v-system-bar status color="transparent" class="px-0">
-											<h4>{{item.name}}</h4>
+											<h4 style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.name}}</h4>
 											<v-spacer></v-spacer>
 											<v-btn icon small class="ma-0"><v-icon color="success" size="20">add_shopping_cart</v-icon></v-btn>
 										</v-system-bar>	
 										
-										<span class="grey--text" v-if="item._name !== null">({{item._name}})</span>
+										<span class="grey--text" v-if="item._name !== null" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">({{item._name}})</span>
 										<v-layout row wrap>
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
 												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
 											</v-flex>	
 										</v-layout>
 									</v-card-text>
+								</v-flex>
+								<v-flex xs12  v-if="item.description != null">
+									<span class="text-xs-center caption">Mô tả: {{ item.description }}</span>
 								</v-flex>
 							</v-layout>
 						</v-card>
@@ -562,7 +565,7 @@
 
 								</v-flex>
 								<v-divider></v-divider>
-								
+
 							</v-flex>
 						</v-layout>		
 					</v-container>

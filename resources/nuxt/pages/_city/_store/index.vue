@@ -21,7 +21,7 @@
 
 							<v-card-title class="pb-0 pl-1">
 								<div>
-									<h4 class="body-1">{{store.coupon.title}}</h4>
+									<h4>{{store.coupon.title}}</h4>
 									<div class="body-1">Nhập mã: <span class="red--text"><strong><u>{{store.coupon.code}}</u></strong></span> để được khuyến mãi {{store.coupon.discount}}%</div>
 									<input type="hidden" id="coupon-code" :value="store.coupon.code">
 								</div>
@@ -29,9 +29,9 @@
 							<v-card-actions  class="pa-0 pb-2">
 								
 								<v-spacer></v-spacer>
-								<v-btn small flat @click="copyCode()">
-									<v-icon>content_copy</v-icon>
-									<span>Sao chép mã</span>
+								<v-btn small flat @click="copyCode()" class="body-1" outline color="green darken-3">
+									<v-icon size="20">content_copy</v-icon>
+									<h5>Sao chép mã</h5>
 								</v-btn> 								
 							</v-card-actions>							
 						</v-card>						

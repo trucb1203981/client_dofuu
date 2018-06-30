@@ -114,7 +114,6 @@
 							<td class="text-md-left">
 								<div class="success--text" v-if="props.item.statusId == orderStatus('Thành công')"><strong>{{props.item.statusName}}</strong></div>
 								<div v-if="disableCancelOrder(props.item.statusName)">
-									{{ disableCancelOrder(props.item.statusName) }}
 									<v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text" round>
 										Hủy 
 										<v-icon small right>block</v-icon>
@@ -604,6 +603,10 @@ export default {
 			setTimeout(() => {
 				this.loading = !this.loading
 			}, 500)
+
+			setTimeout(() => {
+				this.getOrders()
+			}, 300000)
 		},
 		//GET ORDER DETAILS
 		getDetails: async function(item) {
@@ -755,7 +758,6 @@ export default {
 			this.toDateString = formatDate(val)
 		},
 		'dialog': function(val, oldVal) {
-			console.log(val)
 			var vm = this
 			if(!val) {				
 				this.tab = 0

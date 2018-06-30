@@ -36,7 +36,7 @@
 					</v-container>
 				</v-card-media>
 
-				<v-system-bar v-if="typeof item.coupon != 'undefined' " status color="transparent">
+				<v-system-bar v-if="item.coupon != null " status color="transparent">
 					<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>
 				</v-system-bar>
 

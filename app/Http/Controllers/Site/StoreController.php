@@ -369,7 +369,7 @@ class StoreController extends Controller
         $res = [
             'type'       => 'success',
             'message'    => 'Get stores successfully!!!',
-            'data'       => StoreResource::collection($store->load('activities')),
+            'data'       => StoreResource::collection($store->load('coupons', 'activities')),
             'pagination' => $pagination
         ];
 

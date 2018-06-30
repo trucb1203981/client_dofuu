@@ -27,7 +27,7 @@
 					</v-flex>
 				</v-layout>	
 				<v-system-bar status color="grey lighten-5">
-					<span v-if="typeof item.coupon != 'undefined'">
+					<span v-if="item.coupon != null">
 						<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>
 					</span>
 					<v-spacer></v-spacer>

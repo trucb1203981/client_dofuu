@@ -3,25 +3,31 @@
 		<v-layout child-flex wrap v-show="!loading">
 			<v-flex xs12 md8>
 				<!-- CARD DEAL START -->
-				<v-card color="white" v-if="store.coupon" flat>
+				<v-card color="white" v-if="store.coupon != null" flat>
 					<v-tooltip v-model="showTooltip" top>
 						<div slot="activator"></div>
 						<span>{{messageTooltip}}</span>
-					</v-tooltip>					
+					</v-tooltip>		
+					<v-system-bar status color="transparent">
+						<v-spacer></v-spacer>
+						<div class="caption">Khuyến mãi kết thúc sau <v-icon>alarm</v-icon> 
+							<span class="body-2"><strong>{{time.dd}}</strong> Ngày <strong>{{time.hh}} : {{time.mm}} : {{time.ss}} </strong>
+							{{start(store.coupon.endedAt)}}</span>
+						</div>
+					</v-system-bar>				
 					<v-alert outline color="warning" icon="card_giftcard" :value="true" class="py-0">
-						<v-card color="transparent" flat>							
+						<v-divider></v-divider>
+						<v-card color="transparent" flat>		
+
 							<v-card-title class="pb-0 pl-1">
 								<div>
-									<div class="title">{{store.coupon.title}}</div>
-									<div class="subheading">Nhập mã: <span class="red--text"><strong><u>{{store.coupon.code}}</u></strong></span> để được khuyến mãi {{store.coupon.discount}}%</div>
+									<h4 class="body-1">{{store.coupon.title}}</h4>
+									<div class="body-1">Nhập mã: <span class="red--text"><strong><u>{{store.coupon.code}}</u></strong></span> để được khuyến mãi {{store.coupon.discount}}%</div>
 									<input type="hidden" id="coupon-code" :value="store.coupon.code">
 								</div>
 							</v-card-title>							
 							<v-card-actions  class="pa-0 pb-2">
-								<div>Khuyến mãi kết thúc sau <v-icon>alarm</v-icon> 
-									<span class="subheading"><strong>{{time.dd}}</strong> Ngày <strong>{{time.hh}} : {{time.mm}} : {{time.ss}} </strong>
-									{{start(store.coupon.endedAt)}}</span>
-								</div>
+								
 								<v-spacer></v-spacer>
 								<v-btn small flat @click="copyCode()">
 									<v-icon>content_copy</v-icon>
@@ -188,7 +194,7 @@
 
 						<v-list-tile-content >			
 
-							<v-text-field v-if="coupon == null" prepend-icon="redeem" single-line solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-icon="'send'" :append-icon-cb="checkCoupon"></v-text-field>		
+							<v-text-field v-if="coupon == null" single-line solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-icon="'send'" :append-icon-cb="checkCoupon"></v-text-field>		
 
 							<v-chip close v-else :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
 								<v-icon left>redeem</v-icon>
@@ -352,7 +358,7 @@
 
 			<v-list-tile-content >			
 
-				<v-text-field v-if="coupon == null" prepend-icon="redeem" single-line solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-icon="'send'" :append-icon-cb="checkCoupon"></v-text-field>		
+				<v-text-field v-if="coupon == null" single-line solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-icon="'send'" :append-icon-cb="checkCoupon"></v-text-field>		
 
 				<v-chip close v-else :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
 					<v-icon left>redeem</v-icon>

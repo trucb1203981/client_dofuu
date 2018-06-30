@@ -10,6 +10,10 @@
 							{{time.from}} - {{time.to}} 
 						</span>	
 					</span>
+					<v-spacer></v-spacer>
+					<span>
+						{{item.type.name}}
+					</span>
 				</v-system-bar>
 				<v-card-media class="white--text" :height="$vuetify.breakpoint.mdAndUp ? '150px' : '250px' " :src="image(item.avatar)">
 					<v-container fill-height fluid>
@@ -32,11 +36,10 @@
 					</v-container>
 				</v-card-media>
 
-				<v-card-actions>
-					<div class="subheading grey--text">
-						{{item.type.name}}
-					</div>		
-				</v-card-actions>
+				<v-system-bar v-if="typeof item.coupon != 'undefined' " status color="transparent">
+					<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>
+				</v-system-bar>
+
 				<v-divider light></v-divider>
 				<v-card-text >
 					<v-tooltip top>												

@@ -121,58 +121,10 @@
 
 						<v-flex xs12>
 							<v-content>
-								<v-layout row wrap >
-									<v-flex  xs12 md3 d-flex v-for="(item, i) in deal.stores " :key="i">
-
-										<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}"  hover ripple >
-											<v-system-bar status color="yellow accent-4">
-												<v-icon left>access_time</v-icon>
-												<span v-for="(item, i) in item.activities" v-if="i==0">		
-													<span v-for="(time, i) in item.times">
-														{{time.from}} - {{time.to}} 
-													</span>	
-												</span>
-											</v-system-bar>
-											<v-card-media class="white--text" :height="$vuetify.breakpoint.mdAndUp ? '150px' : '250px' " :src="image(item.avatar)">
-												<v-container fill-height fluid>
-													<v-layout fill-height >
-														<v-flex xs12>
-															<v-tooltip top>
-																<v-icon slot="activator" :color="item.color" v-if="status(item.status) == 1">
-																	sentiment_very_satisfied
-																</v-icon>
-																<span>{{item.status}}</span>
-															</v-tooltip>
-															<v-tooltip top>
-																<v-icon slot="activator" :color="item.color" v-if="status(item.status) == 2">
-																	sentiment_neutral
-																</v-icon>
-																<span>{{item.status}}</span>
-															</v-tooltip>
-														</v-flex>
-													</v-layout>
-												</v-container>
-											</v-card-media>
-
-											<v-card-actions>
-												<v-icon color="red">whatshot</v-icon>
-												<div class="red--text"><strong><i>{{item.coupon.title}}</i></strong></div>
-											</v-card-actions>
-											<v-divider light></v-divider>
-											<v-card-text >
-												<v-tooltip top>												
-													<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"><strong >{{item.name}}</strong>
-													</div>
-													<span>{{item.name}}</span>
-												</v-tooltip>
-												<v-tooltip top>												
-													<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
-													<span>{{item.address}}</span>
-												</v-tooltip>
-											</v-card-text>
-										</v-card>
-									</v-flex>
-								</v-layout>
+								<!-- STORE LIST -->
+								<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list>
+								<!-- STORE GRID -->
+								<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid>
 								<!-- PAGINATION -->
 								<div class="text-xs-center" v-if="deal.pagination.last_page>1">
 									<v-pagination :length="deal.pagination.last_page" v-model="deal.pagination.current_page" @input="changePage(deal.pagination.current_page, 'deal')" circle></v-pagination>

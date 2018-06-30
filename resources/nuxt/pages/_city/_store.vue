@@ -51,9 +51,7 @@
 										<v-tooltip top v-if="store.verified">
 											<v-avatar
 											slot="activator"
-											size="22"
-											color="white"
-											>
+											size="22">
 											<v-icon color="green darken-3">verified_user</v-icon>
 										</v-avatar>	
 										<span>Chứng nhận hợp tác cùng Dofuu</span>
@@ -62,7 +60,7 @@
 							</v-layout>			
 						</v-card-media>
 						<v-toolbar dense flat color="red darken-3" dark class="elevation-0">
-							<v-subheader class="text-xs-center"><h3>{{store.name}}</h3></v-subheader>
+							<v-subheader class="text-xs-center"><h4>{{store.name}}</h4></v-subheader>
 						</v-toolbar>
 					</v-card>
 					<v-list avatar dense three-line subheader>

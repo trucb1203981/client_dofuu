@@ -480,9 +480,9 @@
 <v-dialog v-model="optionDialog" persistent scrollable>
 	<v-card v-if="editedItem != null">
 		<v-toolbar color="red accent-4" dense class="elevation-0" dark flat>
-			<v-toolbar-title class="subheader px-0"> {{editedItem.name}} <span v-if="editedItem._name != null">({{editedItem._name}})</span></v-toolbar-title>
+			<v-toolbar-title class="subheader px-0"> {{editedItem.name}}</v-toolbar-title>
 			<v-spacer></v-spacer>
-			<h3 class="white--text"></h3>
+			<h3 class="white--text"><span v-if="editedItem._name != null">{{editedItem._name}}</span></h3>
 		</v-toolbar>
 
 		<v-card-text>
@@ -491,7 +491,7 @@
 
 					<v-flex  xs12 md4>
 						<v-card>
-							<v-card-media height="200" color="grey">	
+							<v-card-media height="300" color="grey">	
 								<img :src="image(editedItem.image)" :alt="editedItem.name" class="">
 							</v-card-media>
 						</v-card>				
@@ -509,7 +509,7 @@
 								</v-flex>
 
 								<v-flex xs12>
-									<v-select :items="store.toppings" v-model="editedItem.toppings" label="Topping thêm" multiple max-height="400" hint="Chọn thêm topping" persistent-hint >
+									<v-select :items="store.toppings" v-model="editedItem.toppings" label="Topping thêm" multiple max-height="400" hint="Chọn thêm topping" persistent-hint v-if="editedItem.toppings.length>0" >
 										<template slot="selection" slot-scope="data">
 											<v-chip
 											:selected="data.selected"
@@ -530,12 +530,7 @@
 									</template>
 								</v-select>
 
-								<v-flex xs12>
-									<v-text-field
-									v-model="editedItem.memo"
-									label="Ghi chú" 
-									></v-text-field>
-								</v-flex>
+								
 
 								<v-flex xs12>
 									<div>Số lượng: 
@@ -555,8 +550,14 @@
 									</div>
 
 								</v-flex>
-								<v-divider></v-divider>
 
+								<v-flex xs12>
+									<v-text-field
+									v-model="editedItem.memo"
+									label="Ghi chú" 
+									></v-text-field>
+								</v-flex>
+								
 							</v-flex>
 						</v-layout>		
 					</v-container>

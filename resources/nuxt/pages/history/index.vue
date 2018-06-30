@@ -199,7 +199,7 @@
 							<td colspan="3"><strong>{{order.subTotal | formatPrice}}</strong></td>
 						</tr>
 						<tr>
-							<td colspan="3">Phí:</td>	
+							<td colspan="3">Phí vận chuyển:</td>	
 							<td><strong>{{order.deliveryPrice | formatPrice}}</strong></td>
 						</tr>
 						<tr>

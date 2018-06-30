@@ -153,7 +153,7 @@ class CartController extends Controller
 				$CID    = $request->city['id'];
 				$DID    = $request->store['districtId'];
 				$SID    = $request->store['id'];
-				$secret = $request->secret;
+				$secret = $request->coupon['secret'];
 			// 	//Find store has truly
 				$store  = Store::whereHas('district', function($query) use ($DID, $CID) {
 					$query->where('id', '=', $DID)->where('city_id', '=', $CID);
@@ -171,7 +171,7 @@ class CartController extends Controller
 					$order->delivery_price  = $request->deliveryPrice;					
 					$order->subtotal_amount = $request->subTotal;
 
-					if($request->filled('secret')) {
+					if(!is_null($request->coupon)) {
 						$coupon = Coupon::whereHas('stores', function($query) use ($store) {
 							$query->where('ec_stores.id', '=', $store->id);
 						})->where(function($query) use ($secret, $now) {
@@ -186,7 +186,8 @@ class CartController extends Controller
 
 							$order->coupon         = $coupon->coupon;
 							$order->secret         = $coupon->token;
-							$order->discount_total = $this->discountTotal($order->subtotal_amount, $coupon->discount_percent);
+							$order->discount       = $coupon->discount_percent;
+							$order->discount_total = $this->discountTotal($request->subTotal, $coupon->discount_percent);
 							$order->amount         = $request->total;
 
 						} else {
@@ -203,6 +204,7 @@ class CartController extends Controller
 					$order->user_id         = $request->userId;
 					$order->store_id        = $request->store['id'];
 					$order->created_at 		= new DateTime;
+
 					$order->save();
 
 					$currentUser 			= auth('api')->user();
@@ -281,10 +283,10 @@ class CartController extends Controller
 	// 	return (float)$subTotal + (float)$deliveryPrice - $this->discountTotal($subTotal, $discount);
 	// }
 
-	// //CALCULATE DEAL
-	// public function discountTotal($subTotal, $discount = 0) {
-	// 	return ((float)$subTotal * (int)$discount/100);
-	// }
+	//CALCULATE DEAL
+	public function discountTotal($subTotal, $discount = 0) {
+		return ((float)$subTotal * (int)$discount/100);
+	}
 
 	//GET PRODUCT BY STORE
 	public function getProductByStore(Request $request) {

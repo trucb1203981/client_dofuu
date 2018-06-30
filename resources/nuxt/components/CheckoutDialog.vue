@@ -556,6 +556,7 @@ export default {
 
 				await window.localStorage.setItem('cart', JSON.stringify(cart))
 				await this.$store.commit('FETCH_CART', cart)
+				await this.$store.commit('REMOVE_COUPON')
 				this.$store.commit('CLOSE_CHECKOUT')
 			})
 			this.processCheckout = false

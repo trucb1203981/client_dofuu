@@ -785,7 +785,7 @@ export default {
 				}
 			})
 		},
-		closeCartDialog: function() {
+		closeCartDialog: async function() {
 			
 			this.sizes        = await []		
 			this.editedItem   = await {

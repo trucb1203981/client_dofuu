@@ -575,7 +575,7 @@
 	</v-card-text>
 	<v-divider></v-divider>
 	<v-card-actions>
-		<v-btn color="red" flat @click.native="closeCartDialog" class="mr-5" round small>Hủy bỏ</v-btn>
+		<v-btn color="red" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
 		<v-spacer></v-spacer>									
 		<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="processAddCart" small>
 			{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
@@ -786,9 +786,9 @@ export default {
 			})
 		},
 		closeCartDialog: async function() {
-			
+		
 			this.sizes        = await []		
-			this.editedItem   = await {
+			this.editedItem   =  {
 				rowId: null, 
 				size: null,
 				memo: null,

@@ -474,7 +474,7 @@ export default {
 		},
 		currentLocation: async function() {
 			var vm             = this
-			vm.loadingLocation = await true
+			vm.loadingLocation = true
 			if(navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(async function(position){
 					await vm.geocoder('latlng', {lat: position.coords.latitude, lng: position.coords.longitude}).then(response => {

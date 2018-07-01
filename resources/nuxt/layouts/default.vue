@@ -44,8 +44,12 @@ export default {
 				}
 			}
 		});
-
 		this.$store.dispatch("fetchType");
+	},
+	mounted: function() {
+		this.$store.dispatch("currentLocation").then(response => {
+			
+		})
 	}
 };
 </script>

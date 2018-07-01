@@ -9,9 +9,9 @@
 			<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up"></v-toolbar-side-icon>
 
 			<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 200px': 'width: 200px'">		
-				<a href="/">					
+				<nuxt-link :to="{path: '/'}">					
 					<img src="/logo_page.png" alt="dofuu-logo">
-				</a>
+				</nuxt-link>
 			</v-toolbar-title>
 
 			<v-text-field solo
@@ -92,7 +92,7 @@
 		</v-toolbar-items>	
 	</v-toolbar>
 	<v-tabs v-if="currentCity != null && types.length > 0" fixed-tabs show-arrows slider-color="red">
-		<v-tab nuxt href="/">
+		<v-tab nuxt :to="{path: '/'}">
 			<v-icon left color="red accent-3" size="20">home</v-icon> <h5>Trang chủ </h5>
 		</v-tab>
 		<v-tab nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">

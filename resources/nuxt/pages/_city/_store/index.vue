@@ -487,9 +487,9 @@
 <v-dialog v-model="optionDialog" persistent scrollable>
 	<v-card v-if="editedItem != null">
 		<v-toolbar color="red accent-4" dense class="elevation-0" dark flat>
-			<v-toolbar-title class="subheader px-0"> {{editedItem.name}}</v-toolbar-title>
+			<v-toolbar-title class="body-1 px-0"> {{editedItem.name}}</v-toolbar-title>
 			<v-spacer></v-spacer>
-			<h3 class="white--text"><span v-if="editedItem._name != null">{{editedItem._name}}</span></h3>
+			<h4 class="body-1 white--text"><span v-if="editedItem._name != null">{{editedItem._name}}</span></h4>
 		</v-toolbar>
 
 		<v-card-text>
@@ -658,6 +658,14 @@ export default {
 				subTotal: 0,
 				toppings: []
 			},
+			default: {
+				rowId: null, 
+				size: null,
+				memo: null,
+				qty: 1,
+				subTotal: 0,
+				toppings: []				
+			},
 			sizes: [],
 			processAddCart: false,
 		}
@@ -766,6 +774,7 @@ export default {
 		openCartDialog: async function(item) {
 			this.checkDayOff().then(async(response) => {
 				if(response) {
+					this.editedItem   =  Object.assign({}, this.default)
 					this.sizes        =  []		
 					var uuid = require("uuid");
 					var rowId = uuid.v4();
@@ -785,26 +794,17 @@ export default {
 				}
 			})
 		},
-		closeCartDialog: function() {
-
-			this.sizes        =  []		
-			this.editedItem   =  {
-				rowId: null, 
-				size: null,
-				memo: null,
-				qty: 1,
-				subTotal: 0,
-				toppings: []
-			}
+		closeCartDialog: async function() {
 			this.optionDialog = false
-			
+			this.editedItem   = Object.assign({}, this.default)
+			this.sizes        =  []				
 		},
 		// ADD ITEM TO CART
 		addToCart: async function (product) {
 			var vm              = this
-			vm.processAddCart = await true
+			vm.processAddCart = true
 
-			await setTimeout(async () => {
+			setTimeout(async () => {
 				const productIndex  = await vm.cart.items.findIndex(item => {
 					return item.rowId === product.rowId
 				})

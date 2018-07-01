@@ -116,8 +116,8 @@
 						<v-card flat ><!-- START ALL STORE -->					
 							<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
 								<v-toolbar color="white" flat dense  extension-height="30px" class="mb-1">
-									<v-toolbar-title class="red--text text--accent-3" id="all-store">
-										<h5>TẤT CẢ</h5>
+									<v-toolbar-title class="red--text text--accent-3" >
+										<h5 id="all-store">TẤT CẢ</h5>
 									</v-toolbar-title>
 									<!-- START DISTRICT IN ALL STORE -->
 									<v-toolbar-items slot="extension">

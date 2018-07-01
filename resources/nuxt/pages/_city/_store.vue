@@ -1,15 +1,16 @@
 <template>
 	<div ref="target_store" fluid class="mt-4" v-scroll="onScroll" v-show="!loading">
-		<v-dialog v-model="loading" persistent fullscreen>
-			<div id="overlay">
-				<v-container fill-height>
-					<v-layout row wrap justify-center align-center>
-						<v-flex xs4 d-flex>
-							<v-progress-circular :size="50" indeterminate color="g"></v-progress-circular>
-						</v-flex>
-					</v-layout>					
-				</v-container>
-			</div>
+		<v-dialog v-model="loading" hide-overlay persistent width="300">
+			<v-card	color="red darken-3"	dark>
+				<v-card-text>
+					Xin vui lòng chờ giây lát...
+					<v-progress-linear
+					indeterminate
+					color="white"
+					class="mb-0"
+					></v-progress-linear>
+				</v-card-text>
+			</v-card>
 		</v-dialog>
 		<v-content v-show="!loading">
 			<v-toolbar :fixed="offsetTop>offsetTab" color="white" class="elevation-0 scroll-y"  flat dense style="max-height: 400px" tabs  v-if="store != null"> 

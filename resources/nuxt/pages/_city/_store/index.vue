@@ -16,7 +16,6 @@
 						</div>
 					</v-system-bar>				
 					<v-alert outline color="warning" icon="card_giftcard" :value="true" class="py-0">
-						<v-divider></v-divider>
 						<v-card color="transparent" flat>		
 
 							<v-card-title class="pb-0 pl-1">
@@ -58,7 +57,7 @@
 											<v-btn icon small class="ma-0"><v-icon color="success" size="20">add_shopping_cart</v-icon></v-btn>
 										</v-system-bar>	
 										
-										<span class="grey--text" v-if="item._name !== null" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item._name}}</span>
+										<h5 class="grey--text" v-if="item._name !== null" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item._name}}</h5>
 										<v-layout row wrap>
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
 												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
@@ -787,7 +786,7 @@ export default {
 			})
 		},
 		closeCartDialog: function() {
-			
+
 			this.sizes        =  []		
 			this.editedItem   =  {
 				rowId: null, 

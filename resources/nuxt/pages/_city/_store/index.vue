@@ -767,6 +767,7 @@ export default {
 		openCartDialog: async function(item) {
 			this.checkDayOff().then(async(response) => {
 				if(response) {
+					this.sizes        =  []		
 					var uuid = require("uuid");
 					var rowId = uuid.v4();
 
@@ -785,9 +786,9 @@ export default {
 				}
 			})
 		},
-		closeCartDialog: async function() {
-		
-			this.sizes        = await []		
+		closeCartDialog: function() {
+			
+			this.sizes        =  []		
 			this.editedItem   =  {
 				rowId: null, 
 				size: null,

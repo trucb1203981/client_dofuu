@@ -786,6 +786,7 @@ export default {
 			})
 		},
 		closeCartDialog: function() {
+			this.optionDialog = false
 			this.editedItem   = {
 				rowId: null, 
 				size: null,
@@ -794,8 +795,7 @@ export default {
 				subTotal: 0,
 				toppings: []
 			}
-			this.sizes        = []
-			this.optionDialog = false
+			this.sizes        = []			
 		},
 		// ADD ITEM TO CART
 		addToCart: async function (product) {

@@ -267,8 +267,9 @@
 						</v-flex>
 					</v-layout>
 					<v-divider></v-divider>
+					<h4 class="text-xs-center" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</h4>
 					<v-card-actions>
-						<v-btn block :disabled="!cart || cart.items.length==0" color="red accent-2 white--text" dense @click.native="checkOut" round>
+						<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
 							Gửi đơn hàng
 						</v-btn>
 					</v-card-actions>
@@ -433,8 +434,9 @@
 			</v-flex>
 		</v-layout>
 		<v-divider></v-divider>
+		<h4 class="text-xs-center" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</h4>
 		<v-card-actions>
-			<v-btn block :disabled="!cart || cart.items.length==0" color="red accent-2 white--text" dense @click.native="checkOut" round>
+			<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
 				Gửi đơn hàng
 			</v-btn>
 		</v-card-actions>
@@ -534,9 +536,7 @@
 											</v-list-tile-content>
 										</template>
 									</template>
-								</v-select>
-
-								
+								</v-select>								
 
 								<v-flex xs12>
 									<div>Số lượng: 
@@ -660,7 +660,7 @@ export default {
 				toppings: []
 			},
 			sizes: [],
-			processAddCart: false
+			processAddCart: false,
 		}
 	},
 	methods: {
@@ -779,14 +779,14 @@ export default {
 						}
 					})
 
-					this.editedItem       = await Object.assign(this.editedItem, item)
-					this.editedItem.rowId = await rowId
+					this.editedItem       = Object.assign(this.editedItem, item)
+					this.editedItem.rowId = rowId
 					this.optionDialog     = true
 				}
 			})
 		},
-		closeCartDialog: async function() {
-			this.editedItem   = await {
+		closeCartDialog: function() {
+			this.editedItem   = {
 				rowId: null, 
 				size: null,
 				memo: null,
@@ -794,7 +794,7 @@ export default {
 				subTotal: 0,
 				toppings: []
 			}
-			this.sizes        = await []
+			this.sizes        = []
 			this.optionDialog = false
 		},
 		// ADD ITEM TO CART
@@ -989,6 +989,14 @@ export default {
 				}
 			}
 		},
+		processCheckout: function() {
+			if(this.currentCity != null) {
+				if(this.subTotal >= this.currentCity.service.minAmount) {
+					return false
+				}
+			}
+			return true
+		}
 	},
 	watch: {
 		'loading': function(val) {

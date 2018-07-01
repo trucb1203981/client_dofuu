@@ -33,18 +33,13 @@ const store = () => {
 			}
 		},
 		actions: {
-			nuxtServerInit ({ commit }, { req }) {
-
-			},
 			currentLocation: ({commit}, params) => new Promise((resolve, reject) => {
 				var vm = this
 				if(navigator.geolocation) {
 					navigator.geolocation.getCurrentPosition(function(position){
-						console.log(position)
 						var geocoder = new google.maps.Geocoder()
 						geocoder.geocode({'location': {lat: position.coords.latitude, lng: position.coords.longitude}}, function(results, status) {
 							if(status === 'OK') {
-								console.log(results)
 								commit('UPDATE_LOCATION', results)
 							}
 						})

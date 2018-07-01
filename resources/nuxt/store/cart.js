@@ -7,7 +7,8 @@ const state = {
 		items: []
 	},
 	coupon: null,
-	dialog: false
+	dialog: false,
+	cartDrawer: false
 }
 
 const mutations = {
@@ -47,6 +48,12 @@ const mutations = {
 	},
 	REMOVE_COUPON(state) {
 		state.coupon = null
+	},
+	SHOW_CART(state) {
+		state.cartDrawer = true
+	},
+	CLOSE_CART(state) {
+		state.cartDrawer = false
 	}
 }
 

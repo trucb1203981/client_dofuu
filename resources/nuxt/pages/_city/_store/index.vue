@@ -278,7 +278,8 @@
 	</v-layout>
 
 	<!-- RIGHT NAVBAR MOBILE START -->
-	<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" right class="hidden-lg-only hidden-md-only">
+	<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer"
+ right class="hidden-lg-only hidden-md-only">
 		<v-tabs icons-and-text grow :value="`item-${tabIndex}`" color="">
 
 			<v-tabs-slider color="yellow"></v-tabs-slider>
@@ -442,13 +443,6 @@
 	</v-card>
 
 </v-navigation-drawer>
-
-<v-btn fixed bottom right icon color="grey accent-2" dark @click.stop="drawer =! drawer" class="hidden-lg-only hidden-md-only">
-	<v-badge color="red">
-		<span slot="badge" v-if="counts>0">{{counts}}</span>
-		<v-icon>menu</v-icon>
-	</v-badge>
-</v-btn>
 <!-- RIGHT NAVBAR MOBILE END -->
 <!-- DIALOG ALERT START-->
 <v-dialog v-model="dialog" max-width="400">
@@ -498,7 +492,7 @@
 
 					<v-flex  xs12 md4>
 						<v-card>
-							<v-card-media height="300" color="grey">	
+							<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300' : '200'" color="grey">	
 								<img :src="image(editedItem.image)" :alt="editedItem.name" class="">
 							</v-card-media>
 						</v-card>				
@@ -958,7 +952,8 @@ export default {
 			rightDrawer: state => state.storeStore.rightDrawer,
 			show: state        => state.cartStore.show,
 			cart: state        => Object.assign({}, state.cartStore.cart),
-			coupon: state      => state.cartStore.coupon
+			coupon: state      => state.cartStore.coupon,
+			cartDrawer:state   => state.cartStore.cartDrawer
 		}),
 		options: function() {
 			return {
@@ -1010,6 +1005,16 @@ export default {
 		},
 		'rightDrawer': function(val) {
 			console.log(val) 
+		},
+		'cartDrawer': function(val) {
+			if(val) {
+				this.drawer = true
+			}
+		},
+		'drawer': function(val) {
+			if(!val) {
+				this.$store.commit('CLOSE_CART')
+			}
 		}
 	},	
 	mounted: async function() {

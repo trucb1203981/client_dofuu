@@ -27,8 +27,14 @@
 					<!-- <v-tab nuxt exact :to="{name: 'city-store-about', params: {city: $route.params.city, store: $route.params.store}}">
 						Giới thiệu
 					</v-tab> -->
-
 				</v-tabs>
+				<v-spacer></v-spacer>
+				<v-btn icon @click.native="$store.commit('SHOW_CART')">
+					<v-badge color="red" overlap>
+						<span slot="badge" v-if="countItems>0">{{countItems}}</span>
+						<v-icon color="blue">shopping_cart</v-icon>
+					</v-badge>					
+				</v-btn>
 			</v-toolbar>
 			<v-layout row wrap v-if="store != null">
 				<v-flex xs12 md3>
@@ -149,7 +155,11 @@ export default {
 			loading: state   => state.storeStore.loading,
 			offsetTop: state => state.offsetTop,
 			store: state     => state.storeStore.store
-		})
+		}),
+		//COUNT ITEM IN CART
+		countItems() {
+			return this.$store.getters.counts
+		},
 	},
 	created() {
 		this.getStore()

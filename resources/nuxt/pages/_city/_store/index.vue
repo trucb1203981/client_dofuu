@@ -121,13 +121,13 @@
 						<v-tabs-slider color="yellow"></v-tabs-slider>
 
 						<v-tab v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)":href="`#item-${index}`" >
-							{{tab.title}}
+							<h5>{{tab.title}}</h5>
 							<v-badge color="red" v-if="index == 1" overlap>
 								<span slot="badge" v-if="counts>0">{{counts}}</span>
-								<v-icon left>shopping_cart</v-icon>						 
+								<v-icon left size="20">shopping_cart</v-icon>						 
 							</v-badge>
 
-							<v-icon left v-if="index == 0">assignment</v-icon>
+							<v-icon left v-if="index == 0" size="20">assignment</v-icon>
 
 						</v-tab>
 					</v-tabs>
@@ -285,13 +285,13 @@
 			<v-tabs-slider color="yellow"></v-tabs-slider>
 
 			<v-tab v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)":href="`#item-${index}`" >
-				{{tab.title}}
+				<h5>{{tab.title}}</h5>
 				<v-badge color="red" v-if="index == 1" overlap>
 					<span slot="badge" v-if="counts>0">{{counts}}</span>
-					<v-icon left>shopping_cart</v-icon>						 
+					<v-icon left size="20">shopping_cart</v-icon>						 
 				</v-badge>
 
-				<v-icon left v-if="index == 0">assignment</v-icon>
+				<v-icon left v-if="index == 0" size="20">assignment</v-icon>
 
 			</v-tab>
 		</v-tabs>
@@ -492,7 +492,7 @@
 
 					<v-flex  xs12 md4>
 						<v-card>
-							<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300' : '200'" color="grey">	
+							<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300' : '200'" color="grey">
 								<img :src="image(editedItem.image)" :alt="editedItem.name" class="">
 							</v-card-media>
 						</v-card>				

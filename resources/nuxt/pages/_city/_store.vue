@@ -3,7 +3,7 @@
 		<v-dialog v-model="loading" hide-overlay persistent width="300">
 			<v-card	color="red darken-3"	dark>
 				<v-card-text>
-					Xin vui lòng chờ giây lát...
+					Xin Quý khách vui lòng chờ giây lát...
 					<v-progress-linear
 					indeterminate
 					color="white"

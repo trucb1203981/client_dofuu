@@ -786,8 +786,9 @@ export default {
 			})
 		},
 		closeCartDialog: function() {
-			this.optionDialog = false
-			this.editedItem   = {
+			
+			this.sizes        = await []		
+			this.editedItem   = await {
 				rowId: null, 
 				size: null,
 				memo: null,
@@ -795,7 +796,8 @@ export default {
 				subTotal: 0,
 				toppings: []
 			}
-			this.sizes        = []			
+			this.optionDialog = false
+			
 		},
 		// ADD ITEM TO CART
 		addToCart: async function (product) {

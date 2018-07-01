@@ -29,7 +29,7 @@
 					</v-tab> -->
 				</v-tabs>
 				<v-spacer></v-spacer>
-				<v-btn icon @click.native="$store.commit('SHOW_CART')">
+				<v-btn icon @click.native="$store.commit('SHOW_CART')" v-if="$vuetify.breakpoint.smAndDown">
 					<v-badge color="red" overlap>
 						<span slot="badge" v-if="countItems>0">{{countItems}}</span>
 						<v-icon color="blue">shopping_cart</v-icon>

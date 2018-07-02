@@ -139,12 +139,16 @@ export default {
 	},
 	methods: {
 		getStore() {
+			var vm       = this
 			const params = {_CID: this.$route.params.city, _SID: this.$route.params.store}
-			this.$store.dispatch('getStore', params).then(response => {
-				if(response.status == 200) {
-					this.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
-					this.$store.commit('UPDATE_CITY', response.data.city)
-				}
+			return new Promise((resolve, reject) => {
+				vm.$store.dispatch('getStore', params).then(response => {
+					if(response.status == 200) {
+						vm.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
+						vm.$store.commit('UPDATE_CITY', response.data.city)
+					}
+					resolve(response)
+				})
 			})
 		},
 		onScroll (e) {
@@ -163,7 +167,11 @@ export default {
 		},
 	},
 	created() {
-		this.getStore()
+		this.getStore().then(response => {
+			if(response.status === 200) {
+				this.$store.dispatch('getToCart', response.data.store.id)	
+			}
+		})		
 	},
 	mounted() {
 		this.offsetTab = this.$refs.target_store.offsetTop

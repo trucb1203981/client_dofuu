@@ -58,25 +58,29 @@ const mutations = {
 }
 
 const actions = {
-	getToCart:({commit}, id) => new Promise((resolve, reject) => {
+	getToCart:({commit}, id) => new Promise(async (resolve, reject) => {
+		
 		var temp = Object.assign({}, {instance: id, items: []})
 		var storage = window.localStorage.getItem('cart')
-		if(typeof storage == 'undefined' || storage == null ) {
-			window.localStorage.setItem('cart', JSON.stringify({instance:0, items:[]}))
+
+		if (typeof storage == 'undefined' || storage == null ) {
+			window.localStorage.setItem('cart', JSON.stringify(temp))
 		} else {	
-			let cartTemp = new Array(JSON.parse(storage))			
-			cartTemp = cartTemp.find(item => {
-				return parseInt(item.instance) === parseInt(id)
-			})
-			if(typeof cartTemp == 'undefined' || cartTemp == null) {
-				commit('FETCH_CART', temp)
-				commit('CHANGE_TAB', 0)
-			} else {
+
+			let cartTemp = JSON.parse(storage)		
+			
+			if(id === cartTemp.instance) {
+				
 				temp = Object.assign({}, cartTemp)
 				commit('FETCH_CART', temp)
 				commit('CHANGE_TAB', 1)
-			}
 
+			} else {
+				window.localStorage.setItem('cart', JSON.stringify(temp))
+				commit('FETCH_CART', temp)
+				commit('CHANGE_TAB', 0)
+			}
+			
 		}
 	})
 }

@@ -190,16 +190,13 @@
 					<v-divider></v-divider>
 
 					<v-list-tile class="yellow accent-3">
-
-						<v-list-tile-content >			
-
-							<v-text-field v-if="coupon == null" single-line solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-icon="'send'" :append-icon-cb="checkCoupon"></v-text-field>		
+						<v-list-tile-content class="pl-4">			
+							<v-text-field v-if="coupon == null" single-line color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-outer-icon="'send'" :append-outer-icon-cb="checkCoupon" solo class="text-xs-center"></v-text-field>		
 
 							<v-chip close v-else :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
 								<v-icon left>redeem</v-icon>
 								{{coupon.coupon}}											
 							</v-chip>				
-
 						</v-list-tile-content>
 
 						<v-list-tile-action v-if="coupon != null">
@@ -214,7 +211,7 @@
 
 					<v-layout row wrap>
 						<v-flex	xs12>
-							<v-list dense two-line> 
+							<v-list dense > 
 
 								<v-list-tile>
 
@@ -266,7 +263,7 @@
 						</v-flex>
 					</v-layout>
 					<v-divider></v-divider>
-					<h4 class="text-xs-center" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</h4>
+					<div class="text-xs-center font-weight-bold" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</div>
 					<v-card-actions>
 						<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
 							Gửi đơn hàng
@@ -357,9 +354,9 @@
 
 	<v-list-tile class="yellow accent-3">
 
-		<v-list-tile-content >			
+		<v-list-tile-content class="pl-4">			
 
-			<v-text-field v-if="coupon == null" single-line solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-icon="'send'" :append-icon-cb="checkCoupon"></v-text-field>		
+			<v-text-field v-if="coupon == null" single-line solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-outer-icon="'send'" :append-outer-icon-cb="checkCoupon"></v-text-field>		
 
 			<v-chip close v-else :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
 				<v-icon left>redeem</v-icon>
@@ -380,7 +377,7 @@
 
 	<v-layout row wrap>
 		<v-flex	xs12>
-			<v-list dense two-line> 
+			<v-list dense> 
 
 				<v-list-tile>
 
@@ -1020,11 +1017,6 @@ export default {
 		}
 	},	
 	mounted: async function() {
-		if(!this.loading) {
-			
-		}
-		this.$store.dispatch('getToCart', this.store.id)	
-
 		
 	},
 	beforeDestroy() {

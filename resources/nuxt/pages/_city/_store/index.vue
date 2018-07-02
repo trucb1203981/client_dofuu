@@ -478,7 +478,8 @@
 </v-dialog>
 <!-- DIALOG ALERT END-->
 <vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
-<v-dialog v-model="optionDialog" persistent scrollable>
+
+<v-dialog v-model="optionDialog" persistent scrollable disabled>
 	<v-card v-if="editedItem != null">
 		<v-toolbar color="red accent-4" dense class="elevation-0" dark flat>
 			<v-toolbar-title class="body-1 px-0"> {{editedItem.name}}</v-toolbar-title>

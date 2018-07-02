@@ -515,15 +515,16 @@ export default {
 			}
 			this.processCheckout = await true
 
-			await axios.post('/api/Dofuu/CheckOut', data, {headers: getHeader(), withCredentials:true}).then(async (response) => {
+			axios.post('/api/Dofuu/CheckOut', data, {headers: getHeader(), withCredentials:true}).then(async (response) => {
 				if(response.status == 201) {
+					
 				}
-
-				await window.localStorage.setItem('cart', JSON.stringify(cart))
-				await this.$store.commit('FETCH_CART', cart)
-				await this.$store.commit('REMOVE_COUPON')
-				this.$store.commit('CLOSE_CHECKOUT')
 			})
+			await window.localStorage.setItem('cart', JSON.stringify(cart))
+			await this.$store.commit('FETCH_CART', cart)
+			await this.$store.commit('REMOVE_COUPON')
+			await this.$store.commit('CLOSE_CHECKOUT')
+			this.$store.commit('CHECKOUT_SUCCESS')
 			this.processCheckout = false
 		}
 	},

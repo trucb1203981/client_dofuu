@@ -443,10 +443,11 @@
 <!-- RIGHT NAVBAR MOBILE END -->
 <v-dialog v-model="optionDialog" persistent scrollable disabled max-width="1000">
 	<v-card v-if="editedItem != null">
-		<v-toolbar color="red accent-4" dense class="elevation-0" dark flat>
-			<v-toolbar-title class="body-1 px-0"> {{editedItem.name}}</v-toolbar-title>
+		<v-toolbar color="red accent-4" dense class="elevation-0" dark flat :extended="editedItem._name != null" extension-height="15" height="20">
+			<v-toolbar-title class="body-1 px-0"> {{editedItem.name |upperCase}}</v-toolbar-title>
+			<h4 slot="extension" class="body-1 white--text"><span v-if="editedItem._name != null">{{editedItem._name | upperCase}}</span></h4>
 			<v-spacer></v-spacer>
-			<h4 class="body-1 white--text"><span v-if="editedItem._name != null">{{editedItem._name}}</span></h4>
+			<div>{{totalProduct(editedItem) | formatPrice}}</div>
 		</v-toolbar>
 
 		<v-card-text>
@@ -455,7 +456,7 @@
 
 					<v-flex  xs12 md4>
 						<v-card>
-							<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '200' : '200'" color="grey">
+							<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'" color="grey">
 								<img :src="image(editedItem.image)" :alt="editedItem.name" class="">
 							</v-card-media>
 						</v-card>				
@@ -465,115 +466,117 @@
 						<v-container class="py-0 my-0">
 							<v-layout row wrap>
 								<v-flex xs12>
-									<v-radio-group v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp">
+									<v-radio-group mandatory v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp">
 										<v-radio color="primary" :value="size" v-for="(size, i) in sizes" :key="i">
-											<span slot="label" class="black--text">{{size.name}} <strong>({{size.price | formatPrice}})</strong></span>
+											<span slot="label" class="black--text body-1">{{size.name}} <strong>({{size.price | formatPrice}})</strong></span>
 										</v-radio>
 									</v-radio-group>
 								</v-flex>
 
-								<v-flex xs12>
-									<v-select :items="store.toppings" v-model="editedItem.toppings" label="Topping thêm" multiple max-height="400" hint="Chọn thêm topping" persistent-hint v-if="editedItem.toppings.length>0" >
-										<template slot="selection" slot-scope="data">
-											<v-chip
-											:selected="data.selected"
-											:key="JSON.stringify(data.item)"
-											close
-											class="chip--select-multi"
-											@input="data.parent.selectItem(data.item)"
-											>
-											{{ data.item.name }}
-										</v-chip>
-									</template>
-									<template slot="item" slot-scope="data">
-										<template>
-											<v-list-tile-content>
-												<v-list-tile-title>{{data.item.name}} <strong>({{data.item.price |formatPrice}})</strong></v-list-tile-title>
-											</v-list-tile-content>
+								<v-flex xs12 v-if="store.toppings.length>0">
+									<v-combobox v-model="editedItem.toppings" :items="store.toppings" hint="Chọn thêm topping"  label="Phần thêm" multiple persistent-hint small-chips solo>
+
+										<template slot="selection" slot-scope="{ item, parent, selected }">
+											<v-chip	:selected="selected" label small>
+												{{ item.name }}
+												<v-icon small @click="parent.selectItem(item)" >close</v-icon>
+											</v-chip>
 										</template>
-									</template>
-								</v-select>								
 
-								<v-flex xs12>
-									<div>Số lượng: 
-										<span>
-											<v-btn icon ripple @click.stop="editedItem.qty++" class="ma-0">
-												<v-icon color="green darken-3">add_box</v-icon>
-											</v-btn>
-										</span>
-										<span>												
-											{{editedItem.qty}}
-										</span>
-										<span>
-											<v-btn icon ripple @click.stop="editedItem.qty--"  class="ma-0">
-												<v-icon color="grey" >indeterminate_check_box</v-icon>
-											</v-btn>
-										</span>				
-									</div>
+										<template slot="item" slot-scope="{ index, item, parent }">
+											<v-list-tile-content>							
+												{{item.name}}
+											</v-list-tile-content>
+
+											<v-list-tile-action>
+												{{item.price |formatPrice}}
+											</v-list-tile-action>
+										</template>
+
+									</v-combobox>		
+
+									<v-flex xs12>
+										<div>Số lượng: 
+											<span>
+												<v-btn icon ripple @click.stop="editedItem.qty++" class="ma-0">
+													<v-icon color="green darken-3">add_box</v-icon>
+												</v-btn>
+											</span>
+											<span>												
+												{{editedItem.qty}}
+											</span>
+											<span>
+												<v-btn icon ripple @click.stop="editedItem.qty--"  class="ma-0">
+													<v-icon color="grey" >indeterminate_check_box</v-icon>
+												</v-btn>
+											</span>				
+										</div>
+
+									</v-flex>
+
+									<v-flex xs12>
+										<v-text-field
+										v-model="editedItem.memo"
+										label="Ghi chú" 
+										></v-text-field>
+									</v-flex>
 
 								</v-flex>
+							</v-layout>		
+						</v-container>
 
-								<v-flex xs12>
-									<v-text-field
-									v-model="editedItem.memo"
-									label="Ghi chú" 
-									></v-text-field>
-								</v-flex>
-								
-							</v-flex>
-						</v-layout>		
-					</v-container>
+					</v-flex>
 
-				</v-flex>
-
-			</v-layout>
-		</v-container>			
-	</v-card-text>
-	<v-divider></v-divider>
-	<v-card-actions>
-		<v-btn color="red" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
-		<v-spacer></v-spacer>									
-		<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="processAddCart" small>
-			{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
-		</v-card-actions>
-	</v-card>
-</v-dialog>
-<!-- DIALOG ALERT START-->
-<v-dialog v-model="dialog" max-width="400">
-	<v-card>
-		<v-toolbar dense color="transparent" class="elevation-0">
-			<v-avatar size="24px" tile>
-				<img src="~/static/dofuu24x24.png">
-			</v-avatar>
-			<v-toolbar-title>
-				Thông báo
-			</v-toolbar-title>
-		</v-toolbar>
-		<v-divider></v-divider>
-		<v-card-text>
-			<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
-			<div>{{message}}</div>
-			<div>Quán phục vụ vào lúc 
-				<span v-for="(item, i) in store.activities" v-if="i==0"> 
-					<span v-for="(time, index) in item.times" class="green--text text--darken-1">
-						<strong>
-							{{time.from}} - {{time.to}} 
-						</strong>
-					</span>	
-					<span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span>
-				</span>
-			</div>
-			<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
+				</v-layout>
+			</v-container>			
 		</v-card-text>
+		<v-divider></v-divider>
 		<v-card-actions>
-			<v-btn block color="green darken-1" dark @click.native="dialog = false">Đồng ý</v-btn>
-		</v-card-actions>
-	</v-card>
-</v-dialog>
-<!-- DIALOG ALERT END-->
-<vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
-
-
+			<v-btn color="red" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
+			<v-spacer></v-spacer>									
+			<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="processAddCart" small>
+				{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
+	<!-- DIALOG ALERT START-->
+	<v-dialog v-model="dialog" max-width="400">
+		<v-card>
+			<v-toolbar dense color="transparent" class="elevation-0">
+				<v-avatar size="24px" tile>
+					<img src="~/static/dofuu24x24.png">
+				</v-avatar>
+				<v-toolbar-title>
+					Thông báo
+				</v-toolbar-title>
+			</v-toolbar>
+			<v-divider></v-divider>
+			<v-card-text class="text-xs-center" v-if="checkOutSuccess">
+				<div class="green--text">Quý khách đã đặt hàng thành công</div>
+				<v-btn color="success" :to="{name:'history'}" @click="$store.commit('CLOSE_CHECKOUT_SUCCESS')" >Lịch sử đặt món</v-btn>
+			</v-card-text>
+			<v-card-text v-if="dayOff">
+				<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
+				<div>{{message}}</div>
+				<div>Quán phục vụ vào lúc 
+					<span v-for="(item, i) in store.activities" v-if="i==0"> 
+						<span v-for="(time, index) in item.times" class="green--text text--darken-1">
+							<strong>
+								{{time.from}} - {{time.to}} 
+							</strong>
+						</span>	
+						<span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span>
+					</span>
+				</div>
+				<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
+			</v-card-text>
+			<v-card-actions v-if="dayOff">
+				<v-btn block color="green darken-1" dark @click.native="dialog = false">Đồng ý</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
+	<!-- DIALOG ALERT END-->
+	<vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
 </v-container>
 </template>
 
@@ -661,6 +664,7 @@ export default {
 			},
 			sizes: [],
 			processAddCart: false,
+			dayOff:false,
 		}
 	},
 	methods: {
@@ -726,15 +730,18 @@ export default {
 						} else {
 							if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
 								this.dialog  = true
+								this.dayOff  = true
 								this.message = 'Quán hiện tại chưa mở cửa'
 							} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
 								this.dialog  = true
+								this.dayOff  = true
 								this.message = 'Quán hiện tại đã đóng cửa'
 							}
 						}
 					})
 				} else {
 					this.dialog  = true
+					this.dayOff  = true
 					this.message = 'Quán hôm nay nghỉ'
 				}			
 			})			
@@ -941,18 +948,19 @@ export default {
 	},
 	computed: {
 		...mapState({
-			currentCity: state => state.cityStore.currentCity,
-			offsetTop: state   => state.offsetTop,
-			tabIndex: state    => state.storeStore.tabIndex,
-			tabs: state        => state.storeStore.headers,
-			isAuth: state      => state.authStore.isAuth,			
-			store: state       => state.storeStore.store,
-			loading: state     => state.storeStore.loading,
-			rightDrawer: state => state.storeStore.rightDrawer,
-			show: state        => state.cartStore.show,
-			cart: state        => Object.assign({}, state.cartStore.cart),
-			coupon: state      => state.cartStore.coupon,
-			cartDrawer:state   => state.cartStore.cartDrawer
+			currentCity: state    => state.cityStore.currentCity,
+			offsetTop: state      => state.offsetTop,
+			tabIndex: state       => state.storeStore.tabIndex,
+			tabs: state           => state.storeStore.headers,
+			isAuth: state         => state.authStore.isAuth,			
+			store: state          => state.storeStore.store,
+			loading: state        => state.storeStore.loading,
+			rightDrawer: state    => state.storeStore.rightDrawer,
+			show: state           => state.cartStore.show,
+			cart: state           => Object.assign({}, state.cartStore.cart),
+			coupon: state         => state.cartStore.coupon,
+			cartDrawer:state      => state.cartStore.cartDrawer,
+			checkOutSuccess:state => state.cartStore.checkOutSuccess
 		}),
 		options: function() {
 			return {
@@ -1013,6 +1021,17 @@ export default {
 		'drawer': function(val) {
 			if(!val) {
 				this.$store.commit('CLOSE_CART')
+			}
+		},
+		'checkOutSuccess': function(val) {
+			if(val) {
+				this.dialog = true
+			}
+		},
+		'dialog': function(val) {
+			if(!val) {
+				console.log(!val)
+				this.$store.commit('CLOSE_CHECKOUT_SUCCESS')
 			}
 		}
 	},	

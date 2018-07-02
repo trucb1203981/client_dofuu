@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Coupon;
 use App\Models\RegularOrder;
+use App\Models\ActualOrder;
 use App\Models\OrderStatus;
 use App\Models\City;
 use App\Models\Role;
@@ -210,24 +211,46 @@ class CartController extends Controller
 					$currentUser 			= auth('api')->user();
 					$currentUser->free_ship = 0;
 					$currentUser->save();
+					//ACTUAL ORDER
+					$actual_order                  = new ActualOrder;
+					$actual_order->delivery_price  = $order->delivery_price;
+					$actual_order->subtotal_amount = $order->subtotal_amount;
+					$actual_order->coupon          = $order->coupon;
+					$actual_order->secret		   = $order->secret;
+					if(!is_null($order->coupon)) {
+						$actual_order->discount       = $order->discount_percent;
+						$actual_order->discount_total = $order->discount_total;
+						$actual_order->amount         = $order->amount;
 
+					} else {
+						$actual_order->discount       = $store->discount;
+						$actual_order->discount_total = $this->discountTotal($order->subtotal_amount, $store->discount);
+						$actual_order->amount         = (float)$order->subtotal_amount - (float)$actual_order->discount_total;
+					}	
+					$actual_order->order_id		      = $order->id;
+					$actual_order->save();
+					
 					foreach($request->items as $data) {
 						$order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['size']['price'], 'total' => $data['subTotal'], 'memo' => $data['memo'], 'toppings' => serialize($data['toppings'])]]);
+						$actual_order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['size']['price'], 'total' => $data['subTotal'], 'memo' => $data['memo'], 'toppings' => serialize($data['toppings'])]]);
 					}
 
 					//Notify to employee in City
 					$users = User::where('role_id', '=', $this->employee->id)->get();
-					Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($order));
 					
+
 					foreach($users as $user) {
 						$user->notify(new CheckoutNotification($order)); 
-					}						
+					}		
+
+					Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($order));
 
 					$res = [
 						'type'    => 'success',
 						'message' => 'Check out cart successfully.',
 						'data'    => []
 					];
+					
 					return response($res, 201);
 				}
 			}
@@ -239,49 +262,6 @@ class CartController extends Controller
 		];
 		return response('Something went wrong', 500);
 	}
-
-	// //CALCULATE DELIVERY PRICE
-	// public function deliveryPrice($distance, $id) {
-	// 	$distance = (float)$distance;
-	// 	$city = City::with('service', 'deliveries')->where('id', '=', $id)->first();
-	// 	if($city->service->delivery_actived) {
-	// 		foreach($city->deliveries as $data) {
-	// 			if($data['from'] <= $distance && $data['to'] >= $distance && $city->service['min_range'] >= $distance) {
-	// 				return $data->pivot['price'];
-	// 			} else if($data['from'] <= $distance && $data['to'] >= $distance && $city->service['max_range'] >= $distance && $city->service['min_range'] < $distance) {
-	// 				return (float)$data->pivot['price']*(float)$distance;
-	// 			}
-	// 		}
-	// 	} else {
-	// 		return (int)0;
-	// 	}
-	// }
-
-	// // CALCULATE DEAL DELIVERY PRICE
-	// public function dealDelivery() {
-
-	// }
-
-	// //CALCULATE SUBTOTAL
-	// public function subTotal($cityId, $items) {
-	// 	$items    = $items;
-	// 	$subTotal = 0;
-	// 	foreach ($items as $item) {
-	// 		$id = $item['id'];
-	// 		$store = Store::with(['products' => function($query) use ($id){
-	// 			return $query->where('ec_products.id', '=', $id);
-	// 		}])->where('id', '=', $cityId)->first();
-	// 		if(count($store->products)>0) {
-	// 			$subTotal = $subTotal + ((int)$item['qty'] * (float)$store->products[0]['price']);
-	// 		}
-	// 	}
-	// 	return (float)$subTotal;
-	// }
-
-	// //CALCULATE TOTAL
-	// public function total($subTotal, $deliveryPrice, $discount = 0) {
-	// 	return (float)$subTotal + (float)$deliveryPrice - $this->discountTotal($subTotal, $discount);
-	// }
 
 	//CALCULATE DEAL
 	public function discountTotal($subTotal, $discount = 0) {

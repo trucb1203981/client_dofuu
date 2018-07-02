@@ -8,7 +8,8 @@ const state = {
 	},
 	coupon: null,
 	dialog: false,
-	cartDrawer: false
+	cartDrawer: false,
+	checkOutSuccess:false
 }
 
 const mutations = {
@@ -54,6 +55,12 @@ const mutations = {
 	},
 	CLOSE_CART(state) {
 		state.cartDrawer = false
+	},
+	CHECKOUT_SUCCESS(state) {
+		state.checkOutSuccess = true
+	},
+	CLOSE_CHECKOUT_SUCCESS(state) {
+		state.checkOutSuccess = false
 	}
 }
 

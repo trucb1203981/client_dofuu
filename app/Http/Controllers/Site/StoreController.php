@@ -226,6 +226,8 @@ class StoreController extends Controller
             }])->first();
 
             if(!is_null($store)) {
+                $store->views = ++$store->views;
+                $store->save();
                 $res = [
                     'type'    => 'success',
                     'message' => 'Get store information successfully!!!',

@@ -813,12 +813,12 @@ export default {
 				} else {
 					vm.cart.items.push(product)
 				}
-				await vm.$store.commit('FETCH_CART', vm.cart)
-				await window.localStorage.setItem('cart', JSON.stringify(vm.cart))
+				vm.$store.commit('FETCH_CART', vm.cart)
+				window.localStorage.setItem('cart', JSON.stringify(vm.cart))
 			}, 500)
 			
 			this.processAddCart = false
-			await this.closeCartDialog()
+			this.closeCartDialog()
 			this.$store.commit('CHANGE_TAB', 1)
 
 		},
@@ -955,7 +955,6 @@ export default {
 			isAuth: state         => state.authStore.isAuth,			
 			store: state          => state.storeStore.store,
 			loading: state        => state.storeStore.loading,
-			rightDrawer: state    => state.storeStore.rightDrawer,
 			show: state           => state.cartStore.show,
 			cart: state           => Object.assign({}, state.cartStore.cart),
 			coupon: state         => state.cartStore.coupon,
@@ -1009,9 +1008,6 @@ export default {
 					this.offsetNavbarRight = this.$refs.target_navbar_right.offsetTop
 				}, 300)
 			}
-		},
-		'rightDrawer': function(val) {
-			console.log(val) 
 		},
 		'cartDrawer': function(val) {
 			if(val) {

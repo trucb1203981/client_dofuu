@@ -155,7 +155,7 @@ class CartController extends Controller
 				$DID    = $request->store['districtId'];
 				$SID    = $request->store['id'];
 				$secret = $request->coupon['secret'];
-			// 	//Find store has truly
+				//Find store has truly
 				$store  = Store::whereHas('district', function($query) use ($DID, $CID) {
 					$query->where('id', '=', $DID)->where('city_id', '=', $CID);
 				})->where('id', '=', $request->store['id'])->first();
@@ -218,7 +218,7 @@ class CartController extends Controller
 					$actual_order->coupon          = $order->coupon;
 					$actual_order->secret		   = $order->secret;
 					if(!is_null($order->coupon)) {
-						$actual_order->discount       = $order->discount_percent;
+						$actual_order->discount       = $coupon->discount_percent;
 						$actual_order->discount_total = $order->discount_total;
 						$actual_order->amount         = $order->amount;
 

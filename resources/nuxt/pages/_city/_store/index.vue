@@ -2,6 +2,9 @@
 	<v-container fluid grid-list-lg="$vuetify.breakpoint.mdAndUp" grid-list-xs="$vuetify.breakpoint.smAndDown">
 		<v-layout child-flex wrap v-show="!loading">
 			<v-flex xs12 md8>
+				<!-- <v-autocomplete prepend-icon="search" :items="productData" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" box item-text="name" item-value="name" clearable>
+					
+				</v-autocomplete> -->
 				<!-- CARD DEAL START -->
 				<v-card color="white" v-if="store.coupon != null" flat>
 					<v-tooltip v-model="showTooltip" top>
@@ -26,7 +29,7 @@
 								</div>
 							</v-card-title>							
 							<v-card-actions  class="pa-0 pb-2">
-								
+
 								<v-spacer></v-spacer>
 								<v-btn small flat @click="copyCode()" class="body-1" outline color="green darken-3">
 									<v-icon size="20">content_copy</v-icon>
@@ -38,7 +41,7 @@
 				</v-card><!-- CARD DEAL END -->
 
 				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index">
-					
+
 					<v-subheader :id="'item_'+data.id"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
 					<!-- MOBILE PRODUCT LIST-->
 					<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in data.products" :key="i">
@@ -56,7 +59,7 @@
 											<v-spacer></v-spacer>
 											<v-btn icon small class="ma-0"><v-icon color="success" size="20">add_shopping_cart</v-icon></v-btn>
 										</v-system-bar>	
-										
+
 										<h5 class="grey--text" v-if="item._name !== null" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item._name}}</h5>
 										<v-layout row wrap>
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
@@ -97,7 +100,7 @@
 												<div class="caption">{{size.name}}:</div>
 												<div><strong>{{size.price | formatPrice}}</strong></div>
 											</v-flex>
-											
+
 											<v-flex xs12 md12>
 												<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
 											</v-flex>	
@@ -157,19 +160,23 @@
 										<div><v-btn  outline color="primary" icon @click="props.expanded = ! props.expanded" small><v-icon>edit</v-icon></v-btn></div>
 									</td>
 									<td class="text-xs-center">
-										<span>
-											<v-btn icon ripple @click.stop="addToCart(props.item)" class="ma-0">
-												<v-icon color="green">add_box</v-icon>
-											</v-btn>
-										</span>
-										<span class="py-0">												
-											{{props.item.qty}}
-										</span>
-										<span class="py-0">
-											<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
-												<v-icon color="grey" >indeterminate_check_box</v-icon>
-											</v-btn>
-										</span>											
+										<v-layout column>
+											<v-flex xs4 class="py-0">
+												<v-btn icon ripple @click.stop="addToCart(props.item)" class="ma-0">
+													<v-icon color="green">add_box</v-icon>
+												</v-btn>
+											</v-flex>
+
+											<v-flex xs4 class="py-0">
+												{{props.item.qty}}
+											</v-flex>
+
+											<v-flex xs4 class="py-0">
+												<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
+													<v-icon color="grey" >indeterminate_check_box</v-icon>
+												</v-btn>
+											</v-flex>
+										</v-layout>									
 									</td>
 									<td>{{totalProduct(props.item) | formatPrice}}</td>	
 								</tr>
@@ -320,19 +327,23 @@
 						<div><v-btn  outline color="primary" icon @click="props.expanded = ! props.expanded" small><v-icon>edit</v-icon></v-btn></div>
 					</td>
 					<td class="text-xs-center">
-						<span>
-							<v-btn icon ripple @click.stop="addToCart(props.item)" class="ma-0">
-								<v-icon color="green">add_box</v-icon>
-							</v-btn>
-						</span>
-						<span class="py-0">												
-							{{props.item.qty}}
-						</span>
-						<span class="py-0">
-							<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
-								<v-icon color="grey" >indeterminate_check_box</v-icon>
-							</v-btn>
-						</span>											
+						<v-layout column>
+							<v-flex xs4 class="py-0">
+								<v-btn icon ripple @click.stop="addToCart(props.item)" class="ma-0">
+									<v-icon color="green">add_box</v-icon>
+								</v-btn>
+							</v-flex>
+
+							<v-flex xs4 class="py-0">
+								{{props.item.qty}}
+							</v-flex>
+
+							<v-flex xs4 class="py-0">
+								<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
+									<v-icon color="grey" >indeterminate_check_box</v-icon>
+								</v-btn>
+							</v-flex>
+						</v-layout>									
 					</td>
 					<td>{{totalProduct(props.item) | formatPrice}}</td>	
 				</tr>
@@ -631,7 +642,7 @@ export default {
 			showTooltip: false,
 			messageTooltip: '',
 			storeInfo: null,
-			search: '',
+			search: null,
 			drawer: false,
 			dialog: false,
 			message:'',
@@ -902,18 +913,23 @@ export default {
 		},
 		//SEARCH PRODUCT BY KEYWORD
 		getByKeyWords: function(list, value) {
-			let search = new String(value).toLowerCase()
-			let data   = list
-			if(!search.length) {
+			let search = value
+			
+			let data   = this.store.catalogues.slice(0)
+			if(search === null || !search.length) {
 				return data
 			}
-			let temp   = data.map(item => {
-				let product = item.products.filter(product => product.name.toLowerCase().indexOf(search) > -1)
-				if(product.length>0) {
-					return product
+			
+			let temp   = data.filter(item => {
+				var products = item.products.filter(product => product.name.toLowerCase().indexOf(search) > -1)
+				if(products.length>0) {
+					item.products = products
+					return item
 				}
 			})
-			return new Array(temp)
+
+			console.log(temp)
+			return temp
 		},
 		//GET ALL PRODUCT BY STORE
 		getProducts: function() {
@@ -988,9 +1004,23 @@ export default {
 		menu: function () {
 			if(this.store.catalogues.length>0) { 
 				if(this.store.catalogues) {
-					return this.getByKeyWords(this.store.catalogues, this.search)
+					console.log(this.store.catalogues)
+					return this.getByKeyWords(this.store.catalogues.slice(0), this.search)
 				}
 			}
+		},
+		productData: function() {
+			var array = []
+			if(this.store.catalogues.length>0) {
+				this.store.catalogues.forEach(item => {
+					if(item.products.length>0) {
+						item.products.forEach(product => {
+							array.push(product)
+						})
+					} 
+				})
+			}
+			return array
 		},
 		processCheckout: function() {
 			if(this.currentCity != null) {

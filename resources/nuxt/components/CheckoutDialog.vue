@@ -286,8 +286,8 @@ export default {
 				lng: 0
 			},
 			matrix: {
-				distance:'0 km',
-				duration:'0 phút'
+				distance: null,
+				duration: null
 			},
 			deliveryPrice: 0,
 			datestring: formatDate(new Date().toISOString().substr(0, 10)),			
@@ -296,7 +296,8 @@ export default {
 			disabled: true,
 			menuTime: false,
 			dialog:false,
-			maxRange: 20
+			maxRange: 20,
+			calculate: true
 		}
 	},
 	methods: {
@@ -336,8 +337,9 @@ export default {
 			}
 		},
 		calculateRoute:async function(des) {
-			var vm  = this
-			var map = await new google.maps.Map(document.getElementById('map'), {
+			this.calculate = true
+			var vm         = this
+			var map        = await new google.maps.Map(document.getElementById('map'), {
 				zoom: 17,
 				center: {lat:vm.store.lat, lng:vm.store.lng}
 			});
@@ -418,6 +420,7 @@ export default {
 					window.alert('Directions request failed due to ' + status);
 				}
 			})
+			this.calculate = false
 		},
 		geocoder: function(type, location) {
 			return new Promise((resolve, reject) => {
@@ -538,7 +541,7 @@ export default {
 			myLocation: state  => state.myLocation
 		}),
 		disabledCheckout: function() {
-			if(this.editedItem.name.length > 0 && this.editedItem.phone.length > 0 && this.editedItem.address != null) {
+			if(this.editedItem.name.length > 0 && this.editedItem.phone.length > 0 && this.editedItem.address != null && !this.calculate && this.matrix.distance != null && this.matrix.duration != null) {
 				return false
 			} else {
 				return true
@@ -603,29 +606,32 @@ export default {
 			return he
 		},
 		intendTime: function() {
-			const totalTime = numeral(this.matrix.duration.slice(0,-5)).value() + numeral(this.store.prepareTime).value() // Total time of prepare time and duration time
-			var now         = moment().locale('vi') // Date time current
-			var intendTime  = now.add(totalTime, 'minutes') //Intent time when after direction
-			var mm          = Math.floor(parseInt(intendTime.format('mm'))/5) // Calculate minutes of intentime divide 5
-			// Less than 15 minutes
-			var time        = null
-			
-			if(mm >= 0 && mm < 3) {
-				var minTemp = Math.floor(15 - parseInt(intendTime.format('mm')))	
-				time = intendTime.add(minTemp, 'minutes')
-			} else if(mm >= 3 && mm < 6) {
-				var minTemp = Math.floor(30 - parseInt(intendTime.format('mm')))	
-				time = intendTime.add(minTemp, 'minutes')
-			} else if(mm >= 6 && mm < 9) {
-				var minTemp = Math.floor(45 - parseInt(intendTime.format('mm')))	
-				time = intendTime.add(minTemp, 'minutes')
-			} else if (mm >= 9 && mm < 12) {
-				var minTemp = Math.floor(60 - parseInt(intendTime.format('mm')))	
-				time = intendTime.add(minTemp, 'minutes')
-			}
-			this.editedItem.time = time.format('HH:mm')
+			if(this.matrix.duration != null) {
+				const totalTime = numeral(this.matrix.duration.slice(0,-5)).value() + numeral(this.store.prepareTime).value() // Total time of prepare time and duration time
+				var now         = moment().locale('vi') // Date time current
+				var intendTime  = now.add(totalTime, 'minutes') //Intent time when after direction
+				var mm          = Math.floor(parseInt(intendTime.format('mm'))/5) // Calculate minutes of intentime divide 5
+				// Less than 15 minutes
+				var time        = null
 
-			return totalTime
+				if(mm >= 0 && mm < 3) {
+					var minTemp = Math.floor(15 - parseInt(intendTime.format('mm')))	
+					time = intendTime.add(minTemp, 'minutes')
+				} else if(mm >= 3 && mm < 6) {
+					var minTemp = Math.floor(30 - parseInt(intendTime.format('mm')))	
+					time = intendTime.add(minTemp, 'minutes')
+				} else if(mm >= 6 && mm < 9) {
+					var minTemp = Math.floor(45 - parseInt(intendTime.format('mm')))	
+					time = intendTime.add(minTemp, 'minutes')
+				} else if (mm >= 9 && mm < 12) {
+					var minTemp = Math.floor(60 - parseInt(intendTime.format('mm')))	
+					time = intendTime.add(minTemp, 'minutes')
+				}
+				this.editedItem.time = time.format('HH:mm')
+
+				return totalTime
+			}
+
 		}
 	}, 
 	filters: {
@@ -640,9 +646,9 @@ export default {
 			if(val) {
 
 				vm.autoComplete()
-				
+
 				if(vm.user.address != null) {
-					
+
 					setTimeout(() => {
 						vm.geocoder('address', vm.user.address).then(response => {
 							vm.editedItem.address = response[0].formatted_address.slice(0, -10)
@@ -673,10 +679,12 @@ export default {
 			}
 		},
 		'matrix.distance': function(val) {
-			var distance = numeral(val.split(' ')[0]).value()
-			if(val) {
-				this.calculateDeliveryPrice(distance)
-			}
+			if(val != null) {
+				var distance = numeral(val.split(' ')[0]).value()
+				if(val) {
+					this.calculateDeliveryPrice(distance)
+				}
+			}			
 		},
 		'editedItem.address': function(val) {
 

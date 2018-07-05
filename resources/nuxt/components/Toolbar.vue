@@ -8,22 +8,22 @@
 		<v-toolbar color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0">
 			<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up"></v-toolbar-side-icon>
 
-			<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 200px': 'width: 200px'">		
+			<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 280px': 'width: 200px'">		
 				<nuxt-link :to="{path: '/'}">					
 					<img src="/logo_page.png" alt="dofuu-logo">
 				</nuxt-link>
 			</v-toolbar-title>
 
-			<v-text-field solo
-			light
+			<v-text-field 
+			solo
 			v-model="keywords"
-			color="red accent-2"
+			color="red accent-3"
 			label="Tìm kiếm (quán, món, ...)"
 			offset-x
 			@keyup.enter="search"
-			:append-icon="'search'"
-			:append-icon-cb="search"
-			single-line></v-text-field>		
+			:append-outer-icon="'search'"
+			:append-outer-icon-cb="search"
+			single-line class="elevation-0"></v-text-field>		
 
 			<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
 

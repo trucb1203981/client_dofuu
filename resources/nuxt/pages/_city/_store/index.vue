@@ -2,9 +2,16 @@
 	<v-container fluid grid-list-lg="$vuetify.breakpoint.mdAndUp" grid-list-xs="$vuetify.breakpoint.smAndDown">
 		<v-layout child-flex wrap v-show="!loading">
 			<v-flex xs12 md8>
-				<!-- <v-autocomplete prepend-icon="search" :items="productData" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" box item-text="name" item-value="name" clearable>
-					
-				</v-autocomplete> -->
+				<v-autocomplete prepend-inner-icon="search" :items="productData" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" outline max-height="200" height="10" item-text="name"  clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu" color="red accent--3" return-object @input="openCartDialog">
+					<template slot="item" slot-scope="data" >
+						<v-list-tile-avatar>
+							<img :src="image(data.item.image)">
+						</v-list-tile-avatar>
+						<v-list-tile-content>
+							<v-list-tile-title v-html="data.item.name"></v-list-tile-title>				
+						</v-list-tile-content>				
+					</template>
+				</v-autocomplete>
 				<!-- CARD DEAL START -->
 				<v-card color="white" v-if="store.coupon != null" flat>
 					<v-tooltip v-model="showTooltip" top>
@@ -90,11 +97,9 @@
 									<v-flex xs12 md4 class="text-xs-center">
 										<v-avatar size="80" color="grey lighten-3">
 											<img :src="image(item.image)" alt="alt">
-										</v-avatar>
+										</v-avatar>										
 									</v-flex>
-
 									<v-flex xs12 md8 class="px-0">				
-
 										<v-layout row wrap class="pr-2">
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="pa-0 text-xs-center" :key="i" v-if="size.price >0">
 												<div class="caption">{{size.name}}:</div>
@@ -789,16 +794,16 @@ export default {
 					this.sizes        =  []		
 					var uuid = require("uuid");
 					var rowId = uuid.v4();
-
-					await item.sizes.forEach(size => {
-						if(size.price > 0) {					
-							this.sizes.push(size)
-							if(this.editedItem.size === null) {
-								this.editedItem.size = size
+					if(item.sizes.length >0) {
+						await item.sizes.forEach(size => {
+							if(size.price > 0) {					
+								this.sizes.push(size)
+								if(this.editedItem.size === null) {
+									this.editedItem.size = size
+								}
 							}
-						}
-					})
-
+						})
+					}
 					this.editedItem       = Object.assign(this.editedItem, item)
 					this.editedItem.rowId = rowId
 					this.optionDialog     = true
@@ -921,14 +926,9 @@ export default {
 			}
 			
 			let temp   = data.filter(item => {
-				var products = item.products.filter(product => product.name.toLowerCase().indexOf(search) > -1)
-				if(products.length>0) {
-					item.products = products
-					return item
-				}
+				return item.products.some((product) => product.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
 			})
 
-			console.log(temp)
 			return temp
 		},
 		//GET ALL PRODUCT BY STORE
@@ -1004,7 +1004,6 @@ export default {
 		menu: function () {
 			if(this.store.catalogues.length>0) { 
 				if(this.store.catalogues) {
-					console.log(this.store.catalogues)
 					return this.getByKeyWords(this.store.catalogues.slice(0), this.search)
 				}
 			}
@@ -1056,14 +1055,10 @@ export default {
 		},
 		'dialog': function(val) {
 			if(!val) {
-				console.log(!val)
 				this.$store.commit('CLOSE_CHECKOUT_SUCCESS')
 			}
 		}
 	},	
-	mounted: async function() {
-		
-	},
 	beforeDestroy() {
 		this.$store.commit('REMOVE_COUPON')
 		this.$store.commit('CLOSE_CHECKOUT')

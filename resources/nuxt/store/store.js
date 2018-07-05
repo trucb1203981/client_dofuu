@@ -43,10 +43,12 @@ const actions = {
 			}
 			await resolve(response)
 			setTimeout(() => {
-				commit('LOADING_STORE')
+				
 			}, 500)
 		}).catch(error => {
 			reject(error)
+		}).finally(() => {
+			commit('LOADING_STORE')
 		})
 
 	}),

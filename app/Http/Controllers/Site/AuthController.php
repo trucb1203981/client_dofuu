@@ -133,17 +133,19 @@ class AuthController extends Controller
     public function me()
     {
         $user = auth('api')->user();
-        // dd($user);
+
         if($user->actived) {
             if ($user->role_id == $this->customer->id) {
                 $data = [
                     'id'       => $user->id,
                     'name'     => $user->name,
+                    'birthday' => $user->birthday,
+                    'gender'   => $user->gender,
                     'email'    => $user->email,
                     'image'    => $user->image,
                     'address'  => $user->address,
                     'phone'    => $user->phone,
-                    'freeShip' => $user->free_ship,
+                    $user->free_ship ? `'freeShip' => $user->free_ship` : '',
                     'type'     => 'Customer'
                 ];
 
@@ -151,6 +153,8 @@ class AuthController extends Controller
                 $data = [
                     'id'         => $user->id,
                     'name'       => $user->name,
+                    'birthday' => $user->birthday,
+                    'gender'   => $user->gender,
                     'email'      => $user->email,
                     'image'      => $user->image,
                     'address'    => $user->address,
@@ -164,6 +168,8 @@ class AuthController extends Controller
                 $data = [
                     'id'         => $user->id,
                     'name'       => $user->name,
+                    'birthday' => $user->birthday,
+                    'gender'   => $user->gender,
                     'email'      => $user->email,
                     'image'      => $user->image,
                     'address'    => $user->address,

@@ -1,7 +1,9 @@
+import Vue from 'vue'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import {getHeader} from '@/config'
-import {removeToken} from '@/utils/auth'
+import Auth from '@/utils/auth'
+Vue.use(Auth)
 var cookieparser = require('cookieparser')
 
 const inBrowser = typeof window !== 'undefined'
@@ -32,13 +34,13 @@ const mutations = {
 	REVOKE_TOKEN: function(state) {
 		state.token  = null
 		state.isAuth = false
-		removeToken()	
+		Vue.auth.removeToken()	
 	},
 	LOGOUT: function(state, token) {
 		state.currentUser = null
 		state.isAuth      = false
 		state.token       = null
-		removeToken()
+		Vue.auth.removeToken()
 	}
 }
 

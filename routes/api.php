@@ -37,8 +37,12 @@ Route::group(['middleware' => 'api', 'namespace' => 'Site'], function ($router) 
 });
 
 Route::group(['namespace' => 'Site'], function() {
+	//REGISTER ACCOUNT
 	Route::post('/register', 'AuthController@register');
+	//ACTIVE ACCOUNT
 	Route::post('/user/active', 'AuthController@active');
+	//GET USER
+	Route::get('/getUser', 'UserController@getUser');
     //FETCH CITY
 	Route::get('/FetchCities', 'CityController@fetchCity');
 	//GET CITY CURRENT

@@ -92,6 +92,13 @@ class User extends Authenticatable implements AuthenticatableUserContract, Authe
             return true;
         } 
         return false;
+    }
+
+    public function getGenderAttribute($value) {
+        if($value) {
+            return true;
+        } 
+        return false;
 
     }
 }

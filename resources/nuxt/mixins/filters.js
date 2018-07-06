@@ -35,3 +35,8 @@ Vue.filter('formatPrice', function(price) {
 Vue.filter('subPrice', function(price, qty) {
 	return numeral(Math.floor(price*qty)).format('0,0$')
 })
+
+Vue.filter('formatPhone', function(phone) {
+	
+	return phone.replace(/(\d{4}|\d{5})(\d{3})(\d{3})/,"($1) $2-$3")
+})

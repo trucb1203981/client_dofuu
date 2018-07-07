@@ -2,11 +2,11 @@
 	<v-container fluid fill-height>
 		<v-layout align-center justify-center>
 			<v-flex xs12 sm8 md4>
-				<v-card class="elevation-12">
+				<v-card class="grey lighten-4">
 					<v-toolbar color="transparent" dense class="elevation-0"> 
 						<v-toolbar-title>Quên mật khẩu</v-toolbar-title>
 					</v-toolbar>
-					<v-card-text>
+					<v-card-text class="white">
 						<v-form>
 							<v-text-field color="red accent-3" prepend-icon="email" v-model="email" name="email" label="Email" type="text"></v-text-field>
 						</v-form>

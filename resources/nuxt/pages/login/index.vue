@@ -2,17 +2,19 @@
 	<v-container fluid fill-height>
 		<v-layout align-center justify-center>
 			<v-flex xs12 sm8 md4>
-				<v-card class="elevation-12">
+				<v-card class="grey lighten-4">
 					<v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 					<v-toolbar color="transparent" dense class="elevation-0" > 
 						<v-toolbar-title>
 							Đăng nhập
 						</v-toolbar-title>
 					</v-toolbar>
-					<v-card-text>
-						<v-alert :color="alert.type"  icon="warning" :value="show" outline>
+					<v-card-text class="white">
+						
+						<v-alert :color="alert.type" dismissible :value="alert.show" outline v-show="alert.index === 0 && $route.name == alert.name">
 							{{alert.message}}
 						</v-alert>
+
 						<v-form>
 							<v-text-field 
 							color="red accent-3"
@@ -62,7 +64,6 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import {clientID, clientSecret} from '@/env'
 import {tokenURL, loginURL} from '@/config'
-import {removeToken} from '@/utils/auth'
 import vietnam from 'vee-validate/dist/locale/vi';
 export default {
 	middleware: 'authenticated',
@@ -81,8 +82,8 @@ export default {
 			let data = {email: vm.email, password: vm.password}
 			vm.$validator.validateAll().then(async function( result ) {
 				if( result ) {
-					vm.loading = await !vm.loading
-					await axios.post('/api/auth/login', data).then(response => {
+					vm.loading = !vm.loading
+					axios.post('/api/auth/login', data).then(response => {
 						if(response.status == 200) {
 							if(response.data.type === 'error') {
 								vm.$store.dispatch('alert', {name: vm.$route.name, alert:  {show: true, message: response.data.message, type: 'error'}})
@@ -107,10 +108,11 @@ export default {
 						}
 					}).catch(error => {
 						if(error.response.status === 401) {
-							vm.$store.dispatch('alert', {name: vm.$route.name, alert:  {show: true, message: 'Email hoặc mật khẩu không đúng', type: 'error'}})
+							vm.$store.dispatch('alert', {index:0, name: vm.$route.name, show: true, message: 'Email hoặc mật khẩu không đúng', type: 'error', close:true})
 						}
-					})
-					vm.loading = !vm.loading
+					}).finally(() => {
+						vm.loading = !vm.loading
+					})					
 				}
 			})			
 		}
@@ -130,7 +132,7 @@ export default {
 			return this.$route.query.redirect
 		},
 		...mapState({
-			name: state => state.alertStore.name,
+			name: state  => state.alertStore.name,
 			alert: state => state.alertStore.alert
 		}), 
 		show() {

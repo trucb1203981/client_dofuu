@@ -29,7 +29,7 @@
 						</v-avatar>
 					</v-layout>
 				</v-container>				
-				<v-list :dense="$vuetify.breakpoint.smAndDown">
+				<v-list>
 					<v-list-tile @click="">
 						<v-list-tile-action>
 							<v-icon color="primary">person</v-icon>							
@@ -102,6 +102,7 @@
 				</v-list>	
 				<v-card-actions class="justify-center">
 					<v-btn color="success" round small :to="{path: 'information/edit'}">Thay đổi thông tin</v-btn>
+					<v-btn color="success" round small :to="{path: 'information/change-password'}">Thay đổi mật khẩu</v-btn>
 				</v-card-actions>				
 			</v-card>
 		</v-flex>

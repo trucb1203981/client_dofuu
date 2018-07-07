@@ -12,9 +12,9 @@
 						</v-flex>
 					</v-flex>
 
-					<v-flex xs12 v-if="deal.stores.length>0">
+					<v-flex xs12 v-if="deal.stores.length>0" class="mb-3">
 						<!-- START DEAL STORES -->
-						<v-card flat class="pb-2" >					
+						<v-card flat>					
 							<v-layout grey lighten-4 row wrap class="elevation-1" >
 
 								<v-toolbar color="white" flat dense  extension-height="30px">

@@ -17,7 +17,7 @@ export default {
 			axios.post(baseURL+'/api/user/active', data).then(response => {
 				if(response.status === 200) {
 					if(response.data != '') {
-						vm.$store.dispatch('alert', {name: 'login' , alert: {show:true, type: 'success', message: response.data}})
+						vm.$store.dispatch('alert', {index:0, name: 'login', show:true, type: 'success', message: response.data, close:true})
 					}					
 					this.$router.replace({name: 'login'})
 				}

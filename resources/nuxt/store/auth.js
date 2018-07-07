@@ -34,13 +34,15 @@ const mutations = {
 	REVOKE_TOKEN: function(state) {
 		state.token  = null
 		state.isAuth = false
-		Vue.auth.removeToken()	
+		window.localStorage.removeItem('jwt')
+		Cookies.remove('jwt', null)	
 	},
 	LOGOUT: function(state, token) {
 		state.currentUser = null
 		state.isAuth      = false
 		state.token       = null
-		Vue.auth.removeToken()
+		window.localStorage.removeItem('jwt')
+		Cookies.remove('jwt', null)
 	}
 }
 

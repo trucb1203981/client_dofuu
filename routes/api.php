@@ -30,9 +30,16 @@ Route::group(['middleware' => 'api', 'namespace' => 'Site'], function ($router) 
 		Route::post('/Checkout/GetProductByStore', 'CartController@getProductByStore');
 		//History Booking 
 		Route::post('OrderByFilter', 'CartController@orderByFilter');
+		//ORDER DETAILS
 		Route::post('Order/GetOrderDetail', 'CartController@getOrderDetail');
+		//CANCEL ORDER
 		Route::post('Order/CancelByCustomer', 'CartController@cancelOrder');
-		
+		//GET USER
+		Route::get('/GetUser', 'UserController@getUser');
+		//EDIT INFORMATION
+		Route::post('/GetUser/EditInformation', 'UserController@editUser');
+		//CHANGE PASSWORD
+		Route::post('/GetUser/ChangePassword', 'UserController@changePassword');
 	});
 });
 
@@ -41,8 +48,7 @@ Route::group(['namespace' => 'Site'], function() {
 	Route::post('/register', 'AuthController@register');
 	//ACTIVE ACCOUNT
 	Route::post('/user/active', 'AuthController@active');
-	//GET USER
-	Route::get('/getUser', 'UserController@getUser');
+	
     //FETCH CITY
 	Route::get('/FetchCities', 'CityController@fetchCity');
 	//GET CITY CURRENT

@@ -70,14 +70,14 @@
 					</v-list>
 					<v-divider></v-divider>
 					<v-list >
-						<!-- <v-list-tile avatar :to="{name:'information'}">
+						<v-list-tile avatar :to="{name:'information'}">
 							<v-list-tile-avatar>
 								<v-icon class="blue white--text">person</v-icon>
 							</v-list-tile-avatar>
 							<v-list-tile-content>
 								<v-list-tile-title>Thông tin tài khoản</v-list-tile-title>
 							</v-list-tile-content>
-						</v-list-tile> -->
+						</v-list-tile>
 						<v-list-tile avatar :to="{name:'history'}">
 							<v-list-tile-avatar>
 								<v-icon class="yellow lighten-1 white--text">history</v-icon>

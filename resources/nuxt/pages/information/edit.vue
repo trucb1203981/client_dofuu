@@ -16,20 +16,18 @@
 		<v-layout justify-center v-if="!loading">
 			<v-flex xs12>
 				<v-card color="grey lighten-4">
-					<v-toolbar color="white" dense class="elevation-0">
+					<v-toolbar color="transparent" dense class="elevation-0">
 						<v-toolbar-title>
 							Chỉnh sửa thông tin
 						</v-toolbar-title>
-					</v-toolbar>
-					<v-container>
-						<v-layout row wrap class="justify-center">
-							<v-avatar size="150" color="grey" style="border">
-								<img :src="image(currentUser.image)" alt="avatar">
-							</v-avatar>
-						</v-layout>
-					</v-container>				
-					<v-card>
+					</v-toolbar>			
+					<v-card flat>
 						<v-container>
+
+							<v-alert :color="alert.type" dismissible :value="alert.show" outline v-show="alert.index === 0 && $route.name == alert.name" :icon="alert.type == 'error' ? 'warning' : 'priority_high' ">
+								{{alert.message}}
+							</v-alert>
+
 							<v-layout column>
 								<v-flex xs12 md6>
 									<v-text-field
@@ -64,7 +62,7 @@
 										ref="picker"
 										locale="vn-vi"
 										v-model="editedItem.birthday"
-										@change="$refs.menu.save(editedItem.birthday)"
+										@change="changeDate"
 										min="1950-01-01"
 										:max="new Date().toISOString().substr(0, 10)"></v-date-picker>
 									</v-menu>
@@ -80,8 +78,8 @@
 									data-vv-name="gender" 
 									data-vv-scope="user">
 									<v-radio color="red accent-3" label="Nam" :value="true" 
-									></v-radio>
-									<v-radio color="red accent-3" label="Nữ" :value="false"
+									@change="changeAttribute"></v-radio>
+									<v-radio color="red accent-3" label="Nữ" :value="false" @change="changeAttribute"
 									></v-radio></v-radio-group>
 								</v-flex>
 
@@ -102,8 +100,10 @@
 								</v-flex>
 
 								<v-flex xs12 md6 v-if="editedItem.address != null">
-									<v-subheader>Chúng tôi lấy vị trí của bạn để tiện cho việc đặt và giao hàng.</v-subheader>
-									<div id="map"></div>	
+									<v-subheader >Chúng tôi lấy vị trí của bạn để tiện cho việc đặt và giao hàng.</v-subheader>
+									<v-slide-y-transition>
+										<div id="map"></div>	
+									</v-slide-y-transition>
 								</v-flex>							
 							</v-layout>
 						</v-container>
@@ -111,7 +111,7 @@
 					<v-card-actions class="justify-center">
 						<v-btn color="error" small round :to="{name: 'information'}">Quay lại</v-btn>
 						<v-spacer></v-spacer>
-						<v-btn color="success" round small>Hoàn thành</v-btn>
+						<v-btn color="success" round small :loading="process" :disabled="disabled" @click.stop="save">Hoàn thành</v-btn>
 					</v-card-actions>				
 				</v-card>
 			</v-flex>
@@ -120,13 +120,18 @@
 </template>
 
 <script>
+import image from '@/components/image'
 import axios from 'axios'
 import {getLocation, geocoder} from '@/utils/index'
 import index from '@/mixins/index'
 import {mapState} from 'vuex'
+import vietnam from 'vee-validate/dist/locale/vi';
 export default {
 	middleware: 'notAuthenticated',
 	mixins: [index],
+	components: {
+		'vue-image': image
+	},
 	data() {
 		return {
 			loading: false,
@@ -143,18 +148,38 @@ export default {
 			confirm: '',
 			menu:false,
 			loading: false,
+			process: false,
 			locale: 'vi',
+			disabled: true
 		}
 	},
 	methods: {
+		save: function() {
+			var vm   = this
+			var data = Object.assign({}, vm.editedItem)
+			vm.$validator.validateAll().then(async function(result) {
+				if(result) {
+					vm.process = true
+					axios.post('/api/Dofuu/GetUser/EditInformation', data).then(response => {
+						if(response.status === 200) {
+							vm.editedItem = Object.assign({}, response.data.data)
+							vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"success", close:true })
+						}
+					}).finally(() => {
+						vm.process = false
+						vm.disabled = true
+					})
+				}
+			})
+		},
 		getUser() {
 			this.loading = true
-			axios.get('/api/getUser', {withCredentials:true}).then(response=> {
+			axios.get('/api/Dofuu/GetUser', {withCredentials:true}).then(response=> {
 				if(response.status === 200) {
 					this.editedItem = Object.assign({}, response.data.data)
 				}
 			}).finally(() => {
-				this.loading = false
+				this.loading  = false
 			})
 		},
 		autoComplete() {
@@ -166,7 +191,6 @@ export default {
 				var place = autocomplete.getPlace()
 				if(!place.geometry) {
 					geocoder('address', input.value).then(response => {
-						console.log(response[0].geome)
 						vm.editedItem.address = response[0].formatted_address.slice(0, -10)				
 						vm.editedItem.lat     = response[0].geometry.location.lat()
 						vm.editedItem.lng     = response[0].geometry.location.lng()
@@ -176,7 +200,6 @@ export default {
 
 					return
 				}
-				console.log(place)
 				vm.editedItem.address = place.formatted_address	
 				vm.editedItem.lat     = place.geometry.location.lat()
 				vm.editedItem.lng     = place.geometry.location.lng()
@@ -197,41 +220,63 @@ export default {
 				position: latlng,
 				map: map
 			});
+		},
+		changeDate() {
+			this.$refs.menu.save(this.editedItem.birthday)
+			this.disabled = false
+		},
+		changeAttribute() {
+			this.disabled = false
 		}
 	},
 	computed: {
 		...mapState({
-			currentUser: state => state.authStore.currentUser
+			currentUser: state => state.authStore.currentUser,
+			alert: state       => state.alertStore.alert
 		})
 	},
 	watch: {
 		menu(val) {
 			val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
 		},
-		'editedItem': function(val, oldVal) {
-			if(val) {
-				if(val.address != null) {
-					this.$nextTick(() => {
-
-					})
-					this.googleMap(val)
-				}
+		'editedItem.name': function(val, oldVal) {
+			var vm = this
+			if(oldVal != '') {
+				this.disabled = false
+			} else {
+				this.disabled = true
 			}
 		},
-		'editedItem.address': function(val) {
+		'editedItem.address': function(val, oldVal) {
 			var vm = this
 			if(val.length > 15) {
-				geocoder('address', val).then(response => {
-					// vm.editedItem.address = response[0].formatted_address.slice(0, -10)				
+				geocoder('address', val).then(response => {			
 					vm.editedItem.lat     = response[0].geometry.location.lat()
 					vm.editedItem.lng     = response[0].geometry.location.lng()
 				})
+				setTimeout(() => {					
+					vm.googleMap(vm.editedItem)
+				}, 1000)
 
-				vm.googleMap(vm.editedItem)
+			} 
+			if(oldVal != null) {
+				this.disabled = false
+			} else {
+				this.disabled = true
 			}
 		}
 	},
 	created() {
+		this.$validator.localize(this.locale, {
+			messages:vietnam.messages,
+			attributes: {
+				name: 'Họ tên',
+				birthday: 'Ngày sinh',
+				gender: 'Giới tính',
+				address: 'Địa chỉ'
+			}
+		})
+		this.$validator.localize(this.locale)
 		this.getUser()
 	},
 

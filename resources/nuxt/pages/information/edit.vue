@@ -120,7 +120,6 @@
 </template>
 
 <script>
-import image from '@/components/image'
 import axios from 'axios'
 import {getLocation, geocoder} from '@/utils/index'
 import index from '@/mixins/index'
@@ -129,9 +128,6 @@ import vietnam from 'vee-validate/dist/locale/vi';
 export default {
 	middleware: 'notAuthenticated',
 	mixins: [index],
-	components: {
-		'vue-image': image
-	},
 	data() {
 		return {
 			loading: false,

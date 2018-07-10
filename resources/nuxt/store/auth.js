@@ -11,7 +11,8 @@ const inBrowser = typeof window !== 'undefined'
 const state = {
 	currentUser: null,
 	isAuth: !!window.localStorage.getItem('jwt') || !!Cookies.get('jwt'),
-	token: null
+	token: null,
+	imageDialog: false
 }
 
 const mutations = {
@@ -43,6 +44,12 @@ const mutations = {
 		state.token       = null
 		window.localStorage.removeItem('jwt')
 		Cookies.remove('jwt', null)
+	},
+	SHOW_IMAGE_DIALOG: function(state) {
+		state.imageDialog = true
+	},
+	CLOSE_IMAGE_DIALOG: function(state) {
+		state.imageDialog = false
 	}
 }
 

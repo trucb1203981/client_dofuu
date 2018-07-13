@@ -9,6 +9,9 @@
 							Đăng nhập
 						</v-toolbar-title>
 					</v-toolbar>
+					<!-- <v-card-actions>
+						<v-btn color="indigo accent-4" dark block :loading="loading" @click.stop.prevent="fbLogin" small><v-icon left>fab fa-facebook-square</v-icon>Đăng nhập bằng facebook</v-btn>
+					</v-card-actions> -->
 					<v-card-text class="white">
 						
 						<v-alert :color="alert.type" dismissible :value="alert.show" outline v-show="alert.index === 0 && $route.name == alert.name">
@@ -115,6 +118,26 @@ export default {
 					})					
 				}
 			})			
+		},
+		fbLogin() {
+			var data = []
+			var vm   = this
+			FB.login(function(response) {
+				if(response.authResponse) {
+					console.log(response)
+					FB.api('/me', null , {'fields': 'email, name, birthday, gender, location, picture'}, function(response) {
+						data = response
+						axios.post('/api/facebook/auth', data).then(response => {
+							if(response.status === 204) {
+								vm.$store.commit('SET_TEMP_USER', data)
+								vm.$router.push({name: 'login-facebook'})
+							}
+						})
+					});
+				} else {
+					console.log('User cancelled login or did not fully authorize.');
+				}
+			}, {scope: 'email,user_likes, user_birthday, user_location, user_gender'})
 		}
 	},
 	created() {

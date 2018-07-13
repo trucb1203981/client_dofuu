@@ -48,7 +48,12 @@ Route::group(['namespace' => 'Site'], function() {
 	Route::post('/register', 'AuthController@register');
 	//ACTIVE ACCOUNT
 	Route::post('/user/active', 'AuthController@active');
-	
+	//LOGIN FACEBOOK
+	Route::post('/facebook/auth', 'AuthController@loginFB');
+	//REGISTER FACEBOOK 
+	Route::post('/facebook/register', 'AuthController@registerFB');
+
+	Route::get('/callback', 'SocialAuthController@callback');
     //FETCH CITY
 	Route::get('/FetchCities', 'CityController@fetchCity');
 	//GET CITY CURRENT

@@ -9,6 +9,7 @@ var cookieparser = require('cookieparser')
 const inBrowser = typeof window !== 'undefined'
 
 const state = {
+	tempUser: null,
 	currentUser: null,
 	isAuth: !!window.localStorage.getItem('jwt') || !!Cookies.get('jwt'),
 	token: null,
@@ -44,6 +45,12 @@ const mutations = {
 		state.token       = null
 		window.localStorage.removeItem('jwt')
 		Cookies.remove('jwt', null)
+	},
+	SET_TEMP_USER: function(state, payload) {
+		state.tempUser = payload
+	},
+	DESTROY_TEMP_USER: function(state) {
+		state.tempUser = null
 	},
 	SHOW_IMAGE_DIALOG: function(state) {
 		state.imageDialog = true

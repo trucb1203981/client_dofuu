@@ -9,6 +9,7 @@ use App\Http\Requests\Site\UserRequest;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Activation;
+use App\Models\SocialAccount;
 use App\Http\Resources\Site\AuthResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class AuthController extends Controller
         $this->customer = Role::where('name', 'Customer')->first();
         $this->partner  = Role::where('name', 'Partner')->first();
         $this->employee = Role::where('name', 'Employee')->first();
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'loginFB', 'registerFB']]);
     }
 
     /**
@@ -197,6 +198,74 @@ class AuthController extends Controller
         return response('Unauthorized Error', 401);
     }
 
+    public function loginFB(Request $request) {
+        $account = SocialAccount::where('provider', 'facebook')->where('provider_user_id', $request->id)->first();
+        if($account) {
+
+            $res = [
+                'type'    => 'success',
+                'message' => 'Đăng nhập thành công',
+                'data'    => $account->user
+            ];
+            return response($res, 200);
+
+        } else {
+
+            $res = [
+                'type'    => 'warning',
+                'message' => 'Tài khoản chưa được đăng ký',
+                'data'    => []
+            ];
+            return response($res, 204);
+            // $account = new SocialAccount([
+            //     'provider_user_id' => $request->id,
+            //     'provide'          => 'facebook'
+            // ]);
+            // $user = User::where('email', $request->email)->first();
+
+            // if(!$user) {
+            //     $user = User::create([
+            //         'name' => $request->name,
+            //         'email' => $request->email,
+            //         'gender'=> $request->gender,
+            //         'birthday' => $request->birthday,
+
+            //     ]);
+            // }
+        }
+    }
+
+    public function registerFB(Request $request) {
+        $account = new SocialAccount([
+            'provider_user_id' => $request->id,
+            'provider'          => 'facebook'
+        ]);
+        $user = User::where('email', $request->email)->first();
+
+        if(!$user) {
+            $user               = new User;
+            $user->name         = $request->name;
+            $user->email        = $request->email;
+            if($request->gender == 'male') {
+                $user->gender = 1;
+            } else {
+                $user->gender = 0;
+            }
+            $user->birthday = $request->birthday;
+            $user->phone    = $request->phone;
+            $user->password = bcrypt($request->password);
+            $user->image    = $request->picture->data->url;
+            $user->save();
+        }
+        $account->user()->associate($user);
+        $account->save();
+        $res = [
+            'type'    => 'warning',
+            'message' => 'Tài khoản đã được đăng ký',
+            'data'    => $user
+        ];
+        return response($res, 201);
+    }
     /**
      * Log the user out (Invalidate the token).
      *

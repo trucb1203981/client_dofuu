@@ -16,7 +16,10 @@ module.exports = laravelNuxt({
 		link: [
 		{ rel: 'icon', type: 'image/x-icon', href: '/dofuu24x24.png'},
 		{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'}
-		]
+		],
+		script: [
+		{ src: '/js/fb-sdk.js' }
+		],
 	},
 	loading: { color: '#3B8070' },
 	/*

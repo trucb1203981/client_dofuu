@@ -24,14 +24,14 @@
 					<v-container>
 						<v-layout row wrap class="justify-center">
 							
-							<a @click.stop="$store.commit('SHOW_IMAGE_DIALOG')">								
+							<!-- <a @click.stop="$store.commit('SHOW_IMAGE_DIALOG')">								 -->
 								<v-avatar  size="150" color="grey" style="border" @mouseover="hoverImage = true" @mouseleave="hoverImage = false">
 									<img :src="image(currentUser.image)" alt="avatar">
 								</v-avatar>
 								<v-badge color="blue-grey" top right overlap v-model="show">
 									<v-icon slot="badge" dark >camera_alt</v-icon>
 								</v-badge>	
-							</a>
+							<!-- </a> -->
 						</v-layout>
 					</v-container>				
 					<v-list>

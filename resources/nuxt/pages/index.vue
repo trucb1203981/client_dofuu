@@ -98,9 +98,9 @@
 								<v-flex xs12>
 									<v-content>
 										<!-- STORE LIST -->
-										<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list>
+										<!-- <vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list> -->
 										<!-- STORE GRID -->
-										<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid>
+										<!-- <vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid> -->
 										<!-- PAGINATION -->
 										<div class="text-xs-center" v-if="deal.pagination.last_page>1">
 											<v-pagination :length="deal.pagination.last_page" v-model="deal.pagination.current_page" @input="changePage(deal.pagination.current_page, 'deal')" circle></v-pagination>
@@ -179,9 +179,9 @@
 								<v-flex xs12 order-xs1>
 									<v-content class="pb-0">
 										<!-- STORE LIST -->
-										<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list>
+										<!-- <vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list> -->
 										<!-- STORE GRID -->
-										<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid>
+										<!-- <vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid> -->
 
 										<div class="text-xs-center" v-if="all.pagination.last_page>1">
 											<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>

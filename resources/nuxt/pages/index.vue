@@ -1,5 +1,5 @@
 <template>
-	<v-container grey-lighten-4 lighten-2  grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
+	<v-container grey-lighten-4 lighten-2  :grid-list-xs="$vuetify.breakpoint.smAndDown" :grid-list-md="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
 		<v-layout grey-lighten-4 row wrap v-if="!loading">
 			<v-flex xs12>
 				<v-layout column> 

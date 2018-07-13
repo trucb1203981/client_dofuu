@@ -1,6 +1,6 @@
 <template>
 	<no-ssr>
-		<v-container grey-lighten-4 lighten-2 :grid-list-xs="$vuetify.breakpoint.smAndDown" :grid-list-lg="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
+		<v-container grey-lighten-4 lighten-2  v-scroll="onScroll">
 			<v-layout grey-lighten-4 row wrap v-if="!loading">
 				<v-flex xs12>
 					<v-layout column> 
@@ -8,7 +8,7 @@
 						<v-flex xs12>
 							<v-flex xs12>
 								<no-ssr>
-									<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300px' : '200px'"  >			
+									<v-card-media   >			
 										<img src="img/deal_banner.png" alt="">
 									</v-card-media>
 								</no-ssr>
@@ -28,7 +28,7 @@
 
 										<v-toolbar-items slot="extension">
 											<!-- START DISTRICT IN DEAL STORE -->
-											<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+											<v-menu left bottom offset-y >
 												<v-btn slot="activator" flat><h5>Khu vực</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
 												<v-list dense>
 													<v-list-tile @click="loadDistrict(0, 'deal')" :class="{'red--text text--accent-2 bold' : deal.list_flag == 0}" >
@@ -62,7 +62,7 @@
 												</v-list>
 											</v-menu> <!-- END DISTRICT IN ALL STORE -->
 											<!-- START TYPE IN ALL STORE -->
-											<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+											<v-menu left bottom offset-y >
 												<v-btn slot="activator" flat><h5>Danh mục</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
 												<v-list dense>
 													<v-list-tile @click="loadType(0, 'deal')" :class="{'red--text text--accent-2' : deal.list_flag == 0}" >
@@ -102,11 +102,11 @@
 										<v-content>
 											<!-- STORE LIST -->
 											<no-ssr>
-												<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list>
+												<vue-store-list v-if="currentCity != null" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list>
 											</no-ssr>
 											<!-- STORE GRID -->
 											<no-ssr>
-												<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid>
+												<vue-store-grid v-if="currentCity != null" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid>
 											</no-ssr>
 											<!-- PAGINATION -->
 											<div class="text-xs-center" v-if="deal.pagination.last_page>1">
@@ -128,7 +128,7 @@
 										</v-toolbar-title>
 										<!-- START DISTRICT IN ALL STORE -->
 										<v-toolbar-items slot="extension">
-											<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+											<v-menu left bottom offset-y >
 												<v-btn slot="activator" flat> <h5>Khu vực</h5> <v-icon right>arrow_drop_down</v-icon></v-btn>
 												<v-list dense>
 													<v-list-tile @click="loadDistrict(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}">
@@ -154,7 +154,7 @@
 												</v-list>
 											</v-menu> <!-- END DISTRICT IN ALL STORE -->
 											<!-- START TYPE IN ALL STORE -->
-											<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+											<v-menu left bottom offset-y>
 												<v-btn slot="activator" flat><h5>Danh mục</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
 												<v-list dense>
 													<v-list-tile @click="loadType(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}" >
@@ -187,11 +187,11 @@
 										<v-content class="pb-0">
 											<!-- STORE LIST -->
 											<no-ssr>
-												<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list>
+												<vue-store-list v-if="currentCity != null" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list>
 											</no-ssr>
 											<!-- STORE GRID -->
 											<no-ssr>
-												<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid>
+												<vue-store-grid v-if="currentCity != null" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid>
 											</no-ssr>
 											<div class="text-xs-center" v-if="all.pagination.last_page>1">
 												<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>

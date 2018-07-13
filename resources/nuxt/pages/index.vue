@@ -7,9 +7,9 @@
 						
 						<v-flex xs12>
 							<v-flex xs12>
-								<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300px' : '200px'"  >			
+								<!-- <v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300px' : '200px'"  >			
 									<img src="img/deal_banner.png" alt="">
-								</v-card-media>
+								</v-card-media> -->
 							</v-flex>
 						</v-flex>
 
@@ -99,9 +99,9 @@
 									<v-flex xs12>
 										<v-content>
 											<!-- STORE LIST -->
-											<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list>
+											<!-- <vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list> -->
 											<!-- STORE GRID -->
-											<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid>
+											<!-- <vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid> -->
 											<!-- PAGINATION -->
 											<div class="text-xs-center" v-if="deal.pagination.last_page>1">
 												<v-pagination :length="deal.pagination.last_page" v-model="deal.pagination.current_page" @input="changePage(deal.pagination.current_page, 'deal')" circle></v-pagination>
@@ -180,9 +180,9 @@
 									<v-flex xs12 order-xs1>
 										<v-content class="pb-0">
 											<!-- STORE LIST -->
-											<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list>
+											<!-- <vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list> -->
 											<!-- STORE GRID -->
-											<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid>
+											<!-- <vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid> -->
 
 											<div class="text-xs-center" v-if="all.pagination.last_page>1">
 												<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>
@@ -215,8 +215,8 @@
 <script>
 import axios from 'axios'
 import index from "@/mixins/index.js";
-import StoreList from '@/components/StoreList'
-import StoreGrid from '@/components/StoreGrid'
+// import StoreList from '@/components/StoreList'
+// import StoreGrid from '@/components/StoreGrid'
 import {getCityHasDealURL, getStoreHasDealURL} from '@/config.js'
 import { mapState } from "vuex";
 import Cookies from "js-cookie";
@@ -224,8 +224,8 @@ export default {
 	mixins: [index],
 	middleware: ["home"],
 	components: {
-		'vue-store-list': StoreList,
-		'vue-store-grid': StoreGrid
+		// 'vue-store-list': StoreList,
+		// 'vue-store-grid': StoreGrid
 	},
 	// Async Data
 	async asyncData({ store }) {

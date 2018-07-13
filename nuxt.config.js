@@ -33,7 +33,7 @@ module.exports = laravelNuxt({
 	/*
 	** Plugin 
 	*/
-	plugins: ['~/plugins/vuetify', '~/plugins/filters', '~/plugins/vee-validate', '~/plugins/numeral', '~/plugins/vue-google-map', {src:'~/plugins/ga', ssr:false}, '~/plugins/axios', {src: '~/plugins/auth', ssr:false}, '~/plugins/vue-croppie'],
+	plugins: ['~/plugins/vuetify', '~/plugins/filters', '~/plugins/vee-validate', '~/plugins/numeral', '~/plugins/vue-google-map', {src:'~/plugins/ga', ssr:false}, {src: '~/plugins/axios', ssr:false}, {src: '~/plugins/auth', ssr:false}, {src: '~/plugins/vue-croppie', ssr:false}],
 	build: {
 		vendor: ['vuetify', 'js-cookie', 'moment', 'vee-validate', 'numeral', 'vue2-google-maps'],
 		extend (config, { isDev, isClient }) {

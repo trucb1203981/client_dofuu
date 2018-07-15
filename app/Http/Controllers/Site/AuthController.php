@@ -27,7 +27,7 @@ class AuthController extends Controller
         $this->customer = Role::where('name', 'Customer')->first();
         $this->partner  = Role::where('name', 'Partner')->first();
         $this->employee = Role::where('name', 'Employee')->first();
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'loginFB', 'registerFB']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'loginFB', 'registerFB', 'socialLogin']]);
     }
 
     /**
@@ -84,7 +84,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(UserRequest $request) {
-        if($request->filled(['_n', '_e', '_pw', '_g', '_b', '_p'])) {
+        if($request->filled(['name', 'email', 'password', 'gender', 'birthday', 'phone'])) {
             $user           = new User;
             $user->name     = $request->_n;
             $user->email    = $request->_e;
@@ -93,6 +93,7 @@ class AuthController extends Controller
             $user->gender   = $request->_g;
             $user->phone    = $request->_p;
             $user->role_id  = $this->customer->id;
+            $user->free_ship= 1;
             $user->actived  = 1;
             $user->save();
 
@@ -105,6 +106,41 @@ class AuthController extends Controller
             return response('Create account Successfully!!!', 201);
         }
         return response('Something went wrong', 500);
+    }
+
+    public function registerFB(UserRequest $request) {
+
+        $account = new SocialAccount([
+            'provider_user_id' => $request->id,
+            'provider'         => 'facebook'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if(!$user) {
+            $user               = new User;
+            $user->name         = $request->name;
+            $user->email        = $request->email;
+            if($request->gender == 'male') {
+                $user->gender = 1;
+            } else {
+                $user->gender = 0;
+            }
+            $user->birthday = $request->birthday;
+            $user->phone    = $request->phone;
+            $user->password = bcrypt($request->password);
+            $user->image    = $request->picture['data']['url'];
+            $user->role_id  = $this->customer->id;
+            $user->actived  = 1;
+            $user->save();
+        }
+        $account->user()->associate($user);
+        $account->save();
+
+
+        $token = auth('api')->login($user);
+
+        return $this->respondWithToken($token, 1000);
     }
     /**
      * Active the user after register (Invalidate the token).
@@ -201,13 +237,13 @@ class AuthController extends Controller
     public function loginFB(Request $request) {
         $account = SocialAccount::where('provider', 'facebook')->where('provider_user_id', $request->id)->first();
         if($account) {
-
-            $res = [
-                'type'    => 'success',
-                'message' => 'Đăng nhập thành công',
-                'data'    => $account->user
-            ];
-            return response($res, 200);
+            $token = auth('api')->login($account->user);
+            // $res = [
+            //     'type'    => 'success',
+            //     'message' => 'Đăng nhập thành công',
+            //     'data'    => $account->user
+            // ];
+            return $this->respondWithToken($token, 1000);
 
         } else {
 
@@ -235,37 +271,7 @@ class AuthController extends Controller
         }
     }
 
-    public function registerFB(Request $request) {
-        $account = new SocialAccount([
-            'provider_user_id' => $request->id,
-            'provider'          => 'facebook'
-        ]);
-        $user = User::where('email', $request->email)->first();
-
-        if(!$user) {
-            $user               = new User;
-            $user->name         = $request->name;
-            $user->email        = $request->email;
-            if($request->gender == 'male') {
-                $user->gender = 1;
-            } else {
-                $user->gender = 0;
-            }
-            $user->birthday = $request->birthday;
-            $user->phone    = $request->phone;
-            $user->password = bcrypt($request->password);
-            $user->image    = $request->picture->data->url;
-            $user->save();
-        }
-        $account->user()->associate($user);
-        $account->save();
-        $res = [
-            'type'    => 'warning',
-            'message' => 'Tài khoản đã được đăng ký',
-            'data'    => $user
-        ];
-        return response($res, 201);
-    }
+    
     /**
      * Log the user out (Invalidate the token).
      *

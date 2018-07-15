@@ -9,8 +9,9 @@
 							Đăng nhập
 						</v-toolbar-title>
 					</v-toolbar>
-					<!-- <v-card-actions>
-						<v-btn color="indigo accent-4" dark block :loading="loading" @click.stop.prevent="fbLogin" small><v-icon left>fab fa-facebook-square</v-icon>Đăng nhập bằng facebook</v-btn>
+					<!-- <v-card-actions> -->
+						<!-- LOGIN FACEBOOK -->
+						<!-- <v-btn color="indigo lighten-1" dark block :loading="loading" @click.stop.prevent="fbLogin" small><v-icon left>fab fa-facebook-square</v-icon>Đăng nhập bằng facebook</v-btn>
 					</v-card-actions> -->
 					<v-card-text class="white">
 						
@@ -124,12 +125,28 @@ export default {
 			var vm   = this
 			FB.login(function(response) {
 				if(response.authResponse) {
-					console.log(response)
 					FB.api('/me', null , {'fields': 'email, name, birthday, gender, location, picture'}, function(response) {
 						data = response
 						axios.post('/api/facebook/auth', data).then(response => {
+							if(response.status === 200) {
+								vm.$store.commit('SET_TOKEN', response.data)
+								vm.$store.dispatch('getUser').then(response => {
+									if(response.data.type == 'success') {
+										if(typeof vm.redirect == 'undefined') {
+											vm.$router.push({path: '/'})
+										} else {
+											vm.$router.push({path: vm.redirect})	
+										}	
+									}
+									else if (response.data.type == 'error') {
+										vm.$store.commit('REVOKE_TOKEN')
+										vm.$store.dispatch('alert', {name: vm.$route.name, alert: {message: response.data.message, type: 'warning'}})
+									}
+
+								})
+							}
 							if(response.status === 204) {
-								vm.$store.commit('SET_TEMP_USER', data)
+								vm.$store.commit('SET_FB_USER', data)
 								vm.$router.push({name: 'login-facebook'})
 							}
 						})

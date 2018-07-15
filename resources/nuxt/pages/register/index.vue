@@ -136,8 +136,8 @@ export default {
 	methods: {
 		register: function() {
 			var vm = this
-			
-			let data = {_n: vm.editedItem.name, _e: vm.editedItem.email, _pw: vm.editedItem.password, _g: vm.editedItem.gender, _b: vm.editedItem.birthday, _p: vm.editedItem.phone}
+
+			let data = Object.assign({}, vm.editedItem)			
 
 			vm.$validator.validateAll().then(async function(result) {
 				if(result) {

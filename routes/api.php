@@ -16,6 +16,8 @@ Route::group(['middleware' => 'api', 'namespace' => 'Site'], function ($router) 
 	Route::group(['prefix' => 'auth'], function () {
         //CREDENTIAL
 		Route::post('login', 'AuthController@login');
+		Route::get('/login/facebook', 'AuthController@socialLogin');
+		Route::get('/login/facebook/callback', 'AuthController@handleProviderCallBack');
 		Route::post('logout', 'AuthController@logout');
 		Route::post('refresh', 'AuthController@refresh');
 		Route::post('/df', 'AuthController@me');
@@ -52,8 +54,6 @@ Route::group(['namespace' => 'Site'], function() {
 	Route::post('/facebook/auth', 'AuthController@loginFB');
 	//REGISTER FACEBOOK 
 	Route::post('/facebook/register', 'AuthController@registerFB');
-
-	Route::get('/callback', 'SocialAuthController@callback');
     //FETCH CITY
 	Route::get('/FetchCities', 'CityController@fetchCity');
 	//GET CITY CURRENT

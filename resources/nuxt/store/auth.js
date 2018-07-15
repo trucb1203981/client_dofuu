@@ -9,7 +9,7 @@ var cookieparser = require('cookieparser')
 const inBrowser = typeof window !== 'undefined'
 
 const state = {
-	tempUser: null,
+	facebookUser: null,
 	currentUser: null,
 	isAuth: !!window.localStorage.getItem('jwt') || !!Cookies.get('jwt'),
 	token: null,
@@ -46,11 +46,11 @@ const mutations = {
 		window.localStorage.removeItem('jwt')
 		Cookies.remove('jwt', null)
 	},
-	SET_TEMP_USER: function(state, payload) {
-		state.tempUser = payload
+	SET_FB_USER: function(state, payload) {
+		state.facebookUser = payload
 	},
-	DESTROY_TEMP_USER: function(state) {
-		state.tempUser = null
+	DESTROY_FB_USER: function(state) {
+		state.facebookUser = null
 	},
 	SHOW_IMAGE_DIALOG: function(state) {
 		state.imageDialog = true
@@ -90,6 +90,11 @@ const actions = {
 			reject(error)
 		})
 	}),
+	getFBUser:({commit}) => new Promise((resolve, reject) => {
+		FB.api('/me', null , {'fields': 'email, name, birthday, gender, location, picture'}, function(response) {
+			commit('SET_FB_USER', response)
+		});
+	}),
 	refreshToken: ({commit}, payload) => new Promise((resolve, reject) => {
 		const data = []
 		axios.post('/api/auth/refresh', data, {headers: getHeader()}).then(response => {
@@ -105,6 +110,7 @@ const actions = {
 				commit('LOGOUT')
 			}
 		})
+		FB.logout()
 	}),
 	// loadToken ({commit}, req) {
 	// 	const cookiesStr = inBrowser ? document.cookie : req.headers.cookie

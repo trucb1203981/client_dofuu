@@ -32,12 +32,12 @@
 								data-vv-name="password"
 								:error-messages="errors.collect('password')"
 								data-vv-delay="300"
-								hint="Sử dụng 8 ký tự trở lên và kết hợp chữ cái, chữ số và biểu tượng"
+								hint="Khuyên sử dụng 8 ký tự trở lên và kết hợp chữ cái, chữ số và biểu tượng"
 								persistent-hint></v-text-field>
 							</v-flex>
 
 							<v-flex xs12>
-								<v-text-field color="red accent-3"  prepend-icon="lock" v-model.trim="confirm" name="confirm" label="Xác nhận mật khẩu" id="confirm" type="password"
+								<v-text-field color="red accent-3"  prepend-icon="lock" v-model.trim="confirm" name="confirm" label="Xác nhận lại mật khẩu" id="confirm" type="password"
 								v-validate="{required: true, is:editedItem.password}"
 								data-vv-name="confirm"
 								:error-messages="errors.collect('confirm')"
@@ -48,7 +48,7 @@
 						<v-spacer></v-spacer>
 					</v-card-text>
 					<v-card-actions>
-						<v-btn round color="success" dark block :loading="loading" @click.stop.prevent="save" small>Hoàn thành</v-btn>
+						<v-btn round color="success" class="text--white" block :loading="process" @click.stop.prevent="save" :disabled="disabled" small>Hoàn thành</v-btn>
 					</v-card-actions>
 				</v-card>
 			</v-flex>
@@ -60,7 +60,10 @@
 import moment from 'moment'
 import axios from 'axios'
 import {mapState} from 'vuex'
+import vietnam from 'vee-validate/dist/locale/vi';
 export default {
+	middleware: 'authenticated',
+	layout: 'credential',
 	data() {
 		return {
 			editedItem: {
@@ -68,31 +71,118 @@ export default {
 				password: ''
 			},
 			confirm: '',
-			loading: false
+			loading: false,
+			process: false,
+			locale: 'vi',
 		}
 	},
 	computed: {
 		...mapState({
 			alert: state => state.alertStore.alert,
-			user: state  => state.authStore.tempUser
-		})
+			user: state  => state.authStore.facebookUser,
+			alert: state => state.alertStore.alert
+		}),
+		disabled: function() {
+			if(this.editedItem.phone.length > 0 && this.editedItem.password.length > 0 && this.confirm.length > 0) {
+				return false
+			} else {
+				return true
+			}
+		}
 	},
 	methods: {
 		save() {
-			this.user.birthday = moment(this.user.birthday).format('YYYY-MM-DD')
-			var data = Object.assign(this.editedItem, this.user)
-			axios.post('/api/facebook/register', data).then(response => {
-				if(response.status === 201) {
+			var vm = this
+			vm.user.birthday = moment(vm.user.birthday).format('YYYY-MM-DD')
 
-				}
+			var data = Object.assign(vm.editedItem, vm.user)
+
+			if(vm.user.gender === 'male') {
+				data.gender = true
+			} else {
+				data.gender = false
+			}
+
+			vm.$validator.validateAll().then(async function(result) {
+				if(result) {
+					vm.process = true
+					axios.post('/api/facebook/register', data).then(response => {
+						if(response.status === 201) {
+							vm.$store.commit('SET_TOKEN', response.data)
+							vm.$store.dispatch('getUser').then(response => {
+								if(response.data.type == 'success') {
+									if(typeof vm.redirect == 'undefined') {
+										vm.$router.push({path: '/'})
+									} else {
+										vm.$router.push({path: vm.redirect})	
+									}	
+								}
+								else if (response.data.type == 'error') {
+									vm.$store.commit('REVOKE_TOKEN')
+									vm.$store.dispatch('alert', {name: vm.$route.name, alert: {message: response.data.message, type: 'warning'}})
+								}
+
+							})
+						}
+					}).catch(error => {
+						if(error.response.status == 422) {
+							
+							var mes = ''
+							
+							Object.values(error.response.data.errors).map((item) => {
+								mes += item[0] + ' ';
+							})
+
+							vm.$store.dispatch('alert', {
+								name: vm.$route.name,
+								index:0,
+								type: 'error',
+								message: mes,
+								close: true
+							})
+
+						}
+					}).finally(() => {
+						vm.process = false 
+					})
+				}				
 			})
 		}
 	},
 	watch: {
-		
 	},
 	created() {
-	
+		this.$validator.localize(this.locale, {
+			messages:vietnam.messages,
+			attributes: {
+				password: 'Mật khẩu',
+				confirm: 'Xác nhận mật khẩu',
+				phone: 'Số điện thoại'
+			}
+		})
+		this.$validator.localize(this.locale)
+	},
+	mounted() {
+		this.$nextTick(() => {
+			var vm   = this
+			FB.login(function(response) {
+				if(response.authResponse) {
+					FB.api('/me', 'GET', {'fields': 'email,name,birthday,gender,location,picture.width(100).height(100)'}, function(response) {
+						var data = response
+						console.log(response)
+						axios.post('/api/facebook/auth', data).then(response => {
+							if(response.status === 204) {
+								vm.$store.commit('SET_FB_USER', data)
+							} else {
+								vm.$router.replace({path: '/'})
+							}
+						})
+					});
+				} else {
+					console.log('User cancelled login or did not fully authorize.');
+				}
+			}, {scope: 'email,user_likes, user_birthday, user_location, user_gender'})
+		})
 	}
 }
 </script>

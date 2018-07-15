@@ -1,6 +1,6 @@
 <template>
-	<v-container fluid grid-list-lg="$vuetify.breakpoint.mdAndUp" grid-list-xs="$vuetify.breakpoint.smAndDown">
-		<v-layout child-flex wrap v-show="!loading">
+	<v-container fluid :grid-list-lg="$vuetify.breakpoint.mdAndUp" :grid-list-xs="$vuetify.breakpoint.smAndDown">
+		<v-layout child-flex v-show="!loading" justify-end>
 			<v-flex xs12 md8>
 				<v-autocomplete prepend-inner-icon="search" :items="productData" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" outline max-height="200" height="10" item-text="name"  clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu" color="red accent--3" return-object @input="openCartDialog">
 					<template slot="item" slot-scope="data" >
@@ -95,7 +95,7 @@
 								<v-layout row wrap class="px-2">
 
 									<v-flex xs12 md4 class="text-xs-center">
-										<v-avatar size="80" color="grey lighten-3">
+										<v-avatar :size="imageSize"  color="grey lighten-3">
 											<img :src="image(item.image)" alt="alt">
 										</v-avatar>										
 									</v-flex>
@@ -105,11 +105,10 @@
 												<div class="caption">{{size.name}}:</div>
 												<div><strong>{{size.price | formatPrice}}</strong></div>
 											</v-flex>
-
-											<v-flex xs12 md12>
-												<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
-											</v-flex>	
 										</v-layout>										
+									</v-flex>
+									<v-flex xs12 md12>
+										<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
 									</v-flex>
 								</v-layout>
 							<!-- 	<v-system-bar status color="grey lighten-4">
@@ -122,9 +121,9 @@
 				</v-content>
 			</v-flex>
 			<!-- RIGHT NAVBAR DESKTOP -->
-			<v-flex offset-md-8 xs12 md4  ref="target_navbar_right" class="hidden-sm-and-down">
-				<v-card :class="{'card--sticky' : offsetTop>offsetNavbarRight-50 && !$vuetify.breakpoint.xsOnly}" style="z-index:4">
-					<v-tabs icons-and-text grow :value="`item-${tabIndex}`" color="">
+			<v-flex offset-md-8 xs12 md4  ref="target_navbar_right" v-if="$vuetify.breakpoint.mdAndUp" class="hidden-sm-and-down row px-0 text-xs-right">
+				<v-card :class="{'card--sticky' : offsetTop>offsetNavbarRight-50 && $vuetify.breakpoint.mdAndUp}" style="z-index:4" :width="$vuetify.breakpoint.mdOnly ? '280' : '310'">
+					<!-- <v-tabs icons-and-text grow :value="`item-${tabIndex}`">
 
 						<v-tabs-slider color="yellow"></v-tabs-slider>
 
@@ -138,7 +137,7 @@
 							<v-icon left v-if="index == 0" size="20">assignment</v-icon>
 
 						</v-tab>
-					</v-tabs>
+					</v-tabs> -->
 					<v-card-text v-if="tabIndex==0">
 						<v-list  class="scroll-y" style="max-height: 400px">
 							<v-list-tile v-for="item in store.catalogues" v-if="item.products.length>0" @click="goTo('#item_'+item.id)" :key="item.name" >
@@ -1030,6 +1029,13 @@ export default {
 				}
 			}
 			return true
+		},
+		imageSize () {
+			switch (this.$vuetify.breakpoint.name) {
+				case 'md': return '50'
+				case 'lg': return '60'
+				case 'xl': return '80'
+			}
 		}
 	},
 	watch: {
@@ -1061,6 +1067,9 @@ export default {
 			}
 		}
 	},	
+	created: function() {
+		console.log(this.$vuetify.breakpoint.name)
+	},
 	beforeDestroy() {
 		this.$store.commit('REMOVE_COUPON')
 		this.$store.commit('CLOSE_CHECKOUT')

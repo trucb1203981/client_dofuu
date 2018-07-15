@@ -9,9 +9,10 @@
 							Đăng nhập
 						</v-toolbar-title>
 					</v-toolbar>
-					<!-- <v-card-actions> -->
+					
 						<!-- LOGIN FACEBOOK -->
-						<!-- <v-btn color="indigo lighten-1" dark block :loading="loading" @click.stop.prevent="fbLogin" small><v-icon left>fab fa-facebook-square</v-icon>Đăng nhập bằng facebook</v-btn>
+				<!-- 	<v-card-actions>
+						<v-btn color="indigo lighten-1" dark block :loading="loading" @click.stop.prevent="fbLogin" small><v-icon left>fab fa-facebook-square</v-icon>Đăng nhập bằng facebook</v-btn>
 					</v-card-actions> -->
 					<v-card-text class="white">
 						

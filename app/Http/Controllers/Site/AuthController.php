@@ -131,6 +131,7 @@ class AuthController extends Controller
             $user->password = bcrypt($request->password);
             $user->image    = $request->picture['data']['url'];
             $user->role_id  = $this->customer->id;
+            $user->free_ship= 1;
             $user->actived  = 1;
             $user->save();
         }
@@ -182,7 +183,7 @@ class AuthController extends Controller
                     'image'    => $user->image,
                     'address'  => $user->address,
                     'phone'    => $user->phone,
-                    $user->free_ship ? `'freeShip' => $user->free_ship` : '',
+                    'freeShip' => $user->free_ship,
                     'type'     => 'Customer'
                 ];
 
@@ -190,8 +191,8 @@ class AuthController extends Controller
                 $data = [
                     'id'         => $user->id,
                     'name'       => $user->name,
-                    'birthday' => $user->birthday,
-                    'gender'   => $user->gender,
+                    'birthday'   => $user->birthday,
+                    'gender'     => $user->gender,
                     'email'      => $user->email,
                     'image'      => $user->image,
                     'address'    => $user->address,

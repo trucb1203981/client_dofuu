@@ -11,9 +11,9 @@
 					</v-toolbar>
 					
 						<!-- LOGIN FACEBOOK -->
-				<!-- 	<v-card-actions>
-						<v-btn color="indigo lighten-1" dark block :loading="loading" @click.stop.prevent="fbLogin" small><v-icon left>fab fa-facebook-square</v-icon>Đăng nhập bằng facebook</v-btn>
-					</v-card-actions> -->
+					<v-card-actions>
+						<v-btn color="indigo lighten-1" dark block :loading="process" @click.stop.prevent="fbLogin" small><v-icon left>fab fa-facebook-square</v-icon>Đăng nhập bằng facebook</v-btn>
+					</v-card-actions>
 					<v-card-text class="white">
 						
 						<v-alert :color="alert.type" dismissible :value="alert.show" outline v-show="alert.index === 0 && $route.name == alert.name">
@@ -47,7 +47,7 @@
 						<nuxt-link :to="{path: '/forget-password'}">Quên mật khẩu?</nuxt-link>
 					</v-card-text>
 					<v-card-actions>
-						<v-btn round color="red accent-3" dark block :loading="loading" @click.stop.prevent="login" small>Đăng nhập</v-btn>
+						<v-btn round color="red accent-3" dark block :loading="process" @click.stop.prevent="login" small>Đăng nhập</v-btn>
 					</v-card-actions>
 					<v-card-actions>
 						<v-layout row wrap justify-center>
@@ -78,7 +78,8 @@ export default {
 			email: '',
 			password: '',
 			loading: false,
-			locale: 'vi'
+			locale: 'vi',
+			process:false,
 		}
 	},
 	methods: {
@@ -87,7 +88,7 @@ export default {
 			let data = {email: vm.email, password: vm.password}
 			vm.$validator.validateAll().then(async function( result ) {
 				if( result ) {
-					vm.loading = !vm.loading
+					vm.process = true
 					axios.post('/api/auth/login', data).then(response => {
 						if(response.status == 200) {
 							if(response.data.type === 'error') {
@@ -116,7 +117,7 @@ export default {
 							vm.$store.dispatch('alert', {index:0, name: vm.$route.name, show: true, message: 'Email hoặc mật khẩu không đúng', type: 'error', close:true})
 						}
 					}).finally(() => {
-						vm.loading = !vm.loading
+						vm.process = false
 					})					
 				}
 			})			
@@ -124,6 +125,7 @@ export default {
 		fbLogin() {
 			var data = []
 			var vm   = this
+			vm.process = true
 			FB.login(function(response) {
 				if(response.authResponse) {
 					FB.api('/me', null , {'fields': 'email, name, birthday, gender, location, picture'}, function(response) {
@@ -150,6 +152,8 @@ export default {
 								vm.$store.commit('SET_FB_USER', data)
 								vm.$router.push({name: 'login-facebook'})
 							}
+						}).finally(() => {
+							vm.process = false
 						})
 					});
 				} else {

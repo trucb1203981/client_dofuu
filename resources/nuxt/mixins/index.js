@@ -5,6 +5,12 @@ export default {
 		image(url) {
 			if(url == null) {
 				return baseURL+'/img/default.png'
+			} else {
+				if(url.slice(1, 8) === "storage") {
+					return baseURL+url
+				} else {
+					return url
+				}
 			}
 			return baseURL+url
 		},

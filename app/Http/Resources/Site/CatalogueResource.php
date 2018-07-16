@@ -15,12 +15,13 @@ class CatalogueResource extends JsonResource
     public function toArray($request)
     {
         $products = $this->products->sortByDesc('priority')->sortBy('name');
+
         return [
             'id'       => $this->id,
             'name'     => $this->catalogue,
             '_name'    => $this->_catalogue,
             'slug'     => $this->slug,
-            'products' => ProductResource::collection($this->products)->sortByDesc('priority')
+            'products' => ProductResource::collection($this->products)
         ];
     }
 }

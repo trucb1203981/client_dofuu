@@ -14,6 +14,7 @@
 					<!-- <v-card-actions>
 						<v-btn color="indigo lighten-1" dark block :loading="process" @click.stop.prevent="fbLogin" small><v-icon left>fab fa-facebook-square</v-icon>Đăng nhập bằng facebook</v-btn>
 					</v-card-actions> -->
+
 					<v-card-text class="white">
 						
 						<v-alert :color="alert.type" dismissible :value="alert.show" outline v-show="alert.index === 0 && $route.name == alert.name">

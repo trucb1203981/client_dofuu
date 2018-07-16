@@ -2,7 +2,8 @@
 	<v-container fluid :grid-list-lg="$vuetify.breakpoint.mdAndUp" :grid-list-xs="$vuetify.breakpoint.smAndDown">
 		<v-layout child-flex v-show="!loading" justify-end>
 			<v-flex xs12 md8>
-				<v-autocomplete prepend-inner-icon="search" :items="productData" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" outline max-height="200" height="10" item-text="name"  clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu" color="red accent--3" return-object @input="openCartDialog">
+
+				<v-autocomplete prepend-inner-icon="search" :items="products" :loading="isLoading" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" outline max-height="200" height="10" item-text="name"  clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu" color="red accent--3" return-object @input="openCartDialog">
 					<template slot="item" slot-scope="data" >
 						<v-list-tile-avatar>
 							<img :src="image(data.item.image)">
@@ -12,6 +13,7 @@
 						</v-list-tile-content>				
 					</template>
 				</v-autocomplete>
+
 				<!-- CARD DEAL START -->
 				<v-card color="white" v-if="store.coupon != null" flat>
 					<v-tooltip v-model="showTooltip" top>
@@ -649,6 +651,7 @@ export default {
 			messageTooltip: '',
 			storeInfo: null,
 			search: null,
+			isLoading: false,
 			drawer: false,
 			dialog: false,
 			message:'',
@@ -919,17 +922,18 @@ export default {
 		},
 		//SEARCH PRODUCT BY KEYWORD
 		getByKeyWords: function(list, value) {
-			let search = value
-			
-			let data   = this.store.catalogues.slice(0)
+
+			var search   = value
+			var products = []
+			var data     = this.store.catalogues.slice(0)
+
 			if(search === null || !search.length) {
 				return data
 			}
-			
+
 			let temp   = data.filter(item => {
 				return item.products.some((product) => product.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
 			})
-
 			return temp
 		},
 		//GET ALL PRODUCT BY STORE
@@ -938,7 +942,7 @@ export default {
 			return new Promise((resolve, reject) => {
 				var vm = this 
 				const data = {storeId: vm.store.id} 
-				axios.post('/api/Dofuu/Checkout/GetProductByStore', data, {headers: getHeader()}).then(response => {
+				axios.get('/api/GetStore/'+vm.store.id+'/Product').then(response => {
 					if(response.status == 200) {
 						vm.products = response.data.data
 					}
@@ -1009,19 +1013,6 @@ export default {
 				}
 			}
 		},
-		productData: function() {
-			var array = []
-			if(this.store.catalogues.length>0) {
-				this.store.catalogues.forEach(item => {
-					if(item.products.length>0) {
-						item.products.forEach(product => {
-							array.push(product)
-						})
-					} 
-				})
-			}
-			return array
-		},
 		processCheckout: function() {
 			if(this.currentCity != null) {
 				if(this.subTotal >= this.currentCity.service.minAmount) {
@@ -1065,10 +1056,18 @@ export default {
 			if(!val) {
 				this.$store.commit('CLOSE_CHECKOUT_SUCCESS')
 			}
+		},
+		search: function(val) {
+			if(this.products.length>0) return
+				this.isLoading = true
+			this.getProducts().finally(() => {
+				this.isLoading = false
+			})
+
 		}
 	},	
 	created: function() {
-		console.log(this.$vuetify.breakpoint.name)
+
 	},
 	beforeDestroy() {
 		this.$store.commit('REMOVE_COUPON')

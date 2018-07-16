@@ -15,16 +15,7 @@
 							{{alert.message}}
 						</v-alert>
 
-						<v-form>
-							<v-flex xs12 md12>
-								<v-text-field color="red accent-3"  prepend-icon="email" v-model.trim="editedItem.email" label="Địa chỉ email" type="text"
-								v-validate="'required|email'"
-								data-vv-name="email"
-								:error-messages="errors.collect('email')"
-								data-vv-delay="300"
-								hint="Địa chỉ email là bắt buộc và chính xác"
-								persistent-hint></v-text-field>
-							</v-flex>
+						<form>
 
 							<v-flex xs12 md12>
 								<v-text-field color="red accent-3"  prepend-icon="phone" v-model="editedItem.phone" name="confirm" label="Số điện thoại"
@@ -54,7 +45,8 @@
 								data-vv-delay="300"
 								></v-text-field>
 							</v-flex>
-						</v-form>
+							
+						</form>
 						<v-spacer></v-spacer>
 					</v-card-text>
 					<v-card-actions>
@@ -80,7 +72,9 @@ export default {
 				name: '',
 				email: '',
 				phone: '',
-				password: ''
+				password: '',
+				gender: false,
+				birthday: '2018-05-02',
 			},
 			confirm: '',
 			loading: false,
@@ -114,7 +108,6 @@ export default {
 			} else {
 				data.gender = false
 			}
-
 			vm.$validator.validateAll().then(async function(result) {
 				if(result) {
 					vm.process = true
@@ -138,9 +131,9 @@ export default {
 						}
 					}).catch(error => {
 						if(error.response.status == 422) {
-							
+
 							var mes = ''
-							
+
 							Object.values(error.response.data.errors).map((item) => {
 								mes += item[0] + ' ';
 							})
@@ -183,7 +176,6 @@ export default {
 				if(response.authResponse) {
 					FB.api('/me', 'GET', {'fields': 'email,name,birthday,gender,location,picture.width(100).height(100)'}, function(response) {
 						var data = response
-						console.log(response)
 						axios.post('/api/facebook/auth', data).then(response => {
 							if(response.status === 204) {
 								vm.$store.commit('SET_FB_USER', data)

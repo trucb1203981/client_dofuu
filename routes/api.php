@@ -27,9 +27,7 @@ Route::group(['middleware' => 'api', 'namespace' => 'Site'], function ($router) 
 	Route::group(['prefix' => 'Dofuu'], function() {
 		//Check Out and Order By Customer
 		Route::post('CheckCouponCode', 'CartController@checkCoupon');
-		Route::post('CheckOut', 'CartController@checkOut');
-		//GET PRODUCT
-		Route::post('/Checkout/GetProductByStore', 'CartController@getProductByStore');
+		Route::post('CheckOut', 'CartController@checkOut');		
 		//History Booking 
 		Route::post('OrderByFilter', 'CartController@orderByFilter');
 		//ORDER DETAILS
@@ -72,7 +70,8 @@ Route::group(['namespace' => 'Site'], function() {
 	Route::get('/LoadStore', 'StoreController@getAllStore');
 	//SHOW STORE
 	Route::get('/GetStore', 'StoreController@getStore');
-	
+	//GET PRODUCT
+	Route::get('/GetStore/{sid}/Product', 'ProductController@getProductByStore');
 	//ASYNC AUTOCOMPLETE SEARCH
 	Route::get('/Search/Bar/Query', 'StoreController@searchQuery');
 	//SEARCH STORE

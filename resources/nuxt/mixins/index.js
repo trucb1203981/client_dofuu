@@ -12,7 +12,6 @@ export default {
 					return url
 				}
 			}
-			return baseURL+url
 		},
 		status: function(status) {
 			const _s = new String(status).toLowerCase();

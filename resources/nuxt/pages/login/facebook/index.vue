@@ -17,6 +17,16 @@
 
 						<v-form>
 							<v-flex xs12 md12>
+								<v-text-field color="red accent-3"  prepend-icon="email" v-model.trim="editedItem.email" label="Địa chỉ email" type="text"
+								v-validate="'required|email'"
+								data-vv-name="email"
+								:error-messages="errors.collect('email')"
+								data-vv-delay="300"
+								hint="Địa chỉ email là bắt buộc và chính xác"
+								persistent-hint></v-text-field>
+							</v-flex>
+
+							<v-flex xs12 md12>
 								<v-text-field color="red accent-3"  prepend-icon="phone" v-model="editedItem.phone" name="confirm" label="Số điện thoại"
 								v-validate="'required|numeric|min:10|max:11'"
 								data-vv-name="phone"
@@ -27,7 +37,7 @@
 							</v-flex>
 
 							<v-flex xs12>
-								<v-text-field color="red accent-3"  prepend-icon="lock" v-model.trim="editedItem.password" label="Mật khẩu" id="password" type="password"
+								<v-text-field color="red accent-3"  prepend-icon="lock" v-model.trim="editedItem.password" label="Mật khẩu mới" id="password" type="password"
 								v-validate="'required|min:8|max:36'"
 								data-vv-name="password"
 								:error-messages="errors.collect('password')"
@@ -67,6 +77,8 @@ export default {
 	data() {
 		return {
 			editedItem: {
+				name: '',
+				email: '',
 				phone: '',
 				password: ''
 			},
@@ -107,7 +119,7 @@ export default {
 				if(result) {
 					vm.process = true
 					axios.post('/api/facebook/register', data).then(response => {
-						if(response.status === 201) {
+						if(response.status === 200) {
 							vm.$store.commit('SET_TOKEN', response.data)
 							vm.$store.dispatch('getUser').then(response => {
 								if(response.data.type == 'success') {
@@ -155,6 +167,8 @@ export default {
 		this.$validator.localize(this.locale, {
 			messages:vietnam.messages,
 			attributes: {
+				name: 'Họ tên',
+				email: 'Email',
 				password: 'Mật khẩu',
 				confirm: 'Xác nhận mật khẩu',
 				phone: 'Số điện thoại'

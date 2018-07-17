@@ -16,7 +16,7 @@
 			</v-toolbar-title>
 
 			<v-autocomplete color="red accent-3" :loading="loading"
-			:search-input.sync="keywords" class="mx-3" hide-no-data hide-details label="Tìm kiếm (quán, món, ...)" solo @keyup.enter="search">
+			:search-input.sync="keywords" class="mx-3" hide-no-data hide-details label="Tìm kiếm (quán, món, ...)" solo @keyup.enter="search" :append-icon="null">
 			<template slot="append-outer">
 				<v-icon color="info" @click="search" >search</v-icon>
 			</template>

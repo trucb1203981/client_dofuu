@@ -96,7 +96,7 @@
 		</v-menu>
 	</v-toolbar-items>	
 
-	<v-tabs slot="extension" v-if="currentCity != null && types.length > 0" slider-color="red">
+	<v-tabs slot="extension" v-if="currentCity != null && types.length > 0" slider-color="red" fixed-tabs>
 		<v-tab nuxt :to="{path: '/'}">
 			<v-icon left color="red accent-3" size="20">home</v-icon> <h5>Trang chủ </h5>
 		</v-tab>

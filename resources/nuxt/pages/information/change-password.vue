@@ -49,7 +49,7 @@
 									<v-text-field color="red accent-3"
 									prepend-icon="lock" 
 									v-model.trim="editedItem.newPassword" l
-									abel="Mật khẩu mới" 
+									label="Mật khẩu mới" 
 									type="password"
 									v-validate="'required|min:8|max:36'"
 									data-vv-name="newPassword"

@@ -20,9 +20,9 @@
 		</v-toolbar>
 		<v-list v-if="currentUser != null">
 			<v-subheader>Thông tin tài khoản</v-subheader>
-			<v-list-tile avatar>
+			<v-list-tile avatar :to="{name:'information'}">
 				<v-list-tile-avatar>
-					<img :src="image(currentUser.image)" alt="John">
+					<img :src="image(currentUser.image)" alt="currentUser.name">
 				</v-list-tile-avatar>
 				<v-list-tile-content>
 					<v-list-tile-title>{{currentUser.name}}</v-list-tile-title>

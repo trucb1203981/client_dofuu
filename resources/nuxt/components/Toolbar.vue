@@ -1,11 +1,12 @@
 <template>
-	<v-card flat>
+	<v-card>
 		<v-system-bar status color="red darken-4" dark>
 			<span v-if="currentCity != null">				
 				{{currentCity.service.startTime | formatTime}} - {{currentCity.service.endTime | formatTime}}
 			</span>
 		</v-system-bar>
-		<v-toolbar color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0">
+
+		<v-toolbar color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0" prominent tabs>
 			<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up"></v-toolbar-side-icon>
 
 			<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 280px': 'width: 200px'">		
@@ -14,92 +15,88 @@
 				</nuxt-link>
 			</v-toolbar-title>
 
-			<v-text-field 
-			solo
-			v-model="keywords"
-			color="red accent-3"
-			label="Tìm kiếm (quán, món, ...)"
-			offset-x
-			@keyup.enter="search"
-			:append-outer-icon="'search'"
-			:append-outer-icon-cb="search"
-			single-line class="elevation-0"></v-text-field>		
+			<v-autocomplete color="red accent-3" :loading="loading"
+			:search-input.sync="keywords" class="mx-3" hide-no-data hide-details label="Tìm kiếm (quán, món, ...)" solo @keyup.enter="search">
+			<template slot="append-outer">
+				<v-icon color="info" @click="search" >search</v-icon>
+			</template>
+		</v-autocomplete>		
 
-			<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
+		<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
 
-			<v-btn v-if="!isAuth" nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="blue" small dark :round="$vuetify.breakpoint.mdAndUp" :icon="$vuetify.breakpoint.smAndDown">
-				<v-icon>person</v-icon> <span class="hidden-sm-and-down pl-1">ĐĂNG NHẬP</span>
-			</v-btn>
+		<v-btn v-if="!isAuth" nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="blue" small dark :round="$vuetify.breakpoint.mdAndUp" :icon="$vuetify.breakpoint.smAndDown">
+			<v-icon>person</v-icon> <span class="hidden-sm-and-down pl-1">ĐĂNG NHẬP</span>
+		</v-btn>
 
-			<v-toolbar-items>
-				<v-menu id="menu"
-				v-if="isAuth && currentUser != null"
-				lazy
-				left
-				:close-on-content-click="false"
-				min-width="240px"
-				max-width="240px"
-				:nudge-bottom="50"
-				class="hidden-sm-and-down">
-				<v-list slot="activator" dense>
-					<v-list-tile avatar @click="">
-						<v-avatar size="28">
-							<img :src="image(currentUser.image)">
-						</v-avatar>
-						<v-list-tile-content class="pl-2 ellipsis" style="max-width:140px">
-							<v-list-tile-title>
-								<v-flex ellipsis xs12>								
-									{{currentUser.name}}
-								</v-flex>
-							</v-list-tile-title>
+		<v-toolbar-items>
+			<v-menu id="menu"
+			v-if="isAuth && currentUser != null"
+			lazy
+			left
+			:close-on-content-click="false"
+			min-width="240px"
+			max-width="240px"
+			:nudge-bottom="50"
+			class="hidden-sm-and-down">
+			<v-list slot="activator" dense>
+				<v-list-tile avatar @click="">
+					<v-avatar size="28">
+						<img :src="image(currentUser.image)">
+					</v-avatar>
+					<v-list-tile-content class="pl-2 ellipsis" style="max-width:140px">
+						<v-list-tile-title>
+							<v-flex ellipsis xs12>								
+								{{currentUser.name}}
+							</v-flex>
+						</v-list-tile-title>
+					</v-list-tile-content>
+					<v-icon>expand_more</v-icon>
+				</v-list-tile>
+			</v-list>
+			<v-card>
+				<v-list>
+					<v-list-tile avatar :to="{name:'information'}" inactive>
+						<v-list-tile-avatar>
+							<img :src="image(currentUser.image)" alt="John">
+						</v-list-tile-avatar>
+						<v-list-tile-content>
+							<v-list-tile-title>{{currentUser.name}}</v-list-tile-title>
+							<v-list-tile-sub-title>{{currentUser.type}}</v-list-tile-sub-title>
 						</v-list-tile-content>
-						<v-icon>expand_more</v-icon>
 					</v-list-tile>
 				</v-list>
-				<v-card>
-					<v-list>
-						<v-list-tile avatar :to="{name:'information'}" inactive>
-							<v-list-tile-avatar>
-								<img :src="image(currentUser.image)" alt="John">
-							</v-list-tile-avatar>
-							<v-list-tile-content>
-								<v-list-tile-title>{{currentUser.name}}</v-list-tile-title>
-								<v-list-tile-sub-title>{{currentUser.type}}</v-list-tile-sub-title>
-							</v-list-tile-content>
-						</v-list-tile>
-					</v-list>
-					<v-divider></v-divider>
-					<v-list >
-						<v-list-tile avatar :to="{name:'information'}">
-							<v-list-tile-avatar>
-								<v-icon class="blue white--text">person</v-icon>
-							</v-list-tile-avatar>
-							<v-list-tile-content>
-								<v-list-tile-title>Thông tin tài khoản</v-list-tile-title>
-							</v-list-tile-content>
-						</v-list-tile>
-						<v-list-tile avatar :to="{name:'history'}">
-							<v-list-tile-avatar>
-								<v-icon class="yellow lighten-1 white--text">history</v-icon>
-							</v-list-tile-avatar>
-							<v-list-tile-content>
-								<v-list-tile-title>Lịch sử đặt món</v-list-tile-title>
-							</v-list-tile-content>
-						</v-list-tile>
-						<v-list-tile avatar @click="$store.dispatch('logout')">
-							<v-list-tile-avatar>
-								<v-icon class="red lighten-1 white--text">exit_to_app</v-icon>
-							</v-list-tile-avatar>
-							<v-list-tile-content>
-								<v-list-tile-title>Đăng xuất</v-list-tile-title>
-							</v-list-tile-content>
-						</v-list-tile>
-					</v-list>
-				</v-card>
-			</v-menu>
-		</v-toolbar-items>	
-	</v-toolbar>
-	<v-tabs v-if="currentCity != null && types.length > 0" fixed-tabs show-arrows slider-color="red">
+				<v-divider></v-divider>
+				<v-list >
+					<v-list-tile avatar :to="{name:'information'}">
+						<v-list-tile-avatar>
+							<v-icon class="blue white--text">person</v-icon>
+						</v-list-tile-avatar>
+						<v-list-tile-content>
+							<v-list-tile-title>Thông tin tài khoản</v-list-tile-title>
+						</v-list-tile-content>
+					</v-list-tile>
+					<v-list-tile avatar :to="{name:'history'}">
+						<v-list-tile-avatar>
+							<v-icon class="yellow lighten-1 white--text">history</v-icon>
+						</v-list-tile-avatar>
+						<v-list-tile-content>
+							<v-list-tile-title>Lịch sử đặt món</v-list-tile-title>
+						</v-list-tile-content>
+					</v-list-tile>
+					<v-list-tile avatar @click="$store.dispatch('logout')">
+						<v-list-tile-avatar>
+							<v-icon class="red lighten-1 white--text">exit_to_app</v-icon>
+						</v-list-tile-avatar>
+						<v-list-tile-content>
+							<v-list-tile-title>Đăng xuất</v-list-tile-title>
+						</v-list-tile-content>
+					</v-list-tile>
+				</v-list>
+			</v-card>
+		</v-menu>
+	</v-toolbar-items>	
+
+	<v-tabs slot="extension" v-if="currentCity != null && types.length > 0" slider-color="red">
 		<v-tab nuxt :to="{path: '/'}">
 			<v-icon left color="red accent-3" size="20">home</v-icon> <h5>Trang chủ </h5>
 		</v-tab>
@@ -110,6 +107,19 @@
 			<v-icon left size="20">{{item.icon}}</v-icon> <h5>{{ item.name }}</h5>
 		</v-tab>
 	</v-tabs>
+</v-toolbar>
+
+<!-- 	<v-tabs v-if="currentCity != null && types.length > 0" fixed-tabs show-arrows slider-color="red">
+		<v-tab nuxt :to="{path: '/'}">
+			<v-icon left color="red accent-3" size="20">home</v-icon> <h5>Trang chủ </h5>
+		</v-tab>
+		<v-tab nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
+			<v-icon left size="20">apps</v-icon> <h5>Tất cả</h5>
+		</v-tab>
+		<v-tab v-for="(item, index) in types" :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
+			<v-icon left size="20">{{item.icon}}</v-icon> <h5>{{ item.name }}</h5>
+		</v-tab>
+	</v-tabs> -->
 </v-card>
 </template>
 
@@ -121,11 +131,12 @@ export default {
 	mixins: [index],
 	data() {
 		return {
-			keywords: typeof this.$route.query.q != 'undefined' ? this.$route.query.q : '',
+			keywords: typeof this.$route.query.q != 'undefined' ? this.$route.query.q : null,
 			stores: [],
 			loading: false,
 			select: [],
-			leftDrawer: true
+			leftDrawer: true,
+			model:null
 		}
 	},
 	computed: {
@@ -180,7 +191,7 @@ export default {
 			} 
 			return 'Khách hàng'
 		},
-		search() {
+		search () {
 			const keyword = this.keywords
 			if(keyword.length>0) {
 				this.$router.push({name: 'city-tim-kiem-tat-ca', query: {q: keyword}, params: {city: this.currentCity.slug}})

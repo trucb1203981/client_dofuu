@@ -53,7 +53,7 @@
 								<v-flex xs12 md6>
 
 									<v-menu ref="menu" lazy :close-on-content-click="false" v-model="menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" >
-										<v-text-field slot="activator" label="Ngày sinh" v-model="dateFormatted" prepend-icon="event" v-validate="'required'" :error-messages="errors.collect('birthday')" data-vv-name="birthday" readonly data-vv-delay="3000"></v-text-field>
+										<v-text-field color="red accent-3" slot="activator" label="Ngày sinh" v-model="dateFormatted" prepend-icon="event" v-validate="'required'" :error-messages="errors.collect('birthday')" data-vv-name="birthday" readonly data-vv-delay="3000"></v-text-field>
 										<v-date-picker color="red accent-3" locale="vi-vn" ref="picker" v-model="editedItem.birthday" min="1950-01-01" :max="new Date().toISOString().substr(0, 10)" @change="$refs.menu.save(editedItem.birthday)" ></v-date-picker>
 									</v-menu>
 								</v-flex>

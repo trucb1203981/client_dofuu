@@ -6,10 +6,10 @@
 					{{title}}
 				</v-toolbar-title>
 			</v-toolbar>
-			<v-container grid-list-md>
+			<v-card-title>
 				<v-layout row wrap align-center justify-center>
 
-					<v-flex xs3>
+					<v-flex xs12 md3>
 						<v-select
 						auto
 						prepend-icon="lens"
@@ -21,7 +21,7 @@
 						></v-select>
 					</v-flex>
 
-					<v-flex xs3>						
+					<v-flex xs12 md3>						
 						<v-menu
 						ref="fromDialog"
 						:close-on-content-click="false"
@@ -42,7 +42,7 @@
 						<v-date-picker locale="vn-vi" :show-current="false" v-model="editedItem.fromDate" no-title @input="$refs.fromDialog.save(editedItem.fromDate)"></v-date-picker></v-menu>
 					</v-flex>
 
-					<v-flex xs3>
+					<v-flex xs12 md3>
 						<v-menu
 						ref="toDialog"
 						:close-on-content-click="false"
@@ -65,454 +65,474 @@
 						></v-text-field>
 						<v-date-picker locale="vn-vi" :show-current="false" v-model="editedItem.toDate" no-title @input="$refs.toDialog.save(editedItem.toDate)"></v-date-picker></v-menu>
 					</v-flex>
-					
-					<v-flex xs1>
-						<v-btn small color="primary" outline @click="getOrders" :loading="loading">
+
+					<v-flex xs12 md1>
+						<v-btn :block="$vuetify.breakpoint.smAndDown" color="info" @click="getOrders" :loading="loading">
 							<v-icon>search</v-icon>
 						</v-btn>		
 					</v-flex>
 
-					<v-flex xs12>
-						<v-data-table
-						:headers="headers"
-						:items="orders"
-						rows-per-page-text="Số hàng"
-						class="elevation-1"
-						:loading="loading"
-						>
-						<template slot="headerCell" slot-scope="props">
-							<span class="red--text text--accent-3">
-								{{ props.header.text }}
-							</span>
-						</template>
-						<template slot="items" slot-scope="props">
-							
-							<td>{{ props.index + 1 }}</td>
-							
-							<td><strong>{{ props.item.id }}</strong></td>
-							
-							<td>
-								<div><strong><nuxt-link :to="{name: 'city-store', params: {city: props.item.store.district.city.slug, store: props.item.store.slug}}">{{ props.item.store.name }}</nuxt-link></strong></div>
-								<div>{{ props.item.store.address }}</div>
-							</td>
-
-							<td>
-								<div>Ngày đặt: {{ props.item.bookingDate }}</div>
-								<div><strong>Ngày giao: {{ props.item.receiveDate | formatDate }} {{ props.item.receiveTime }}</strong></div>
-							</td>
-							
-							<td>
-								<div v-if="props.item.employee != null">{{ props.item.employee.name }}</div>
-								<div v-if="props.item.shipper != null">{{ props.item.shipper.name }}</div>
-							</td>
-							
-							<td>
-								<div><strong>{{ props.item.total | formatPrice}}</strong></div>
-								<div class="primary--text"><strong>{{ props.item.payment.paymentMethod}}</strong></div>
-							</td>
-							
-							<td class="text-md-left">
-								<div class="success--text" v-if="props.item.statusId == orderStatus('Thành công')"><strong>{{props.item.statusName}}</strong></div>
-								<div v-if="disableCancelOrder(props.item.statusName)">
-									<v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text" round>
-										Hủy 
-										<v-icon small right>block</v-icon>
-									</v-btn>
-								</div>
-								<h4 v-if="props.item.statusId != orderStatus('Thành công')">{{props.item.statusName}}</h4>
-							</td>
-							
-							<td>
-								<v-tooltip top>									
-									<v-btn slot="activator" icon small @click.prevent="getDetails(props.item)">									
-										<v-icon color="primary">visibility</v-icon>
-									</v-btn>
-									<span>Xem chi tiết</span>
-								</v-tooltip>
-							</td>
-
-						</template>
-
-						<template slot="pageText" slot-scope="{ pageStart, pageStop }">
-							Từ {{ pageStart }} đến {{ pageStop }}
-						</template>
-					</v-data-table>
-				</v-flex>
-			</v-layout>
-		</v-container>	
-
-		<v-dialog scrollable max-width="800px" v-model="dialog" :value="dialog" v-if="dialog">
-			<v-card v-if="order != null">
-				<v-card-title> 
-					<v-tabs
-					:value="`item-${tab}`"
-					slider-color="primary"
-					centered
-					>
-					<v-tab :href="`#item-0`" :value="0" @click.prevent="changeTab(0)">
-						Chi tiết món
-					</v-tab>
-					<v-tab :href="`#item-1`" :value="1" @click.prevent="changeTab(1)">
-						Bản đồ
-					</v-tab>
-					<v-tab :href="`#item-2`" :value="2" @click.prevent="changeTab(2)">
-						Trạng thái
-					</v-tab>
-					<v-tab :href="`#item-3`" :value="3" @click.prevent="changeTab(3)">
-						Thông tin						
-					</v-tab>
-				</v-tabs>
+				</v-layout>
 			</v-card-title>
-			<v-divider></v-divider>
-			<v-card-text style="height: 400px;">
-				<div v-show="tab == 0">
-					<v-data-table
-					:headers="headerDetails"
-					:items="order.items"
-					hide-actions
-					class="elevation-1">
-					<template slot="headerCell" slot-scope="props">
-						<span class="red--text text--accent-3">
-							{{ props.header.text }}
+			<v-container grid-list-md>
+				<v-layout row wrap align-center justify-center>
+					<v-data-iterator
+					:items="orders"
+					rows-per-page-text="Số hàng"
+					content-tag="v-layout"
+					row
+					wrap
+					>
+					<v-flex	slot="item"	slot-scope="props" xs12 sm6 md6	lg6>
+						<v-card>
+							<v-card-title>
+								<v-flex xs6 class="font-weight-bold">
+									Mã đặt hàng
+								</v-flex>
+								<v-flex xs6 class="text-xs-right font-weight-bold"> 
+									{{ props.item.id }}
+								</v-flex>
+							</v-card-title>
+							<v-divider></v-divider>
+							<v-list dense>
+								<v-list-tile>
+									<v-list-tile-content>Người đặt:</v-list-tile-content>
+									<v-list-tile-content class="align-end">{{ props.item.name }}</v-list-tile-content>
+								</v-list-tile>
+								<v-list-tile>
+									<v-list-tile-content>Nơi đặt:</v-list-tile-content>
+									<v-list-tile-content class="align-end">
+										<div><strong><nuxt-link :to="{name: 'city-store', params: {city: props.item.store.district.city.slug, store: props.item.store.slug}}">{{ props.item.store.name }}</nuxt-link></strong></div>
+									</v-list-tile-content>
+								</v-list-tile>
+								<v-list-tile>
+									<v-list-tile-content class="font-weight-medium font-italic">{{ props.item.store.address }}</v-list-tile-content>
+								</v-list-tile>
+								<v-list-tile>
+									<v-list-tile-content>Ngày đặt:</v-list-tile-content>
+									<v-list-tile-content class="align-end">{{ props.item.bookingDate }}</v-list-tile-content>
+								</v-list-tile>
+								<v-list-tile>
+									<v-list-tile-content>Ngày giao:</v-list-tile-content>
+									<v-list-tile-content class="align-end font-weight-bold">
+										{{ props.item.receiveDate | formatDate }} {{ props.item.receiveTime }}
+									</v-list-tile-content>
+								</v-list-tile>
+								<v-list-tile>
+									<v-list-tile-content>CSKH:</v-list-tile-content>
+									<v-list-tile-content class="align-end">
+										<div v-if="props.item.employee != null">{{ props.item.employee.name }}</div>	
+									</v-list-tile-content>
+								</v-list-tile>
+								<v-list-tile>
+									<v-list-tile-content>Giao hàng:</v-list-tile-content>
+									<v-list-tile-content class="align-end">
+										<div v-if="props.item.shipper != null">{{ props.item.shipper.name }}</div>
+									</v-list-tile-content>
+								</v-list-tile>
+								<v-list-tile>
+									<v-list-tile-content>Tổng tiền:</v-list-tile-content>
+									<v-list-tile-content class="align-end">
+										<div><strong>{{ props.item.total | formatPrice}}</strong></div>
+										<div class="primary--text"><strong>{{ props.item.payment.paymentMethod}}</strong></div>
+									</v-list-tile-content>
+								</v-list-tile>
+								<v-list-tile>
+									<v-list-tile-content>Trạng thái:</v-list-tile-content>
+									<v-list-tile-content class="align-end">
+										<div class="success--text" v-if="props.item.statusId == orderStatus('Thành công')"><strong>{{props.item.statusName}}</strong></div>
+										<div v-if="disableCancelOrder(props.item.statusName)">
+											<v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text" round>
+												Hủy 
+												<v-icon small right>block</v-icon>
+											</v-btn>
+										</div>
+										<h4 v-if="props.item.statusId != orderStatus('Thành công')">{{props.item.statusName}}</h4>
+									</v-list-tile-content>
+								</v-list-tile>
+							</v-list>
+							<v-card-actions>								
+								<v-btn small block @click.prevent="getDetails(props.item)">Xem chi tiết</v-btn>
+							</v-card-actions>
+						</v-card>
+					</v-flex>
+				</v-data-iterator>
+			</v-flex>
+		</v-layout>
+	</v-container>	
+
+	<v-dialog scrollable max-width="800px" v-model="dialog" :value="dialog" v-if="dialog">
+		<v-card v-if="order != null">
+			<v-card-title> 
+				<v-tabs
+				:value="`item-${tab}`"
+				slider-color="primary"
+				centered
+				>
+				<v-tab :href="`#item-0`" :value="0" @click.prevent="changeTab(0)">
+					Chi tiết món
+				</v-tab>
+				<v-tab :href="`#item-1`" :value="1" @click.prevent="changeTab(1)">
+					Bản đồ
+				</v-tab>
+				<v-tab :href="`#item-2`" :value="2" @click.prevent="changeTab(2)">
+					Trạng thái
+				</v-tab>
+				<v-tab :href="`#item-3`" :value="3" @click.prevent="changeTab(3)">
+					Thông tin						
+				</v-tab>
+			</v-tabs>
+		</v-card-title>
+		<v-divider></v-divider>
+		<v-card-text style="height: 400px;">
+			<div v-show="tab == 0">
+				<v-data-table
+				:headers="headerDetails"
+				:items="order.items"
+				hide-actions
+				class="elevation-1">
+				<template slot="headerCell" slot-scope="props">
+					<span class="red--text text--accent-3">
+						{{ props.header.text }}
+					</span>
+				</template>
+				<template slot="items" slot-scope="props">
+					<td>
+						{{props.item.name}}
+						<h4 v-if="props.item.pivot.toppings.length > 0">Phần thêm: <span v-for="topping in props.item.pivot.toppings">{{topping.name}} ({{topping.price | formatPrice}}). </span></h4>
+						<div v-if="props.item.pivot.memo != null">Ghi chú: {{props.item.pivot.memo}}</div>
+					</td>
+					<td class="text-xs-center">
+						{{props.item.pivot.quantity}}
+					</td>
+					<td>
+						{{props.item.pivot.price | formatPrice}}
+					</td>
+					<td>
+						{{props.item.pivot.total | formatPrice}}
+					</td>
+				</template>
+				<template slot="footer">
+					<tr>
+						<td colspan="3">Tạm tính</td>
+						<td colspan="3"><strong>{{order.subTotal | formatPrice}}</strong></td>
+					</tr>
+					<tr>
+						<td colspan="3">Phí vận chuyển:</td>	
+						<td><strong>{{order.deliveryPrice | formatPrice}}</strong></td>
+					</tr>
+					<tr>
+						<td colspan="3">Giảm giá:</td>
+						<td><strong>{{-order.discountTotal | formatPrice}}</strong></td>
+					</tr>	
+					<tr>
+						<td colspan="3">Tổng:</td>
+						<td class="red--text"><strong>{{order.total | formatPrice}}</strong></td>
+					</tr>			
+				</template></v-data-table>
+			</div>
+			<div v-show="tab == 1">
+				<v-layout row wrap v-if="matrix.show">
+					<v-flex xs3>Từ:</v-flex>
+					<v-flex xs9>{{matrix.start}}</v-flex>
+					<v-flex xs3>
+						Đến:
+					</v-flex>
+					<v-flex xs9>
+						{{matrix.end}}
+					</v-flex>
+					<v-flex xs3>
+						Khoảng cách:
+					</v-flex>
+					<v-flex xs9>
+						<span class="primary--text">
+							<strong>
+								{{matrix.distance}}
+							</strong>
 						</span>
-					</template>
-					<template slot="items" slot-scope="props">
-						<td>
-							{{props.item.name}}
-							<h4 v-if="props.item.pivot.toppings.length > 0">Phần thêm: <span v-for="topping in props.item.pivot.toppings">{{topping.name}} ({{topping.price | formatPrice}}). </span></h4>
-							<div v-if="props.item.pivot.memo != null">Ghi chú: {{props.item.pivot.memo}}</div>
-						</td>
-						<td class="text-xs-center">
-							{{props.item.pivot.quantity}}
-						</td>
-						<td>
-							{{props.item.pivot.price | formatPrice}}
-						</td>
-						<td>
-							{{props.item.pivot.total | formatPrice}}
-						</td>
-					</template>
-					<template slot="footer">
-						<tr>
-							<td colspan="3">Tạm tính</td>
-							<td colspan="3"><strong>{{order.subTotal | formatPrice}}</strong></td>
-						</tr>
-						<tr>
-							<td colspan="3">Phí vận chuyển:</td>	
-							<td><strong>{{order.deliveryPrice | formatPrice}}</strong></td>
-						</tr>
-						<tr>
-							<td colspan="3">Giảm giá:</td>
-							<td><strong>{{-order.discountTotal | formatPrice}}</strong></td>
-						</tr>	
-						<tr>
-							<td colspan="3">Tổng:</td>
-							<td class="red--text"><strong>{{order.total | formatPrice}}</strong></td>
-						</tr>			
-					</template></v-data-table>
-				</div>
-				<div v-show="tab == 1">
-					<v-layout row wrap v-if="matrix.show">
-						<v-flex xs3>Từ:</v-flex>
-						<v-flex xs9>{{matrix.start}}</v-flex>
-						<v-flex xs3>
-							Đến:
-						</v-flex>
-						<v-flex xs9>
-							{{matrix.end}}
-						</v-flex>
-						<v-flex xs3>
-							Khoảng cách:
-						</v-flex>
-						<v-flex xs9>
-							<span class="primary--text">
-								<strong>
-									{{matrix.distance}}
-								</strong>
-							</span>
-						</v-flex>
-						<v-flex xs3>
-							Phí vận chuyển:
-						</v-flex>
-						<v-flex xs9>
-							<span class="red--text"><strong>
-								{{order.deliveryPrice | formatPrice}}
-							</strong></span>
-						</v-flex>
-					</v-layout>
-					<div id="map"></div>
-				</div>
-				<div v-show="tab == 2">
-					<v-layout row wrap v-if="order.statusId == orderStatus('Hủy')"> 
-						<v-flex xs5 class="text-xs-right">
-							Trạng thái:
-						</v-flex>
-						<v-flex xs5 offset-xs1 class="red--text">
-							<strong>
-								{{order.statusName}}
-							</strong>
-						</v-flex>
+					</v-flex>
+					<v-flex xs3>
+						Phí vận chuyển:
+					</v-flex>
+					<v-flex xs9>
+						<span class="red--text"><strong>
+							{{order.deliveryPrice | formatPrice}}
+						</strong></span>
+					</v-flex>
+				</v-layout>
+				<div id="map"></div>
+			</div>
+			<div v-show="tab == 2">
+				<v-layout row wrap v-if="order.statusId == orderStatus('Hủy')"> 
+					<v-flex xs5 class="text-xs-right">
+						Trạng thái:
+					</v-flex>
+					<v-flex xs5 offset-xs1 class="red--text">
+						<strong>
+							{{order.statusName}}
+						</strong>
+					</v-flex>
 
-						<v-flex xs5 class="text-xs-right">
-							Thông điệp:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							<div>Rất tiếc đơn hàng của quý khách đã bị hủy.</div>
-							<div><strong>Cám ơn bạn đã sử dụng hệ thống.</strong></div>
-						</v-flex>
+					<v-flex xs5 class="text-xs-right">
+						Thông điệp:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						<div>Rất tiếc đơn hàng của quý khách đã bị hủy.</div>
+						<div><strong>Cám ơn bạn đã sử dụng hệ thống.</strong></div>
+					</v-flex>
 
-						<v-flex xs5 class="text-xs-right">
-							Lý do:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							<div v-for="(text, index) in order.orderNotes" :key="index">
-								{{text}}
-							</div>
-						</v-flex>
+					<v-flex xs5 class="text-xs-right">
+						Lý do:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						<div v-for="(text, index) in order.orderNotes" :key="index">
+							{{text}}
+						</div>
+					</v-flex>
 
-					</v-layout>
-					<v-card>						
-						<v-stepper v-model="order.statusId" :value="order.statusId" v-if="order.statusId != orderStatus('Hủy')">
-							<v-stepper-header>
-								<v-stepper-step step="1" :complete="order.statusId > orderStatus('Chờ xử lý') && order.statusId != orderStatus('Hủy')">Chờ xử lý</v-stepper-step>		
-								<v-divider></v-divider>
-								<v-stepper-step step="2" :complete="order.statusId > orderStatus('Đang xử lý') && order.statusId != orderStatus('Hủy')">Đang xử lý</v-stepper-step>				
-								<v-divider></v-divider >
-								<v-stepper-step step="3" :complete="order.statusId > orderStatus('Xác nhận') && order.statusId != orderStatus('Hủy')">Xác nhận</v-stepper-step>
-								<v-divider></v-divider>
-								<v-stepper-step step="4" :complete="order.statusId > orderStatus('Đang giao') && order.statusId != orderStatus('Hủy')">Đang giao</v-stepper-step>
-								<v-divider></v-divider>
-								<v-stepper-step step="5" :complete="order.statusId == orderStatus('Thành công') && order.statusId != orderStatus('Hủy')">Thành công</v-stepper-step>
-							</v-stepper-header>
-							<v-stepper-items>
-								<v-stepper-content step="1">
-									<v-layout row wrap>
-										<v-flex xs4>
-											Trạng thái:
-										</v-flex>
-										<v-flex xs8 class="yellow--text text--accent-4">
-											<strong>
-												{{order.statusName}}
+				</v-layout>
+				<v-card>						
+					<v-stepper v-model="order.statusId" :value="order.statusId" v-if="order.statusId != orderStatus('Hủy')">
+						<v-stepper-header>
+							<v-stepper-step step="1" :complete="order.statusId > orderStatus('Chờ xử lý') && order.statusId != orderStatus('Hủy')">Chờ xử lý</v-stepper-step>		
+							<v-divider></v-divider>
+							<v-stepper-step step="2" :complete="order.statusId > orderStatus('Đang xử lý') && order.statusId != orderStatus('Hủy')">Đang xử lý</v-stepper-step>				
+							<v-divider></v-divider >
+							<v-stepper-step step="3" :complete="order.statusId > orderStatus('Xác nhận') && order.statusId != orderStatus('Hủy')">Xác nhận</v-stepper-step>
+							<v-divider></v-divider>
+							<v-stepper-step step="4" :complete="order.statusId > orderStatus('Đang giao') && order.statusId != orderStatus('Hủy')">Đang giao</v-stepper-step>
+							<v-divider></v-divider>
+							<v-stepper-step step="5" :complete="order.statusId == orderStatus('Thành công') && order.statusId != orderStatus('Hủy')">Thành công</v-stepper-step>
+						</v-stepper-header>
+						<v-stepper-items>
+							<v-stepper-content step="1">
+								<v-layout row wrap>
+									<v-flex xs4>
+										Trạng thái:
+									</v-flex>
+									<v-flex xs8 class="yellow--text text--accent-4">
+										<strong>
+											{{order.statusName}}
+										</strong>
+									</v-flex>
+									<v-flex xs4>
+										Thông điệp:
+									</v-flex>
+									<v-flex xs8>
+										<div>Đơn đặt hàng của quý khách đang chờ nhân viên tiếp nhận.</div>
+										<div><strong>Xin vui lòng chờ trong giây lát.</strong></div>
+										<div><strong>Cám ơn.</strong></div>
+									</v-flex>
+								</v-layout>
+							</v-stepper-content>
+							<v-stepper-content step="2">
+								<v-layout row wrap>
+									<v-flex xs4>
+										Trạng thái:
+									</v-flex>
+									<v-flex xs8>
+										{{order.statusName}}
+									</v-flex>
+									<v-flex xs4>
+										Thông điệp:
+									</v-flex>
+									<v-flex xs8>
+										<div>
+											Đơn hàng của quý khách đã được nhân viên<span v-if="order.employee != null"><strong> {{order.employee.name}} </strong></span>tiếp nhận và xử lý.
+										</div>
+										<div>
+											<strong>Xin vui lòng chờ trong giây lát.
 											</strong>
-										</v-flex>
-										<v-flex xs4>
-											Thông điệp:
-										</v-flex>
-										<v-flex xs8>
-											<div>Đơn đặt hàng của quý khách đang chờ nhân viên tiếp nhận.</div>
-											<div><strong>Xin vui lòng chờ trong giây lát.</strong></div>
-											<div><strong>Cám ơn.</strong></div>
-										</v-flex>
-									</v-layout>
-								</v-stepper-content>
-								<v-stepper-content step="2">
-									<v-layout row wrap>
-										<v-flex xs4>
-											Trạng thái:
-										</v-flex>
-										<v-flex xs8>
-											{{order.statusName}}
-										</v-flex>
-										<v-flex xs4>
-											Thông điệp:
-										</v-flex>
-										<v-flex xs8>
-											<div>
-												Đơn hàng của quý khách đã được nhân viên<span v-if="order.employee != null"><strong> {{order.employee.name}} </strong></span>tiếp nhận và xử lý.
-											</div>
-											<div>
-												<strong>Xin vui lòng chờ trong giây lát.
-												</strong>
-											</div>
-											<div><strong>Cám ơn.</strong></div>
-										</v-flex>
-									</v-layout>
-								</v-stepper-content>
-								<v-stepper-content step="3">
-									<v-layout row wrap>
-										<v-flex xs4>
-											Trạng thái:
-										</v-flex>
-										<v-flex xs8>
-											{{order.statusName}}
-										</v-flex>
-										<v-flex xs4>
-											Thông điệp:
-										</v-flex>
-										<v-flex xs8>
-											<div>
-												Đơn hàng của quý khách đã được xác nhận thành công.
-											</div>
-											<div>
-												<strong>
-													Xin vui lòng chờ ít phút để cửa hàng chuẩn bị.
-												</strong>
-											</div>
-											<div>		
-												<strong>								
-													Cám ơn!
-												</strong>
-											</div>
-										</v-flex>
-									</v-layout>
-								</v-stepper-content>
-								<v-stepper-content step="4">
-									<v-layout row wrap>
-										<v-flex xs4>
-											Trạng thái:
-										</v-flex>
-										<v-flex xs8>
-											{{order.statusName}}
-										</v-flex>
-										<v-flex xs4>
-											Thông điệp:
-										</v-flex>
-										<v-flex xs8>
-											<div>
-												Đơn hàng của quý khách đã được nhân viên <span  v-if="order.shipper != null"><strong> {{order.shipper.name}} </strong></span> giao đến.
-											</div>
-											<div>
-												<strong>
-													Xin vui lòng chờ đợi ít phút.
-												</strong>
-											</div>
-											<div>
-												<strong>
-													Cám ơn.
-												</strong>
-											</div>											
-										</v-flex>
-									</v-layout>
-								</v-stepper-content>
-								<v-stepper-content step="5">
-									<v-layout row wrap>
-										<v-flex xs4>
-											Trạng thái:
-										</v-flex>
-										<v-flex xs8 class="success--text">
-											<strong>{{order.statusName}}</strong>
-										</v-flex>
-										<v-flex xs4>
-											Thông điệp:
-										</v-flex>
-										<v-flex xs8>
-											<div>Đơn hàng của quý khách đã được giao thành công.</div>
-											<div><strong>Cám ơn quý khách đã đặt hàng từ hệ thống.</strong>
-											</div>
-											<div><strong>Chúc bạn dùng ngon miệng.</strong></div>
-										</v-flex>
-									</v-layout>
-								</v-stepper-content>
-							</v-stepper-items>
-						</v-stepper>
-					</v-card>
-				</div>
-				<div v-show="tab == 3">
-					<v-layout row wrap class="grid-list-md">
-						<v-flex xs5 class="text-xs-right">
-							Nơi đặt:
-						</v-flex>
-						
-						<v-flex xs5 offset-xs1>
-							<div class="primary--text">
-								<strong>
-									<nuxt-link :to="{name: 'city-store', params: {city: order.store.district.city.slug, store: order.store.slug}}">
-										{{order.store.name}}
-									</nuxt-link>
-								</strong>
-							</div>
-							<div>
-								{{order.store.address}}
-							</div>
-						</v-flex>
-						
-						<v-flex xs5  class="text-xs-right">
-							Người nhận:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
+										</div>
+										<div><strong>Cám ơn.</strong></div>
+									</v-flex>
+								</v-layout>
+							</v-stepper-content>
+							<v-stepper-content step="3">
+								<v-layout row wrap>
+									<v-flex xs4>
+										Trạng thái:
+									</v-flex>
+									<v-flex xs8>
+										{{order.statusName}}
+									</v-flex>
+									<v-flex xs4>
+										Thông điệp:
+									</v-flex>
+									<v-flex xs8>
+										<div>
+											Đơn hàng của quý khách đã được xác nhận thành công.
+										</div>
+										<div>
+											<strong>
+												Xin vui lòng chờ ít phút để cửa hàng chuẩn bị.
+											</strong>
+										</div>
+										<div>		
+											<strong>								
+												Cám ơn!
+											</strong>
+										</div>
+									</v-flex>
+								</v-layout>
+							</v-stepper-content>
+							<v-stepper-content step="4">
+								<v-layout row wrap>
+									<v-flex xs4>
+										Trạng thái:
+									</v-flex>
+									<v-flex xs8>
+										{{order.statusName}}
+									</v-flex>
+									<v-flex xs4>
+										Thông điệp:
+									</v-flex>
+									<v-flex xs8>
+										<div>
+											Đơn hàng của quý khách đã được nhân viên <span  v-if="order.shipper != null"><strong> {{order.shipper.name}} </strong></span> giao đến.
+										</div>
+										<div>
+											<strong>
+												Xin vui lòng chờ đợi ít phút.
+											</strong>
+										</div>
+										<div>
+											<strong>
+												Cám ơn.
+											</strong>
+										</div>											
+									</v-flex>
+								</v-layout>
+							</v-stepper-content>
+							<v-stepper-content step="5">
+								<v-layout row wrap>
+									<v-flex xs4>
+										Trạng thái:
+									</v-flex>
+									<v-flex xs8 class="success--text">
+										<strong>{{order.statusName}}</strong>
+									</v-flex>
+									<v-flex xs4>
+										Thông điệp:
+									</v-flex>
+									<v-flex xs8>
+										<div>Đơn hàng của quý khách đã được giao thành công.</div>
+										<div><strong>Cám ơn quý khách đã đặt hàng từ hệ thống.</strong>
+										</div>
+										<div><strong>Chúc bạn dùng ngon miệng.</strong></div>
+									</v-flex>
+								</v-layout>
+							</v-stepper-content>
+						</v-stepper-items>
+					</v-stepper>
+				</v-card>
+			</div>
+			<div v-show="tab == 3">
+				<v-layout row wrap class="grid-list-md">
+					<v-flex xs5 class="text-xs-right">
+						Nơi đặt:
+					</v-flex>
+
+					<v-flex xs5 offset-xs1>
+						<div class="primary--text">
 							<strong>
-								{{order.name}}							
+								<nuxt-link :to="{name: 'city-store', params: {city: order.store.district.city.slug, store: order.store.slug}}">
+									{{order.store.name}}
+								</nuxt-link>
 							</strong>
-						</v-flex>
+						</div>
+						<div>
+							{{order.store.address}}
+						</div>
+					</v-flex>
 
-						<v-flex xs5  class="text-xs-right">
-							Địa chỉ nhận:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							{{order.address}}
-						</v-flex>
+					<v-flex xs5  class="text-xs-right">
+						Người nhận:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						<strong>
+							{{order.name}}							
+						</strong>
+					</v-flex>
 
-						<v-flex xs5  class="text-xs-right">
-							Số điện thoại:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							{{order.phone}}
-						</v-flex>
+					<v-flex xs5  class="text-xs-right">
+						Địa chỉ nhận:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						{{order.address}}
+					</v-flex>
 
-						<v-flex xs5  class="text-xs-right">
-							Ngày đặt:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							{{order.bookingDate}}
-						</v-flex>
+					<v-flex xs5  class="text-xs-right">
+						Số điện thoại:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						{{order.phone}}
+					</v-flex>
 
-						<v-flex xs5  class="text-xs-right"> 
-							Ngày nhận:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							{{order.receiveDate | formatDate}} {{order.receiveTime}}
-						</v-flex>						
+					<v-flex xs5  class="text-xs-right">
+						Ngày đặt:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						{{order.bookingDate}}
+					</v-flex>
 
-						<v-flex xs5  class="text-xs-right">
-							Phí vận chuyển:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							<strong>{{order.deliveryPrice | formatPrice}}</strong>
-						</v-flex>
+					<v-flex xs5  class="text-xs-right"> 
+						Ngày nhận:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						{{order.receiveDate | formatDate}} {{order.receiveTime}}
+					</v-flex>						
 
-						<v-flex xs5  class="text-xs-right">
-							Tổng tiền:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							<strong>{{order.total | formatPrice}}</strong>
-						</v-flex>
+					<v-flex xs5  class="text-xs-right">
+						Phí vận chuyển:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						<strong>{{order.deliveryPrice | formatPrice}}</strong>
+					</v-flex>
 
-						<v-flex xs5  class="text-xs-right">
-							Ghi chú:
-						</v-flex>
-						<v-flex xs5 offset-xs1>
-							<strong>{{order.memo}}</strong>
-						</v-flex>
-					</v-layout>
-				</div>
-			</v-card-text>
-			<v-divider></v-divider>
-			<v-card-actions class="justify-center">
-				<span class="red--text">
-					<strong>
-						Tổng: {{order.total | formatPrice}}
-					</strong>
-				</span>
-				<v-spacer></v-spacer>
-				<v-btn color="blue darken-1" dark @click.native="dialog = false">Đóng</v-btn>
-			</v-card-actions>
-		</v-card>
-	</v-dialog>
-	<v-dialog v-model="cancelDialog" :value="cancelDialog" max-width="500">
-		<v-card>
-			<v-card-title class="headline">Hủy đơn đặt hàng?</v-card-title>
-			<v-divider></v-divider>
-			<v-card-text>
-				<v-checkbox v-for="(item, index) in reasons" :label="item.note" v-model="notes" :value="item.note" :key="index"></v-checkbox>
-			</v-card-text>
-			<v-divider></v-divider>
-			<v-card-actions>
-				<v-spacer></v-spacer>
-				<v-btn @click.native="cancelDialog = false">Hủy</v-btn>
-				<v-btn color="red accent-3" dark @click.native="cancelOrder">Chấp nhận</v-btn>
-			</v-card-actions>
-		</v-card>
-	</v-dialog>
+					<v-flex xs5  class="text-xs-right">
+						Tổng tiền:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						<strong>{{order.total | formatPrice}}</strong>
+					</v-flex>
+
+					<v-flex xs5  class="text-xs-right">
+						Ghi chú:
+					</v-flex>
+					<v-flex xs5 offset-xs1>
+						<strong>{{order.memo}}</strong>
+					</v-flex>
+				</v-layout>
+			</div>
+		</v-card-text>
+		<v-divider></v-divider>
+		<v-card-actions class="justify-center">
+			<span class="red--text">
+				<strong>
+					Tổng: {{order.total | formatPrice}}
+				</strong>
+			</span>
+			<v-spacer></v-spacer>
+			<v-btn color="blue darken-1" dark @click.native="dialog = false">Đóng</v-btn>
+		</v-card-actions>
+	</v-card>
+</v-dialog>
+<v-dialog v-model="cancelDialog" :value="cancelDialog" max-width="500">
+	<v-card>
+		<v-card-title class="headline">Hủy đơn đặt hàng?</v-card-title>
+		<v-divider></v-divider>
+		<v-card-text>
+			<v-checkbox v-for="(item, index) in reasons" :label="item.note" v-model="notes" :value="item.note" :key="index"></v-checkbox>
+		</v-card-text>
+		<v-divider></v-divider>
+		<v-card-actions>
+			<v-spacer></v-spacer>
+			<v-btn @click.native="cancelDialog = false">Hủy</v-btn>
+			<v-btn color="red accent-3" dark @click.native="cancelOrder">Chấp nhận</v-btn>
+		</v-card-actions>
+	</v-card>
+</v-dialog>
 </v-card>
 </v-container>	
 </template>

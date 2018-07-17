@@ -15,8 +15,18 @@
 								<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>
 								<!-- STORE GRID -->
 								<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+								<!-- INFINITE LOADING -->
+								<v-card v-if="loading" color="transparent" dark >
+									<v-card-text class="text-xs-center">
+										<v-progress-circular
+										indeterminate
+										color="grey"
+										></v-progress-circular>
+									</v-card-text>
+								</v-card>						
+
 							</v-content>
-						</v-flex>								
+						</v-flex>		
 					</v-layout>						
 				</v-card>
 			</v-flex>				
@@ -48,7 +58,7 @@ export default {
 			trigger:300,
 			currentCity: null,
 			end: false,
-			loading: true
+			loading: false
 		}
 	},
 	methods: {
@@ -71,8 +81,8 @@ export default {
 		getStoreByType: async function(id) {
 			const data = {typeId: 0, pageSize: this.pageSize, offset: this.offset}
 			if(!this.end) {
-				this.loading = await true
-				await axios.post('/api/GetStoreByType/'+id, data, {withCredentials:true}).then(response => {
+				this.loading = true
+				axios.post('/api/GetStoreByType/'+id, data, {withCredentials:true}).then(response => {
 					if(response.status === 200) {
 
 						if(response.data.data.length>0) {
@@ -83,8 +93,9 @@ export default {
 							this.end = true
 						}	
 					}
+				}).finally(() => {					
+					this.loading = false
 				})	
-				this.loading = false
 				this.offset = Math.floor(this.offset + this.pageSize)
 			}
 		}

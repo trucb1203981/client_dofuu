@@ -1,224 +1,215 @@
 <template>
-	<no-ssr>
-		<v-container grey-lighten-4 lighten-2 :grid-list-xs="$vuetify.breakpoint.smAndDown" :grid-list-lg="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
-			<v-layout grey-lighten-4 row wrap v-if="!loading">
-				<v-flex xs12>
-					<v-layout column> 
-						
+	<v-container grey-lighten-4 lighten-2 :grid-list-xs="$vuetify.breakpoint.smAndDown" :grid-list-lg="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
+		<v-layout grey-lighten-4 row wrap v-if="!loading">
+			<v-flex xs12>
+				<v-layout column> 
+					
+					<v-flex xs12>
 						<v-flex xs12>
-							<v-flex xs12>
-								<no-ssr>
-									<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300px' : '200px'"  >			
-										<img src="img/deal_banner.png" alt="">
-									</v-card-media>
-								</no-ssr>
-							</v-flex>
+							<no-ssr>
+								<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300px' : '200px'"  >			
+									<img src="img/deal_banner.png" alt="">
+								</v-card-media>
+							</no-ssr>
 						</v-flex>
+					</v-flex>
 
-						<v-flex xs12 v-if="deal.stores.length>0" class="mb-3">
-							<!-- START DEAL STORES -->
-							<v-card flat>					
-								<v-layout grey lighten-4 row wrap class="elevation-1" >
+					<v-flex xs12 v-if="deal.stores.length>0" class="mb-3">
+						<!-- START DEAL STORES -->
+						<v-card flat>					
+							<v-layout grey lighten-4 row wrap class="elevation-1" >
 
-									<v-toolbar color="white" flat dense  extension-height="30px">
-										<v-icon color="red">whatshot</v-icon>
-										<v-toolbar-title class="red--text text--accent-3" id="deal-store">
-											<h5>HOT DEALS</h5>
-										</v-toolbar-title>									
+								<v-toolbar color="white" flat dense  extension-height="30px">
+									<v-icon color="red">whatshot</v-icon>
+									<v-toolbar-title class="red--text text--accent-3" id="deal-store">
+										<h5>HOT DEALS</h5>
+									</v-toolbar-title>									
 
-										<v-toolbar-items slot="extension">
-											<!-- START DISTRICT IN DEAL STORE -->
-											<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
-												<v-btn slot="activator" flat><h5>Khu vực</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
-												<v-list dense>
-													<v-list-tile @click="loadDistrict(0, 'deal')" :class="{'red--text text--accent-2 bold' : deal.list_flag == 0}" >
-														<v-list-tile-action>
-															<v-icon color="red">whatshot</v-icon>
-														</v-list-tile-action>
-														<v-list-tile-content>
-															<v-list-tile-title>Tất cả</v-list-tile-title>
-														</v-list-tile-content>
-														<v-list-tile-action>
-															<v-avatar color="red accent-3" size="20">
-																<span class="white--text">{{deal.count}}</span>
-															</v-avatar>
-														</v-list-tile-action>
-													</v-list-tile>
+									<v-toolbar-items slot="extension">
+										<!-- START DISTRICT IN DEAL STORE -->
+										<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+											<v-btn slot="activator" flat><h5>Khu vực</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
+											<v-list dense>
+												<v-list-tile @click="loadDistrict(0, 'deal')" :class="{'red--text text--accent-2 bold' : deal.list_flag == 0}" >
+													<v-list-tile-action>
+														<v-icon color="red">whatshot</v-icon>
+													</v-list-tile-action>
+													<v-list-tile-content>
+														<v-list-tile-title>Tất cả</v-list-tile-title>
+													</v-list-tile-content>
+													<v-list-tile-action>
+														<v-avatar color="red accent-3" size="20">
+															<span class="white--text">{{deal.count}}</span>
+														</v-avatar>
+													</v-list-tile-action>
+												</v-list-tile>
 
-													<v-list-tile  v-for="(item, i) in deal.districts" :key="i" @click="loadDistrict(item.id, 'deal')" :class="{'red--text text--accent-2': item.id == deal.list_flag}" >
-														<v-list-tile-action>
-															<v-icon color="red">whatshot</v-icon>
-														</v-list-tile-action>
-														<v-list-tile-content>
-															<v-list-tile-title>{{item.district_name}}</v-list-tile-title>
-														</v-list-tile-content>
-														<v-list-tile-action>
-															<v-avatar color="red accent-3" size="20">
-																<span class="white--text">{{item.stores_count}}</span>
-															</v-avatar>
-														</v-list-tile-action>
-													</v-list-tile>
+												<v-list-tile  v-for="(item, i) in deal.districts" :key="i" @click="loadDistrict(item.id, 'deal')" :class="{'red--text text--accent-2': item.id == deal.list_flag}" >
+													<v-list-tile-action>
+														<v-icon color="red">whatshot</v-icon>
+													</v-list-tile-action>
+													<v-list-tile-content>
+														<v-list-tile-title>{{item.district_name}}</v-list-tile-title>
+													</v-list-tile-content>
+													<v-list-tile-action>
+														<v-avatar color="red accent-3" size="20">
+															<span class="white--text">{{item.stores_count}}</span>
+														</v-avatar>
+													</v-list-tile-action>
+												</v-list-tile>
 
-												</v-list>
-											</v-menu> <!-- END DISTRICT IN ALL STORE -->
-											<!-- START TYPE IN ALL STORE -->
-											<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
-												<v-btn slot="activator" flat><h5>Danh mục</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
-												<v-list dense>
-													<v-list-tile @click="loadType(0, 'deal')" :class="{'red--text text--accent-2' : deal.list_flag == 0}" >
-														<v-list-tile-action>
-															<v-icon color="red">whatshot</v-icon>
-														</v-list-tile-action>
-														<v-list-tile-content>
-															<v-list-tile-title>Tất cả</v-list-tile-title>
-														</v-list-tile-content>
-														<v-list-tile-action>
-															<v-avatar color="red accent-3" size="20">
-																<span class="white--text">{{deal.count}}</span>
-															</v-avatar>
-														</v-list-tile-action>
-													</v-list-tile>
+											</v-list>
+										</v-menu> <!-- END DISTRICT IN ALL STORE -->
+										<!-- START TYPE IN ALL STORE -->
+										<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+											<v-btn slot="activator" flat><h5>Danh mục</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
+											<v-list dense>
+												<v-list-tile @click="loadType(0, 'deal')" :class="{'red--text text--accent-2' : deal.list_flag == 0}" >
+													<v-list-tile-action>
+														<v-icon color="red">whatshot</v-icon>
+													</v-list-tile-action>
+													<v-list-tile-content>
+														<v-list-tile-title>Tất cả</v-list-tile-title>
+													</v-list-tile-content>
+													<v-list-tile-action>
+														<v-avatar color="red accent-3" size="20">
+															<span class="white--text">{{deal.count}}</span>
+														</v-avatar>
+													</v-list-tile-action>
+												</v-list-tile>
 
-													<v-list-tile  v-for="(item, i) in deal.types" :key="i" @click="loadType(item.id, 'deal')" :class="{'red--text text--accent-2': item.id == deal.list_flag}">
-														<v-list-tile-action>
-															<v-icon color="red">whatshot</v-icon>
-														</v-list-tile-action>
-														<v-list-tile-content>
-															<v-list-tile-title>{{ item.type_name }}</v-list-tile-title>
-														</v-list-tile-content>
-														<v-list-tile-action>
-															<v-avatar color="red accent-3" size="20">
-																<span class="white--text">{{item.stores_count}}</span>
-															</v-avatar>
-														</v-list-tile-action>
-													</v-list-tile>
-												</v-list>
-											</v-menu><!-- END TYPE IN ALL STORE -->
-										</v-toolbar-items>
+												<v-list-tile  v-for="(item, i) in deal.types" :key="i" @click="loadType(item.id, 'deal')" :class="{'red--text text--accent-2': item.id == deal.list_flag}">
+													<v-list-tile-action>
+														<v-icon color="red">whatshot</v-icon>
+													</v-list-tile-action>
+													<v-list-tile-content>
+														<v-list-tile-title>{{ item.type_name }}</v-list-tile-title>
+													</v-list-tile-content>
+													<v-list-tile-action>
+														<v-avatar color="red accent-3" size="20">
+															<span class="white--text">{{item.stores_count}}</span>
+														</v-avatar>
+													</v-list-tile-action>
+												</v-list-tile>
+											</v-list>
+										</v-menu><!-- END TYPE IN ALL STORE -->
+									</v-toolbar-items>
 
-									</v-toolbar>					
+								</v-toolbar>					
 
-									<v-flex xs12>
-										<v-content>
-											<!-- STORE LIST -->
-											<no-ssr>
-												<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list>
-											</no-ssr>
-											<!-- STORE GRID -->
-											<no-ssr>
-												<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid>
-											</no-ssr>
-											<!-- PAGINATION -->
-											<div class="text-xs-center" v-if="deal.pagination.last_page>1">
-												<v-pagination :length="deal.pagination.last_page" v-model="deal.pagination.current_page" @input="changePage(deal.pagination.current_page, 'deal')" circle></v-pagination>
-											</div>
-										</v-content>
-									</v-flex>
-								</v-layout> 
-							</v-card><!-- END DEAL STORE -->
+								<v-flex xs12>
+									<v-content>
+										<!-- STORE LIST -->											
+										<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-list>	
+										<!-- STORE GRID -->
+										<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid>
+										<!-- PAGINATION -->
+										<div class="text-xs-center" v-if="deal.pagination.last_page>1">
+											<v-pagination :length="deal.pagination.last_page" v-model="deal.pagination.current_page" @input="changePage(deal.pagination.current_page, 'deal')" circle></v-pagination>
+										</div>
+									</v-content>
+								</v-flex>
+							</v-layout> 
+						</v-card><!-- END DEAL STORE -->
 
-						</v-flex>
+					</v-flex>
 
-						<v-flex  xs12 md12 >
-							<v-card flat ><!-- START ALL STORE -->					
-								<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
-									<v-toolbar color="white" flat dense  extension-height="30px" class="mb-1">
-										<v-toolbar-title class="red--text text--accent-3" >
-											<h5 id="all-store">TẤT CẢ</h5>
-										</v-toolbar-title>
-										<!-- START DISTRICT IN ALL STORE -->
-										<v-toolbar-items slot="extension">
-											<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
-												<v-btn slot="activator" flat> <h5>Khu vực</h5> <v-icon right>arrow_drop_down</v-icon></v-btn>
-												<v-list dense>
-													<v-list-tile @click="loadDistrict(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}">
-														<v-list-tile-content>
-															<v-list-tile-title>Tất cả</v-list-tile-title>
-														</v-list-tile-content>
-														<v-list-tile-action>
-															<v-avatar color="red accent-3" size="20">
-																<span class="white--text">{{all.count}}</span>
-															</v-avatar>
-														</v-list-tile-action>
-													</v-list-tile>
-													<v-list-tile  v-for="(item, i) in all.districts" :key="i" @click="loadDistrict(item.id, 'all')" :class="{'red--text text--accent-2': item.id == all.list_flag}" >
-														<v-list-tile-content>
-															<v-list-tile-title>{{item.district_name}}</v-list-tile-title>
-														</v-list-tile-content>
-														<v-list-tile-action>
-															<v-avatar color="red accent-3" size="20">
-																<span class="white--text">{{item.stores_count}}</span>
-															</v-avatar>
-														</v-list-tile-action>
-													</v-list-tile>
-												</v-list>
-											</v-menu> <!-- END DISTRICT IN ALL STORE -->
-											<!-- START TYPE IN ALL STORE -->
-											<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
-												<v-btn slot="activator" flat><h5>Danh mục</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
-												<v-list dense>
-													<v-list-tile @click="loadType(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}" >
-														<v-list-tile-content>
-															<v-list-tile-title>Tất cả</v-list-tile-title>
-														</v-list-tile-content>
-														<v-list-tile-action>
-															<v-avatar color="red accent-3" size="20">
-																<span class="white--text">{{all.count}}</span>
-															</v-avatar>
-														</v-list-tile-action>
-													</v-list-tile>
+					<v-flex  xs12 md12 >
+						<v-card flat ><!-- START ALL STORE -->					
+							<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
+								<v-toolbar color="white" flat dense  extension-height="30px" class="mb-1">
+									<v-toolbar-title class="red--text text--accent-3" >
+										<h5 id="all-store">TẤT CẢ</h5>
+									</v-toolbar-title>
+									<!-- START DISTRICT IN ALL STORE -->
+									<v-toolbar-items slot="extension">
+										<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+											<v-btn slot="activator" flat> <h5>Khu vực</h5> <v-icon right>arrow_drop_down</v-icon></v-btn>
+											<v-list dense>
+												<v-list-tile @click="loadDistrict(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}">
+													<v-list-tile-content>
+														<v-list-tile-title>Tất cả</v-list-tile-title>
+													</v-list-tile-content>
+													<v-list-tile-action>
+														<v-avatar color="red accent-3" size="20">
+															<span class="white--text">{{all.count}}</span>
+														</v-avatar>
+													</v-list-tile-action>
+												</v-list-tile>
+												<v-list-tile  v-for="(item, i) in all.districts" :key="i" @click="loadDistrict(item.id, 'all')" :class="{'red--text text--accent-2': item.id == all.list_flag}" >
+													<v-list-tile-content>
+														<v-list-tile-title>{{item.district_name}}</v-list-tile-title>
+													</v-list-tile-content>
+													<v-list-tile-action>
+														<v-avatar color="red accent-3" size="20">
+															<span class="white--text">{{item.stores_count}}</span>
+														</v-avatar>
+													</v-list-tile-action>
+												</v-list-tile>
+											</v-list>
+										</v-menu> <!-- END DISTRICT IN ALL STORE -->
+										<!-- START TYPE IN ALL STORE -->
+										<v-menu left bottom offset-y :open-on-hover="$vuetify.breakpoint.mdAndUp">
+											<v-btn slot="activator" flat><h5>Danh mục</h5><v-icon right>arrow_drop_down</v-icon></v-btn>
+											<v-list dense>
+												<v-list-tile @click="loadType(0, 'all')" :class="{'red--text text--accent-2' : all.list_flag == 0}" >
+													<v-list-tile-content>
+														<v-list-tile-title>Tất cả</v-list-tile-title>
+													</v-list-tile-content>
+													<v-list-tile-action>
+														<v-avatar color="red accent-3" size="20">
+															<span class="white--text">{{all.count}}</span>
+														</v-avatar>
+													</v-list-tile-action>
+												</v-list-tile>
 
-													<v-list-tile  v-for="(item, i) in all.types" :key="i" @click="loadType(item.id, 'all')" :class="{'red--text text--accent-2': item.id == all.list_flag}">
-														<v-list-tile-content>
-															<v-list-tile-title>{{ item.type_name }}</v-list-tile-title>
-														</v-list-tile-content>
-														<v-list-tile-action>
-															<v-avatar color="red accent-3" size="20">
-																<span class="white--text">{{item.stores_count}}</span>
-															</v-avatar>
-														</v-list-tile-action>
-													</v-list-tile>
-												</v-list>
-											</v-menu><!-- END TYPE IN ALL STORE -->
-										</v-toolbar-items>							
-									</v-toolbar>					
+												<v-list-tile  v-for="(item, i) in all.types" :key="i" @click="loadType(item.id, 'all')" :class="{'red--text text--accent-2': item.id == all.list_flag}">
+													<v-list-tile-content>
+														<v-list-tile-title>{{ item.type_name }}</v-list-tile-title>
+													</v-list-tile-content>
+													<v-list-tile-action>
+														<v-avatar color="red accent-3" size="20">
+															<span class="white--text">{{item.stores_count}}</span>
+														</v-avatar>
+													</v-list-tile-action>
+												</v-list-tile>
+											</v-list>
+										</v-menu><!-- END TYPE IN ALL STORE -->
+									</v-toolbar-items>							
+								</v-toolbar>					
 
-									<v-flex xs12 order-xs1>
-										<v-content class="pb-0">
-											<!-- STORE LIST -->
-											<no-ssr>
-												<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list>
-											</no-ssr>
-											<!-- STORE GRID -->
-											<no-ssr>
-												<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid>
-											</no-ssr>
-											<div class="text-xs-center" v-if="all.pagination.last_page>1">
-												<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>
-											</div>
+								<v-flex xs12 order-xs1>
+									<v-content class="pb-0">
+										<!-- STORE LIST -->								
+										<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-list>				
+										<!-- STORE GRID -->										
+										<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid>
 
-											<v-card-actions>
-												<v-btn v-if="currentCity != null && all.stores.length > 0" color="grey lighten-2" block :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}" round small >Xem thêm <v-icon right>arrow_forward</v-icon> </v-btn>
-											</v-card-actions>
-										</v-content>
-									</v-flex>								
-								</v-layout>
-							</v-card><!-- END ALL STORE -->
+										<div class="text-xs-center" v-if="all.pagination.last_page>1">
+											<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>
+										</div>
 
-						</v-flex>
-					</v-layout>
-				</v-flex> 
+										<v-card-actions>
+											<v-btn v-if="currentCity != null && all.stores.length > 0" color="grey lighten-2" block :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}" round small >Xem thêm <v-icon right>arrow_forward</v-icon> </v-btn>
+										</v-card-actions>
+									</v-content>
+								</v-flex>								
+							</v-layout>
+						</v-card><!-- END ALL STORE -->
 
-			</v-layout>
+					</v-flex>
+				</v-layout>
+			</v-flex> 
 
-			<v-btn v-if="!endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollDown">
-				<v-icon dark>expand_more</v-icon>
-			</v-btn>
-			<v-btn v-if="endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollTop">
-				<v-icon dark>expand_less</v-icon>
-			</v-btn>
-		</v-container>
-	</no-ssr>
+		</v-layout>
+
+		<v-btn v-if="!endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollDown">
+			<v-icon dark>expand_more</v-icon>
+		</v-btn>
+		<v-btn v-if="endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollTop">
+			<v-icon dark>expand_less</v-icon>
+		</v-btn>
+	</v-container>
 </template>
 
 <script>

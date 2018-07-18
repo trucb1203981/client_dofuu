@@ -105,7 +105,9 @@
 										<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="deal.stores" :currentCity.sync="currentCity"></vue-store-grid>
 										<!-- PAGINATION -->
 										<div class="text-xs-center" v-if="deal.pagination.last_page>1">
-											<v-pagination :length="deal.pagination.last_page" v-model="deal.pagination.current_page" @input="changePage(deal.pagination.current_page, 'deal')" circle></v-pagination>
+											<v-pagination :length="deal.pagination.last_page" v-model="deal.pagination.current_page" @input="changePage(deal.pagination.current_page, 'deal')">
+												
+											</v-pagination>
 										</div>
 									</v-content>
 								</v-flex>

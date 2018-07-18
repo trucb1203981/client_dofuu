@@ -109,8 +109,11 @@ const actions = {
 			if(response.status == 200) {
 				commit('LOGOUT')
 			}
+		}).finally(() => {
+			window.location.reload()
 		})
 		FB.logout()
+
 	}),
 	// loadToken ({commit}, req) {
 	// 	const cookiesStr = inBrowser ? document.cookie : req.headers.cookie

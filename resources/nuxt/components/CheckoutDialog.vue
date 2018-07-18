@@ -310,6 +310,7 @@ export default {
 				var place = autocomplete.getPlace()
 				if(!place.geometry) {
 					vm.geocoder('address', input.value).then(response => {
+						vm.editedItem.address = response[0].formatted_address.slice(0, -10)
 						vm.calculateRoute({lat: response[0].geometry.location.lat(), lng: response[0].geometry.location.lng()})
 					})
 					return
@@ -457,6 +458,7 @@ export default {
 			const service    = this.currentCity.service
 			const deliveries = this.currentCity.deliveries
 			var shipPrice    = 0
+			var oddPrice   = 0
 			this.maxRange    = service.maxRange
 			// CHECK CONDITION MAX RANGE
 			if(distance > service.maxRange) {
@@ -474,7 +476,13 @@ export default {
 								shipPrice = parseFloat(item.price)
 							}
 						} else if(item.from <= distance && item.to >= distance && service.maxRange >= distance && service.minRange < distance) {
-							shipPrice = parseFloat(item.price)*distance
+							shipPrice = new String(parseFloat(item.price)*distance)
+							oddPrice  = numeral(shipPrice.slice(-3)).value()
+							if(oddPrice >= 500) {
+								shipPrice = numeral(shipPrice).value() + (1000 - oddPrice) 
+							} else {
+								shipPrice = numeral(shipPrice).value() - oddPrice
+							}
 						}
 					})
 				} 

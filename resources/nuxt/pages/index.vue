@@ -188,7 +188,7 @@
 										<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="all.stores" :currentCity.sync="currentCity"></vue-store-grid>
 
 										<div class="text-xs-center" v-if="all.pagination.last_page>1">
-											<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle></v-pagination>
+											<v-pagination :length="all.pagination.last_page" v-model="all.pagination.current_page" @input="changePage(all.pagination.current_page, 'all')" circle prev-icon="chevron_left" next-icon="chevron_right"></v-pagination>
 										</div>
 
 										<v-card-actions>

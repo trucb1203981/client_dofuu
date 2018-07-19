@@ -17,7 +17,7 @@
 
 						<form>
 							<v-flex xs12 md12>
-								<v-text-field color="red accent-3"  prepend-icon="email" v-model.trim="editedItem.email" label="Địa chỉ email" type="text"
+								<v-text-field color="red accent-3" v-if="typeof user.email == 'undefined'"  prepend-icon="email" v-model.trim="editedItem.email" label="Địa chỉ email" type="text"
 								v-validate="'required|email'"
 								data-vv-name="email"
 								:error-messages="errors.collect('email')"
@@ -25,7 +25,7 @@
 								hint="Địa chỉ email là bắt buộc và chính xác"
 								persistent-hint></v-text-field>
 							</v-flex>
-							
+
 							<v-flex xs12 md12>
 								<v-text-field color="red accent-3"  prepend-icon="phone" v-model="editedItem.phone" name="confirm" label="Số điện thoại"
 								v-validate="'required|numeric|min:10|max:11'"
@@ -79,7 +79,7 @@ export default {
 		return {
 			editedItem: {
 				name: '',
-				email: '',
+				email: null,
 				phone: '',
 				password: '',
 				gender: false,

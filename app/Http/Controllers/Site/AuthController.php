@@ -239,11 +239,6 @@ class AuthController extends Controller
         $account = SocialAccount::where('provider', 'facebook')->where('provider_user_id', $request->id)->first();
         if($account) {
             $token = auth('api')->login($account->user);
-            // $res = [
-            //     'type'    => 'success',
-            //     'message' => 'Đăng nhập thành công',
-            //     'data'    => $account->user
-            // ];
             return $this->respondWithToken($token, 1000);
 
         } else {
@@ -254,21 +249,21 @@ class AuthController extends Controller
                 'data'    => []
             ];
             return response($res, 204);
-            // $account = new SocialAccount([
-            //     'provider_user_id' => $request->id,
-            //     'provide'          => 'facebook'
-            // ]);
-            // $user = User::where('email', $request->email)->first();
+            $account = new SocialAccount([
+                'provider_user_id' => $request->id,
+                'provide'          => 'facebook'
+            ]);
+            $user = User::where('email', $request->email)->first();
 
-            // if(!$user) {
-            //     $user = User::create([
-            //         'name' => $request->name,
-            //         'email' => $request->email,
-            //         'gender'=> $request->gender,
-            //         'birthday' => $request->birthday,
+            if(!$user) {
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'gender'=> $request->gender,
+                    'birthday' => $request->birthday,
 
-            //     ]);
-            // }
+                ]);
+            }
         }
     }
 

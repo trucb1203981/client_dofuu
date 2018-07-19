@@ -455,22 +455,23 @@ export default {
 			}
 		},
 		calculateDeliveryPrice(distance) {
-			const service    = this.currentCity.service
-			const deliveries = this.currentCity.deliveries
+			var vm           = this
+			const service    = vm.currentCity.service
+			const deliveries = vm.currentCity.deliveries
 			var shipPrice    = 0
-			var oddPrice   = 0
-			this.maxRange    = service.maxRange
+			var oddPrice     = 0
+			vm.maxRange      = service.maxRange
 			// CHECK CONDITION MAX RANGE
 			if(distance > service.maxRange) {
 				deliveries.forEach(item => {
 					shipPrice = item.price*distance
 				})
-				this.dialog   = true
+				vm.dialog     = true
 			} else {
 				if(service.deliveryActived) {
 					deliveries.forEach(item => {
 						if(item.from <= distance && item.to >= distance && service.minRange >= distance) {
-							if(this.user.freeShip) {
+							if(vm.user.freeShip) {
 								shipPrice = 0	
 							} else {								
 								shipPrice = parseFloat(item.price)
@@ -487,7 +488,7 @@ export default {
 					})
 				} 
 			}
-			this.deliveryPrice = shipPrice
+			vm.deliveryPrice = shipPrice
 		},
 		allowedHours: function(v) {
 			return v
@@ -531,6 +532,7 @@ export default {
 					
 				}
 			})
+			this.$store.dispatch('getUser')
 			await window.localStorage.setItem('cart', JSON.stringify(cart))
 			await this.$store.commit('FETCH_CART', cart)
 			await this.$store.commit('REMOVE_COUPON')

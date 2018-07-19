@@ -61,53 +61,57 @@
 						</v-list-tile-avatar>
 						<v-list-tile-content>
 							<v-list-tile-title>{{currentUser.name}}</v-list-tile-title>
-							<v-list-tile-sub-title>{{currentUser.type}}</v-list-tile-sub-title>
-						</v-list-tile-content>
-					</v-list-tile>
-				</v-list>
-				<v-divider></v-divider>
-				<v-list >
-					<v-list-tile avatar :to="{name:'information'}">
-						<v-list-tile-avatar>
-							<v-icon class="blue white--text">person</v-icon>
-						</v-list-tile-avatar>
-						<v-list-tile-content>
-							<v-list-tile-title>Thông tin tài khoản</v-list-tile-title>
-						</v-list-tile-content>
-					</v-list-tile>
-					<v-list-tile avatar :to="{name:'history'}">
-						<v-list-tile-avatar>
-							<v-icon class="yellow lighten-1 white--text">history</v-icon>
-						</v-list-tile-avatar>
-						<v-list-tile-content>
-							<v-list-tile-title>Lịch sử đặt món</v-list-tile-title>
-						</v-list-tile-content>
-					</v-list-tile>
-					<v-list-tile avatar @click="$store.dispatch('logout')">
-						<v-list-tile-avatar>
-							<v-icon class="red lighten-1 white--text">exit_to_app</v-icon>
-						</v-list-tile-avatar>
-						<v-list-tile-content>
-							<v-list-tile-title>Đăng xuất</v-list-tile-title>
-						</v-list-tile-content>
-					</v-list-tile>
-				</v-list>
-			</v-card>
-		</v-menu>
-	</v-toolbar-items>	
+							<v-tooltip top>
+								<v-list-tile-sub-title slot="activator">
+									<v-icon color="red accent-3">scatter_plot</v-icon> <span class="font-weight-bold">{{currentUser.points}}</span></v-list-tile-sub-title>
+									<span>Điểm df dùng đổi thưởng</span>
+								</v-tooltip>
+							</v-list-tile-content>
+						</v-list-tile>
+					</v-list>
+					<v-divider></v-divider>
+					<v-list >
+						<v-list-tile avatar :to="{name:'information'}">
+							<v-list-tile-avatar>
+								<v-icon class="blue white--text">person</v-icon>
+							</v-list-tile-avatar>
+							<v-list-tile-content>
+								<v-list-tile-title>Thông tin tài khoản</v-list-tile-title>
+							</v-list-tile-content>
+						</v-list-tile>
+						<v-list-tile avatar :to="{name:'history'}">
+							<v-list-tile-avatar>
+								<v-icon class="yellow lighten-1 white--text">history</v-icon>
+							</v-list-tile-avatar>
+							<v-list-tile-content>
+								<v-list-tile-title>Lịch sử đặt món</v-list-tile-title>
+							</v-list-tile-content>
+						</v-list-tile>
+						<v-list-tile avatar @click="$store.dispatch('logout')">
+							<v-list-tile-avatar>
+								<v-icon class="red lighten-1 white--text">exit_to_app</v-icon>
+							</v-list-tile-avatar>
+							<v-list-tile-content>
+								<v-list-tile-title>Đăng xuất</v-list-tile-title>
+							</v-list-tile-content>
+						</v-list-tile>
+					</v-list>
+				</v-card>
+			</v-menu>
+		</v-toolbar-items>	
 
-	<v-tabs slot="extension" v-if="currentCity != null && types.length > 0" slider-color="red" fixed-tabs>
-		<v-tab nuxt :to="{path: '/'}">
-			<v-icon left color="red accent-3" size="20">home</v-icon> <h5>Trang chủ </h5>
-		</v-tab>
-		<v-tab nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
-			<v-icon left size="20">apps</v-icon> <h5>Tất cả</h5>
-		</v-tab>
-		<v-tab v-for="(item, index) in types" :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
-			<v-icon left size="20">{{item.icon}}</v-icon> <h5>{{ item.name }}</h5>
-		</v-tab>
-	</v-tabs>
-</v-toolbar>
+		<v-tabs slot="extension" v-if="currentCity != null && types.length > 0" slider-color="red" fixed-tabs>
+			<v-tab nuxt :to="{path: '/'}">
+				<v-icon left color="red accent-3" size="20">home</v-icon> <h5>Trang chủ </h5>
+			</v-tab>
+			<v-tab nuxt :to="{name: 'city-tat-ca-dia-diem', params: {city: currentCity.slug }}">
+				<v-icon left size="20">apps</v-icon> <h5>Tất cả</h5>
+			</v-tab>
+			<v-tab v-for="(item, index) in types" :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
+				<v-icon left size="20">{{item.icon}}</v-icon> <h5>{{ item.name }}</h5>
+			</v-tab>
+		</v-tabs>
+	</v-toolbar>
 
 <!-- 	<v-tabs v-if="currentCity != null && types.length > 0" fixed-tabs show-arrows slider-color="red">
 		<v-tab nuxt :to="{path: '/'}">

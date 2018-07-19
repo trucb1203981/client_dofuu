@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Activation;
 use App\Models\SocialAccount;
 use App\Http\Resources\Site\AuthResource;
+use App\Http\Resources\Site\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\ActiveUserMail;
@@ -126,13 +127,13 @@ class AuthController extends Controller
             } else {
                 $user->gender = 0;
             }
-            $user->birthday = $request->birthday;
-            $user->phone    = $request->phone;
-            $user->password = bcrypt($request->password);
-            $user->image    = $request->picture['data']['url'];
-            $user->role_id  = $this->customer->id;
-            $user->free_ship= 1;
-            $user->actived  = 1;
+            $user->birthday  = $request->birthday;
+            $user->phone     = $request->phone;
+            $user->password  = bcrypt($request->password);
+            $user->image     = $request->picture['data']['url'];
+            $user->role_id   = $this->customer->id;
+            $user->free_ship = 1;
+            $user->actived   = 1;
             $user->save();
         }
         $account->user()->associate($user);
@@ -220,7 +221,7 @@ class AuthController extends Controller
             $res = [
                 'type'    => 'success',
                 'message' => '',
-                'data'    => $data
+                'data'    => new UserResource($user)
             ];
             return response($res, 200);
         } else {

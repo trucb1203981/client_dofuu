@@ -160,7 +160,7 @@ export default {
 				} else {
 					console.log('User cancelled login or did not fully authorize.');
 				}
-			}, {scope: 'email,user_likes, user_birthday, user_location, user_gender'})
+			}, {scope: 'email,user_likes,user_birthday,user_location,user_gender'})
 		}
 	},
 	created() {

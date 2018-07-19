@@ -20,17 +20,23 @@
 						<v-toolbar-title>
 							Thông tin tài khoản
 						</v-toolbar-title>
-					</v-toolbar>
-					<v-container>
-						<v-layout row wrap class="justify-center">
-							
-							<!-- <a @click.stop="$store.commit('SHOW_IMAGE_DIALOG')">								 -->
-								<v-avatar  size="150" color="grey" style="border" @mouseover="hoverImage = true" @mouseleave="hoverImage = false">
-									<img :src="image(currentUser.image)" alt="avatar">
-								</v-avatar>
-								<v-badge color="blue-grey" top right overlap v-model="show">
-									<v-icon slot="badge" dark >camera_alt</v-icon>
-								</v-badge>	
+						<v-spacer></v-spacer>
+						<v-tooltip top>
+							<span slot="activator"><v-icon color="red accent-3">scatter_plot</v-icon> <span class="font-weight-bold">{{currentUser.points}}</span></span>
+							<span>Điểm df dùng đổi thưởng</span>
+						</v-tooltip>
+					</v-list-tile-content>
+				</v-toolbar>
+				<v-container>
+					<v-layout row wrap class="justify-center">
+
+						<!-- <a @click.stop="$store.commit('SHOW_IMAGE_DIALOG')">								 -->
+							<v-avatar  size="150" color="grey" style="border" @mouseover="hoverImage = true" @mouseleave="hoverImage = false">
+								<img :src="image(currentUser.image)" alt="avatar">
+							</v-avatar>
+							<v-badge color="blue-grey" top right overlap v-model="show">
+								<v-icon slot="badge" dark >camera_alt</v-icon>
+							</v-badge>	
 							<!-- </a> -->
 						</v-layout>
 					</v-container>				
@@ -101,7 +107,7 @@
 							</v-list-tile-action>
 
 							<v-list-tile-content>
-								<v-list-tile-title>{{currentUser.address}}</v-list-tile-title>
+								<v-list-tile-title>{{currentUser.address==null ? 'Chưa có' : currentUser.address}}</v-list-tile-title>
 							</v-list-tile-content>
 						</v-list-tile>
 					</v-list>	

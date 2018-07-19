@@ -26,7 +26,12 @@
 				</v-list-tile-avatar>
 				<v-list-tile-content>
 					<v-list-tile-title>{{currentUser.name}}</v-list-tile-title>
-					<v-list-tile-sub-title>{{currentUser.type}}</v-list-tile-sub-title>
+					<v-tooltip top>
+						<v-list-tile-sub-title slot="activator">
+							<v-icon color="red accent-3">scatter_plot</v-icon> <span class="font-weight-bold">{{currentUser.points}}</span></v-list-tile-sub-title>
+							<span>Điểm df dùng đổi thưởng</span>
+						</v-tooltip>
+					</v-list-tile-content>
 				</v-list-tile-content>
 			</v-list-tile>
 			<v-list-tile avatar :to="{name:'history'}">

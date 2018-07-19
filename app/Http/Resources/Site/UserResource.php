@@ -14,17 +14,53 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-    	return [
-			'id'       => $this->id,
-			'address'  => $this->address,
-			'birthday' => $this->birthday,
-			'email'    => $this->email,
-			'gender'   => $this->gender,
-			'image'    => $this->image,
-			'lat'      => $this->lat,
-			'lng'      => $this->lng,
-			'name'     => $this->name,
-			'phone'    => $this->phone,
-    	];
+         if ($this->role_id === 5) {
+                $data = [
+                    'id'       => $this->id,
+                    'name'     => $this->name,
+                    'birthday' => $this->birthday,
+                    'gender'   => $this->gender,
+                    'email'    => $this->email,
+                    'image'    => $this->image,
+                    'address'  => $this->address,
+                    'phone'    => $this->phone,
+                    'freeShip' => $this->free_ship,
+                    'points'   => $this->points,
+                    'type'     => 'Customer'
+                ];
+
+            } else if ($this->role_id === 4) {
+                $data = [
+                    'id'         => $this->id,
+                    'name'       => $this->name,
+                    'birthday'   => $this->birthday,
+                    'gender'     => $this->gender,
+                    'email'      => $this->email,
+                    'image'      => $this->image,
+                    'address'    => $this->address,
+                    'phone'      => $this->phone,
+                    'freeShip'   => $this->free_ship,
+                    'points'   => $this->points,
+                    'isPartner'  => true,
+                    'type'       => 'Partner',
+                    'have_store' => $this->have_store == 1 ? true : false,
+                ];
+            }  else if($this->role_id === 2) {
+                $data = [
+                    'id'         => $this->id,
+                    'name'       => $this->name,
+                    'birthday'   => $this->birthday,
+                    'gender'     => $this->gender,
+                    'email'      => $this->email,
+                    'image'      => $this->image,
+                    'address'    => $this->address,
+                    'phone'      => $this->phone,
+                    'freeShip'   => $this->free_ship,
+                    'points'   => $this->points,
+                    'type'       => 'Admin',
+                    'isEmployee' => true
+                ];
+            }
+    	return $data;
     }
 }

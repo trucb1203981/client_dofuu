@@ -243,32 +243,27 @@ class AuthController extends Controller
             return $this->respondWithToken($token, 1000);
 
         } else {
-
-            $res = [
-                'type'    => 'warning',
-                'message' => 'Tài khoản chưa được đăng ký',
-                'data'    => []
-            ];
-            return response($res, 204);
-            $account = new SocialAccount([
-                'provider_user_id' => $request->id,
-                'provide'          => 'facebook'
-            ]);
             $user = User::where('email', $request->email)->first();
-
             if(!$user) {
-                $user = User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'gender'=> $request->gender,
-                    'birthday' => $request->birthday,
-
+                $res = [
+                    'type'    => 'warning',
+                    'message' => 'Tài khoản chưa được đăng ký',
+                    'data'    => []
+                ];
+                return response($res, 204);
+            } else {
+                $account = new SocialAccount([
+                    'provider_user_id' => $request->id,
+                    'provider'         => 'facebook'
                 ]);
+                $account->user()->associate($user);
+                $token = auth('api')->login($user);
+                return $this->respondWithToken($token, 1000);
             }
         }
     }
 
-    
+
     /**
      * Log the user out (Invalidate the token).
      *

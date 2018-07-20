@@ -43,6 +43,7 @@
 													<v-flex :bind="$vuetify.breakpoint.mdAndUp ? 'xs8' : 'xs10'">
 														<v-text-field prepend-icon="place" placeholder="Địa chỉ nhận" v-model="editedItem.address" id="auto-complete" ref="autocomplete" append-outer-icon="gps_fixed" @click:append-outer="currentLocation"
 														:hint="`Chọn nút phía bên phải trường địa chỉ nhận sẽ xác định vị trí hiện tại`"
+														@focus="autoComplete"
 														persistent-hint></v-text-field>
 													</v-flex>											
 												</v-layout>
@@ -88,7 +89,8 @@
 												<v-textarea
 												prepend-icon="short_text"
 												v-model="editedItem.memo"
-												label="Ghi chú"												hint="Vui lòng dặn dò nếu có"
+												label="Ghi chú"
+												hint="Vui lòng dặn dò nếu có"
 												rows="4"
 												persistent-hint
 												></v-textarea>
@@ -533,6 +535,10 @@ export default {
 				}
 			})
 			this.$store.dispatch('getUser')
+			this.matrix = {
+				distance: null,
+				duration: null
+			},
 			await window.localStorage.setItem('cart', JSON.stringify(cart))
 			await this.$store.commit('FETCH_CART', cart)
 			await this.$store.commit('REMOVE_COUPON')
@@ -654,8 +660,6 @@ export default {
 			var vm = this
 
 			if(val) {
-
-				vm.autoComplete()
 
 				if(vm.user.address != null) {
 

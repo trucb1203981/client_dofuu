@@ -197,7 +197,7 @@ export default {
 		},
 		search () {
 			const keyword = this.keywords
-			if(keyword.length>0) {
+			if( keyword !== null || keyword.length>0) {
 				this.$router.push({name: 'city-tim-kiem-tat-ca', query: {q: keyword}, params: {city: this.currentCity.slug}})
 			}
 			return 		

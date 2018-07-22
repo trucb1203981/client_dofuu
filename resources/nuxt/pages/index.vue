@@ -6,11 +6,9 @@
 					
 					<v-flex xs12>
 						<v-flex xs12>
-							<no-ssr>
-								<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300px' : '200px'"  >			
-									<img src="img/deal_banner.png" alt="">
-								</v-card-media>
-							</no-ssr>
+							<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300px' : '200px'"  >			
+								<img src="img/deal_banner.png" alt="">
+							</v-card-media>
 						</v-flex>
 					</v-flex>
 

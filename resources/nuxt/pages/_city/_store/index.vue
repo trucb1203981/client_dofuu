@@ -528,7 +528,7 @@
 											{{editedItem.qty}}
 										</span>
 										<span>
-											<v-btn icon ripple @click.stop="editedItem.qty--"  class="ma-0">
+											<v-btn icon ripple @click.stop="editedItem.qty > 0 ? editedItem.qty-- :''"  class="ma-0">
 												<v-icon color="grey" >indeterminate_check_box</v-icon>
 											</v-btn>
 										</span>				
@@ -553,7 +553,7 @@
 		<v-card-actions>
 			<v-btn color="red" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
 			<v-spacer></v-spacer>									
-			<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="processAddCart" small>
+			<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="editedItem.qty == 0" small>
 				{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
 			</v-card-actions>
 		</v-card>

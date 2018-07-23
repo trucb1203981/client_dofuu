@@ -21,7 +21,7 @@ class CatalogueResource extends JsonResource
             'name'     => $this->catalogue,
             '_name'    => $this->_catalogue,
             'slug'     => $this->slug,
-            'products' => ProductResource::collection($this->products)
+            'products' => ProductResource::collection($this->products->map(function($query) { return $query; })->where('status_id', '!=', 3)->sortByDesc('priority')->sortBy('name'))
         ];
     }
 }

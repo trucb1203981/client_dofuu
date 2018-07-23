@@ -51,7 +51,7 @@
 
 				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index">
 
-					<v-subheader :id="'item_'+data.id"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
+					<v-subheader :id="'item_'+data.id" v-show="data.products.length>0"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
 					<!-- MOBILE PRODUCT LIST-->
 					<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in data.products" :key="i">
 						<v-card hover ripple class="elevation-1 mb-2" v-on:click.native="openCartDialog(item)">

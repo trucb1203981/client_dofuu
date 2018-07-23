@@ -51,7 +51,7 @@
 
 				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index">
 
-					<v-subheader :id="'item_'+data.id" v-show="data.products.length>0"><span >{{data.name | upperCase }} <span v-if="data._name != null">({{data._name | upperCase}}) </span></span></v-subheader>
+					<v-subheader :id="'item_'+data.id" v-show="data.products.length>0"><span >{{data.name | upperCase }} <div v-show="data._name != null" class="caption font-italic">{{data._name | upperCase}}</div></span></v-subheader>
 					<!-- MOBILE PRODUCT LIST-->
 					<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in data.products" :key="i">
 						<v-card hover ripple class="elevation-1 mb-2" v-on:click.native="openCartDialog(item)">
@@ -125,7 +125,7 @@
 			<!-- RIGHT NAVBAR DESKTOP -->
 			<v-flex offset-md-8 xs12 md4  ref="target_navbar_right" v-if="$vuetify.breakpoint.mdAndUp" class="hidden-sm-and-down row px-0 text-xs-right">
 				<v-card :class="{'card--sticky' : offsetTop>offsetNavbarRight-50 && $vuetify.breakpoint.mdAndUp}" style="z-index:4" :width="$vuetify.breakpoint.mdOnly ? '280' : '310'">
-					<!-- <v-tabs icons-and-text grow :value="`item-${tabIndex}`">
+					<v-tabs icons-and-text grow :value="`item-${tabIndex}`">
 
 						<v-tabs-slider color="yellow"></v-tabs-slider>
 
@@ -139,7 +139,7 @@
 							<v-icon left v-if="index == 0" size="20">assignment</v-icon>
 
 						</v-tab>
-					</v-tabs> -->
+					</v-tabs>
 					<v-card-text v-if="tabIndex==0">
 						<v-list  class="scroll-y" style="max-height: 400px">
 							<v-list-tile v-for="item in store.catalogues" v-if="item.products.length>0" @click="goTo('#item_'+item.id)" :key="item.name" >

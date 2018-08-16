@@ -103,6 +103,11 @@ import {mapState} from 'vuex'
 import vietnam from 'vee-validate/dist/locale/vi';
 export default {
 	layout: 'credential',
+	head() {
+		return {
+			title: 'Tạo tài khoản Dofuu'
+		}
+	},
 	asyncData() {
 		return {
 			title: 'Tạo tài khoản Dofuu',

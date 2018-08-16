@@ -41,10 +41,7 @@ const actions = {
 			if(response.status == 200) {
 				commit('GET_STORE', response.data.store)
 			}
-			await resolve(response)
-			setTimeout(() => {
-				
-			}, 500)
+			resolve(response)
 		}).catch(error => {
 			reject(error)
 		}).finally(() => {

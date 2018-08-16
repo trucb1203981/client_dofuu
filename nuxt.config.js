@@ -7,7 +7,7 @@ module.exports = laravelNuxt({
 	},
 	// Options such as mode, srcDir and generate.dir are already handled for you.
 	head: {
-		title: 'Dofuu website đặt và giao hàng trực tuyến',
+		title: 'Hệ thống đặt và giao thức ăn trực tuyến',
 		meta: [
 		{ charset: 'utf-8' },
 		{ name: 'viewport', content: 'width=device-width, initial-scale=1' },

@@ -183,7 +183,7 @@ export default {
 			var vm   = this
 			FB.login(function(response) {
 				if(response.authResponse) {
-					FB.api('/me', 'GET', {'fields': 'email,name,birthday,gender,location,picture.width(100).height(100)'}, function(response) {
+					FB.api('/me', 'GET', {'fields': 'email,name,birthday,gender,location,picture.width(350).height(350)'}, function(response) {
 						var data = response
 						axios.post('/api/facebook/auth', data).then(response => {
 							if(response.status === 204) {

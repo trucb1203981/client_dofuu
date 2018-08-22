@@ -226,7 +226,7 @@ class StoreController extends Controller
             }, 'catalogues' => function($query) {
                 return $query->where('ec_catalogues.catalogue_show', '=', 1);
             }])->first();
-
+            
             if(!is_null($store)) {
                 $store->views = ++$store->views;
                 $store->save();

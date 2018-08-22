@@ -83,3 +83,7 @@ Route::group(['namespace' => 'Site'], function() {
 	//SEARCH STORE BY PRODUCT
 	Route::get('/Search/Products', 'StoreController@searchStoreByProduct');
 });
+
+Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function() {
+	Route::get('/FetchCities', 'CityController@fetchCity');
+});

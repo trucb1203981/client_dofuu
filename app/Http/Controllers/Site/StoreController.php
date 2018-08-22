@@ -223,6 +223,8 @@ class StoreController extends Controller
                 });
             },'products' => function($query) use ($statusID) {
                 return $query->where('ec_products.status_id', '!=', $statusID);
+            }, 'catalogues' => function($query) {
+                return $query->where('ec_catalogues.catalogue_show', '=', 1);
             }])->first();
 
             if(!is_null($store)) {

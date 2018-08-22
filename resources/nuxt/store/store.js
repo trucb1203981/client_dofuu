@@ -9,8 +9,8 @@ const state = {
 	loading:false,
 	rightDrawer:false,
 	headers: [
-	{title: 'Danh mục'},
-	{title: 'Giỏ hàng'}
+		{title: 'Danh mục'},
+		{title: 'Giỏ hàng'}
 	]
 }
 

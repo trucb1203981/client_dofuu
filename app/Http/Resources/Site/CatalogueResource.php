@@ -14,8 +14,6 @@ class CatalogueResource extends JsonResource
      */
     public function toArray($request)
     {
-        $products = $this->products->where('status_id', '!=', 3)->sortByDesc('priority')->sortBy('name');
-
         return [
             'id'       => $this->id,
             'name'     => $this->catalogue,

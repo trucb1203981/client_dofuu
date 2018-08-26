@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Store extends Model
 {
@@ -34,6 +35,13 @@ class Store extends Model
     public function scopeOfCity($cityId) {
         return $this->whereHas('district', function($query) use($cityId) {
             $query->where('city_id', $cityId);
+        });
+    }
+
+    public function scopeHasCoupon() {
+        $now = Carbon::now()->toDateTimeString(); 
+        return $this->whereHas('coupons', function($query) use ($now) {
+            $query->actived()->unexpired();
         });
     }
 

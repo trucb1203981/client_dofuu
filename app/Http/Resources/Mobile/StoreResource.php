@@ -52,6 +52,18 @@ class StoreResource extends JsonResource
                     return $res;
                 });
             }),
+            'catalogues'    => $this->whenLoaded('catalogues', function() {
+                return CatalogueResource::collection($this->catalogues->where('catalogue_show', '=', 1));
+            }),
+            'district'      => $this->whenLoaded('district', function() {
+                return new DistrictResource($this->district);
+            }),
+            'type'          => $this->whenLoaded('type', function() {
+                return new TypeResource($this->type);
+            }),
+            'toppings'      => $this->whenLoaded('toppings', function() {
+                return ToppingResource::collection($this->toppings);
+            })
         ];
     }
 }

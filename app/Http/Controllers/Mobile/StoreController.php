@@ -39,4 +39,16 @@ class StoreController extends Controller
     	return response($res, 200);
     }
 
+    public function fetchStoreHasDeal(Request $request) {
+
+    	$stores = Store::ofCity($request->cityId)->show()->hasCoupon()->get();
+
+    	$res = [
+				'type'    => 'success',
+				'message' => 'Get city information successfully.',
+				'stores'  => StoreResource::collection($stores->load('coupons', 'activities'))
+        ];
+
+        return response($res, 200);
+    }
 }

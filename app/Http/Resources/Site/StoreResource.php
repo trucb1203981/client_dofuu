@@ -53,7 +53,7 @@ class StoreResource extends JsonResource
                 });
             }),
             'catalogues'    => $this->whenLoaded('catalogues', function() {
-                return CatalogueResource::collection($this->catalogues->where('catalogue_show', '=', 1));
+                return CatalogueResource::collection($this->catalogues->where('catalogue_show', 1));
             }),
             'district'      => $this->whenLoaded('district', function() {
                 return new DistrictResource($this->district);

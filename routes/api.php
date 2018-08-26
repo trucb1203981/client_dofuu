@@ -90,6 +90,7 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function() {
 	Route::get('/FetchCity/{city}/GetInformationHasDeal', 'CityController@getInformationHasDeal');
 	Route::get('/FetchCity/{city}/GetInformation', 'CityController@getInformation');
 	Route::get('/FetchStores', 'StoreController@fetchAllStore');
+	Route::get('/GetStore/{id}', 'StoreController@showStore');
 	Route::get('/FetchStoresHasDeal', 'StoreController@fetchStoreHasDeal');
 	Route::get('/FetchType/Stores', 'StoreController@fetchAllStoreByType');
 });

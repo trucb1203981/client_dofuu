@@ -26,6 +26,18 @@ class City extends Model
 
     }
     
+    public function defaultCity() {
+        return  $this->where('city_name', 'Cần Thơ')->first();
+    }
+
+    public function scopeShow() {
+        return $this->where('city_show', 1);
+    }
+
+    public function scopeHide() {
+        return $this->where('city_show', 0);
+    }
+
     public function country() {
         return $this->belongsTo('App\Models\Country', 'country_id');
     }

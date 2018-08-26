@@ -27,6 +27,16 @@ class Store extends Model
         return false;
     }
 
+    public function scopeShow() {
+        return $this->where('store_show', 1);
+    }
+
+    public function scopeOfCity($cityId) {
+        return $this->whereHas('district', function($query) use($cityId) {
+            $query->where('city_id', $cityId);
+        });
+    }
+
     public function user() {
     	return $this->belongsTo('App\Models\User', 'user_id');
     }

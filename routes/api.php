@@ -86,4 +86,9 @@ Route::group(['namespace' => 'Site'], function() {
 
 Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function() {
 	Route::get('/FetchCities', 'CityController@fetchCity');
+	Route::get('/FetchCity/{city}', 'CityController@getCityCurrent');
+	Route::get('/FetchCity/{city}/GetInformationHasDeal', 'CityController@getInformationHasDeal');
+	Route::get('/FetchCity/{city}/GetInformation', 'CityController@getInformation');
+	Route::get('/FetchStores', 'StoreController@fetchAllStore');
+	Route::get('/FetchType/Stores', 'StoreController@fetchAllStoreByType');
 });

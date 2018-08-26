@@ -1,4 +1,4 @@
-import {baseURL} from '@/config.js'
+import { baseURL } from '@/config.js'
 import Cookies from 'js-cookie'
 export default {
 	methods: {

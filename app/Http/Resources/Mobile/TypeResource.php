@@ -20,7 +20,7 @@ class TypeResource extends JsonResource
             'slug'   => $this->type_slug,
             'icon'   => $this->type_icon,
             'stores' => $this->whenLoaded('stores', function() {
-                return StoreResource::collection($this->stores->map( function($query) {return $query;})->where('status_id', '!=', 3)->sortBy('name')->sortByDesc('priority'));
+                return StoreResource::collection($this->stores->map( function($query) {return $query;})->where('store_show', 1)->where('status_id', '!=', 3)->sortBy('name')->sortByDesc('priority'));
             }),
         ];
     }

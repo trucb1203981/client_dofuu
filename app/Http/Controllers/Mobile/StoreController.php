@@ -18,8 +18,7 @@ class StoreController extends Controller
     }
 
     public function fetchAllStore(Request $request) {
-
-    	$stores = $this->stores->getStoreByCity($request->cityId)->show()->get();
+    	$stores = $this->stores->ofCity($request->cityId)->show()->get();
     	return response($stores);
     }
 

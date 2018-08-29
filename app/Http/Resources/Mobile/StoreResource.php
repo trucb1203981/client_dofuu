@@ -24,6 +24,7 @@ class StoreResource extends JsonResource
             'lat'          => $this->lat,
             'lng'          => $this->lng,
             'avatar'       => $this->store_avatar,
+            'views'        => $this->views,
             'verified'     => $this->verified,
             'type'         => $this->type->type_name,
             'status'       => $this->status->store_status_name,

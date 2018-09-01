@@ -29,7 +29,7 @@ class CityController extends Controller
         $res    = [
             'type'     => 'success',
             'messsage' => 'Get all cities successfully!!!',
-            'city'     => CityResource::collection($cities)
+            'cities'     => CityResource::collection($cities)
         ];
         
         return response($res, 200);

@@ -19,14 +19,19 @@ class StoreController extends Controller
 
     public function fetchAllStore(Request $request) {
     	$stores = $this->stores->ofCity($request->cityId)->show()->get();
-    	return response($stores);
+        $res = [
+                'type'    => 'success',
+                'message' => 'Get store information successfully!!!',
+                'stores'   => new StoreResource($store->load('activities', 'catalogues', 'toppings')),
+            ];
+    	return response($res, 200);
     }
 
     public function showStore($id) {
     	$store = Store::show()->findorFail($id);
     	if(!is_null($store)) {
-            $store->views = ++$store->views;
-            $store->save();
+            // $store->views = ++$store->views;
+            // $store->save();
 
             $res = [
                 'type'    => 'success',

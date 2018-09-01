@@ -209,6 +209,31 @@
 		<v-btn v-if="endPage" class="hidden-md-and-up" transition="scale-transition" right bottom fixed fab dark small color="primary"  @click="scrollTop">
 			<v-icon dark>expand_less</v-icon>
 		</v-btn>
+
+		<v-dialog v-model="notify" max-width="500">
+	      <v-card>
+	        <v-toolbar dense color="transparent" class="elevation-0">
+				<v-avatar size="24px" tile>
+					<img src="~/static/dofuu24x24.png">
+				</v-avatar>
+				<v-toolbar-title class="red--text">
+					Thông báo nghỉ lễ 02/09
+				</v-toolbar-title>
+			</v-toolbar>
+			<v-divider></v-divider>
+	        <v-card-text>
+	        	<h3 class="font-weight-bold">Xin thông báo Dofuu nghỉ lễ 02/09 và sẽ phục vụ trở lại vào ngày 03/09.</h3>
+	        	<br/>
+	        	<h3 class="font-weight-bold">Chúc quý khách hàng có 1 kỳ nghỉ lễ thật vui vẻ và hạnh phúc bên gia đình.</h3>  
+	        	<br/>
+	        	<h3 class="font-weight-bold">Xin trân trọng cám ơn quý khách hàng đã ủng hộ Dofuu.</h3>  
+	        </v-card-text>
+	        <v-divider></v-divider>
+	        <v-card-actions>
+	          <v-btn color="green darken-1" flat @click.native="notify = false" block>Đóng</v-btn>
+	        </v-card-actions>
+	      </v-card>
+	    </v-dialog>
 	</v-container>
 </template>
 
@@ -232,6 +257,7 @@ export default {
 		return {
 			slide: 0,
 			sliding: null,
+			notify:true,
 			deal: {
 				tabs: 0,
 				list_flag: 0,

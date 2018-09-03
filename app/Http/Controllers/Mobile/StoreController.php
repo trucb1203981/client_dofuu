@@ -22,7 +22,7 @@ class StoreController extends Controller
         $res = [
                 'type'    => 'success',
                 'message' => 'Get store information successfully!!!',
-                'stores'   => new StoreResource($store->load('activities', 'catalogues', 'toppings')),
+                'stores'   => StoreResource::collection($stores->load('activities', 'catalogues', 'toppings')),
             ];
     	return response($res, 200);
     }

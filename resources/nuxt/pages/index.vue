@@ -210,7 +210,7 @@
 			<v-icon dark>expand_less</v-icon>
 		</v-btn>
 
-		<v-dialog v-model="notify" max-width="500">
+		<!-- <v-dialog v-model="notify" max-width="500">
 	      <v-card>
 	        <v-toolbar dense color="transparent" class="elevation-0">
 				<v-avatar size="24px" tile>
@@ -233,7 +233,7 @@
 	          <v-btn color="green darken-1" flat @click.native="notify = false" block>Đóng</v-btn>
 	        </v-card-actions>
 	      </v-card>
-	    </v-dialog>
+	    </v-dialog> -->
 	</v-container>
 </template>
 

@@ -51,21 +51,21 @@
 									</span>
 								</div>
 							</v-system-bar>
-							<v-card-media :src="image(store.avatar)" height="200">
+							<v-img :src="image(store.avatar)" height="200" :aspect-ratio="16/9" >
 								<v-layout column class="media">
-									<v-card-title>
-										<v-spacer></v-spacer>
-										<v-tooltip top v-if="store.verified">
-											<v-avatar
-											slot="activator"
-											size="22">
-											<v-icon color="green darken-3">verified_user</v-icon>
-										</v-avatar>	
-										<span>Chứng nhận hợp tác cùng Dofuu</span>
-									</v-tooltip>									
-								</v-card-title>
-							</v-layout>			
-						</v-card-media>
+										<v-card-title>
+											<v-spacer></v-spacer>
+											<v-tooltip top v-if="store.verified">
+												<v-avatar
+												slot="activator"
+												size="22">
+												<v-icon color="green darken-3">verified_user</v-icon>
+											</v-avatar>	
+											<span>Chứng nhận hợp tác cùng Dofuu</span>
+										</v-tooltip>									
+									</v-card-title>
+								</v-layout>			
+							</v-img>
 						<v-toolbar dense flat color="red darken-3" dark class="elevation-0">
 							<v-subheader class="text-xs-center"><h4>{{store.name}}</h4></v-subheader>
 						</v-toolbar>

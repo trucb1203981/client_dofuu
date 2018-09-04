@@ -15,7 +15,7 @@
 			offset-x
 			@keyup.enter="search"
 			:append-icon="'search'"
-			:append-icon-cb="search"
+			@click:append="search"
 			></v-text-field>
 		</v-toolbar>
 		<v-list v-if="currentUser != null">

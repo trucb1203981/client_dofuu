@@ -3,7 +3,7 @@
 		<v-layout child-flex v-show="!loading" justify-end>
 			<v-flex xs12 md8>
 
-				<v-autocomplete prepend-inner-icon="search" :items="products" :loading="isLoading" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" outline max-height="200" height="10" item-text="name"  clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu" color="red accent--3" return-object @input="openCartDialog">
+				<v-autocomplete prepend-inner-icon="search" :items="products" :loading="isLoading" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" outline height="10" item-text="name"  clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu" color="red accent--3" return-object @input="openCartDialog" :menu-props="{maxHeight: '200'}">
 					<template slot="item" slot-scope="data" >
 						<v-list-tile-avatar>
 							<img :src="image(data.item.image)">
@@ -57,8 +57,8 @@
 						<v-card hover ripple class="elevation-1 mb-2" v-on:click.native="openCartDialog(item)">
 							<v-layout row wrap class="px-2">
 								<v-flex xs3 class="text-xs-center">
-									<v-avatar size="80" color="primary">
-										<img :src="image(item.image)" alt="alt">
+									<v-avatar :size="imageSize" color="red darken-4">
+										<img :src="image(item.image)" alt="item.name">
 									</v-avatar>
 								</v-flex>
 								<v-flex xs9 class="px-0">
@@ -71,9 +71,12 @@
 
 										<h5 class="grey--text" v-if="item._name !== null" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item._name}}</h5>
 										<v-layout row wrap>
-											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
-												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
+											<v-flex xs12 class="body justify-center py-0">
+												<div class="caption"><span>{{item.sizes[1].name}}: <strong>{{item.sizes[1].price | formatPrice}}</strong> </span></div>
 											</v-flex>	
+											<!-- <v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
+												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
+											</v-flex>	 -->
 										</v-layout>
 									</v-card-text>
 								</v-flex>
@@ -86,7 +89,7 @@
 					<!-- DESKTOP PRODUCT LIST-->
 					<v-layout row wrap>
 						<v-flex md6  v-for="(item, i) in data.products" :key="i" v-if="$vuetify.breakpoint.mdAndUp">
-							<v-card hover ripple class="mb-2"v-on:click.native="openCartDialog(item)">	
+							<v-card hover ripple class="mb-2" v-on:click.native="openCartDialog(item)">	
 
 								<v-system-bar status color="red darken-3" dark height="40">
 									<h5 class="white--text">{{item.name | upperCase}}</h5>
@@ -98,7 +101,7 @@
 
 									<v-flex xs12 md4 class="text-xs-center">
 										<v-avatar :size="imageSize"  color="grey lighten-3">
-											<img :src="image(item.image)" alt="alt">
+											<img :src="image(item.image)" alt="item.name">
 										</v-avatar>										
 									</v-flex>
 									<v-flex xs12 md8 class="px-0">				
@@ -473,9 +476,8 @@
 
 					<v-flex  xs12 md4>
 						<v-card>
-							<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'" color="grey">
-								<img :src="image(editedItem.image)" :alt="editedItem.name" class="">
-							</v-card-media>
+							<v-img :src="image(editedItem.image)" :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'">								
+							</v-img>
 						</v-card>				
 					</v-flex>
 

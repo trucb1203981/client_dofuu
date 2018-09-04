@@ -7,5 +7,7 @@ use App\Http\Controllers\Controller;
 
 class StoreCommentController extends Controller
 {
-    //
+    public function fetchComment() {
+    	
+    }
 }

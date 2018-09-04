@@ -15,26 +15,8 @@
 						{{item.type.name}}
 					</span>
 				</v-system-bar>
-				<v-card-media class="white--text" :height="$vuetify.breakpoint.mdAndUp ? '150px' : '250px' " :src="image(item.avatar)">
-					<v-container fill-height fluid>
-						<v-layout fill-height >
-							<v-flex xs12>
-								<v-tooltip top>
-									<v-icon slot="activator" :color="item.color" v-if="status(item.status) == 1">
-										sentiment_very_satisfied
-									</v-icon>
-									<span>{{item.status}}</span>
-								</v-tooltip>
-								<v-tooltip top>
-									<v-icon slot="activator" :color="item.color" v-if="status(item.status) == 2">
-										sentiment_neutral
-									</v-icon>
-									<span>{{item.status}}</span>
-								</v-tooltip>
-							</v-flex>
-						</v-layout>
-					</v-container>
-				</v-card-media>
+				<v-img :src="image(item.avatar)" :aspect-ratio="16/9">
+		        </v-img>
 
 				<v-system-bar v-if="item.coupon != null " status color="transparent">
 					<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>

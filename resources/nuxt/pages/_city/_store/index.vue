@@ -776,8 +776,8 @@ export default {
 			setTimeout(() => {
 				let timeNow   = new Date().getTime()
 				
-				let endedTime = new Date(date).getTime()				
-				
+				let endedTime = new Date(date.date).getTime()				
+
 				let distance  = Math.floor(endedTime - timeNow)/1000
 				
 				let day       = Math.floor(distance / (60 * 60 * 24));

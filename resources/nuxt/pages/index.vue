@@ -3,13 +3,25 @@
 		<v-layout grey-lighten-4 row wrap v-if="!loading">
 			<v-flex xs12>
 				<v-layout column> 
-					
 					<v-flex xs12>
-						<v-flex xs12>
-							<v-card-media :height="$vuetify.breakpoint.mdAndUp ? '300px' : '200px'"  >			
-								<img src="img/deal_banner.png" alt="">
-							</v-card-media>
-						</v-flex>
+						<v-carousel :style="$vuetify.breakpoint.mdAndUp ? `height: 315px` : `height: 200px`" hide-delimiters :hide-controls="$vuetify.breakpoint.smAndDown" interval="3000">
+						    <v-carousel-item >
+						    	<v-img src="img/deal_banner.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+								</v-img>
+						    </v-carousel-item>
+						    <v-carousel-item >
+						    	<v-img src="img/Banner1.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+								</v-img>
+						    </v-carousel-item>
+						    <v-carousel-item >
+						    	<v-img src="img/Banner2.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+								</v-img>
+						    </v-carousel-item>
+						    <v-carousel-item >
+						    	<v-img src="img/Banner3.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+								</v-img>
+						    </v-carousel-item>
+						</v-carousel>
 					</v-flex>
 
 					<v-flex xs12 v-if="deal.stores.length>0" class="mb-3">
@@ -233,7 +245,7 @@
 	          <v-btn color="green darken-1" flat @click.native="notify = false" block>Đóng</v-btn>
 	        </v-card-actions>
 	      </v-card>
-	    </v-dialog> -->
+	  </v-dialog> -->
 	</v-container>
 </template>
 

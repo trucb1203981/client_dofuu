@@ -84,4 +84,9 @@ class Store extends Model
     public function regularOrders() {
         return $this->hasMany('App\Models\RegularOrder', 'store_id');
     }
+
+    public function comments()
+    {
+        return $this->morphMany('App\Models\StoreComment', 'commentable');
+    }
 }

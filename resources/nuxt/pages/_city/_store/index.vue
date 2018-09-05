@@ -71,12 +71,9 @@
 
 										<h5 class="grey--text" v-if="item._name !== null" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item._name}}</h5>
 										<v-layout row wrap>
-											<v-flex xs12 class="body justify-center py-0">
-												<div class="caption"><span>{{item.sizes[1].name}}: <strong>{{item.sizes[1].price | formatPrice}}</strong> </span></div>
-											</v-flex>	
-											<!-- <v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
+											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
 												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
-											</v-flex>	 -->
+											</v-flex>	
 										</v-layout>
 									</v-card-text>
 								</v-flex>

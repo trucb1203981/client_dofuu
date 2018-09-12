@@ -5,8 +5,11 @@
         "build": "laravel-nuxt build"
     },
     "dependencies": {
+        "@babel/polyfill": "^7.0.0",
+        "@babel/runtime": "^7.0.0",
         "@nuxtjs/google-analytics": "^2.0.2",
         "axios": "^0.18.0",
+        "babel-plugin-transform-imports": "^1.5.1",
         "babel-polyfill": "^6.26.0",
         "cookieparser": "^0.1.0",
         "js-cookie": "^2.2.0",
@@ -26,7 +29,12 @@
         "vuetify-google-autocomplete": "^2.0.0-beta.4"
     },
     "devDependencies": {
+        "@babel/plugin-transform-runtime": "^7.0.0",
         "@babel/preset-env": "^7.0.0-beta.54",
-        "@fortawesome/fontawesome-free": "^5.1.1"
+        "@fortawesome/fontawesome-free": "^5.1.1",
+        "babel-helper-vue-jsx-merge-props": "^2.0.3",
+        "babel-plugin-syntax-jsx": "^6.18.0",
+        "babel-plugin-transform-vue-jsx": "^3.7.0",
+        "babel-preset-env": "^1.7.0"
     }
 }

@@ -55,5 +55,15 @@ export default {
 </script>
 
 <style>
-
+.card-radius {
+	/*border-radius: 15px 15px 0 0;*/
+	border-radius: 15px;
+}
+.btn-custom.v-text-field.v-text-field--solo .v-input__control {
+	min-height: 30px !important;
+	top: 4px
+}
+.btn-custom.theme--light.v-text-field--solo .v-input__slot {
+	border-radius: 15px;
+}
 </style>

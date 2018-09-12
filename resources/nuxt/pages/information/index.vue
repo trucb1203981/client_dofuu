@@ -1,7 +1,7 @@
 <template>
 	<v-container>
 		<v-dialog v-model="loading" hide-overlay persistent width="300">
-			<v-card	color="red darken-3"	dark>
+			<v-card	color="red darken-3" dark>
 				<v-card-text>
 					Xin Quý khách vui lòng chờ trong giây lát...
 					<v-progress-linear
@@ -15,7 +15,7 @@
 		
 		<v-layout justify-center v-if="!loading">
 			<v-flex xs12>
-				<v-card color="grey lighten-4">
+				<v-card color="grey lighten-4" class="card-radius">
 					<v-toolbar color="white" dense class="elevation-0">
 						<v-toolbar-title>
 							Thông tin tài khoản

@@ -11,7 +11,6 @@
 
 					<v-flex xs12 md3>
 						<v-select
-						auto
 						prepend-icon="lens"
 						:items="status"
 						v-model="editedItem.statusId"
@@ -67,7 +66,7 @@
 					</v-flex>
 
 					<v-flex xs12 md1>
-						<v-btn :block="$vuetify.breakpoint.smAndDown" color="info" @click="getOrders" :loading="loading">
+						<v-btn :block="$vuetify.breakpoint.smAndDown" round color="info" @click="getOrders" :loading="loading" small>
 							<v-icon>search</v-icon>
 						</v-btn>		
 					</v-flex>
@@ -84,7 +83,7 @@
 					wrap
 					>
 					<v-flex	slot="item"	slot-scope="props" xs12 sm6 md6	lg6>
-						<v-card>
+						<v-card class="card-radius">
 							<v-card-title>
 								<v-flex xs6 class="font-weight-bold">
 									Mã đặt hàng
@@ -153,7 +152,7 @@
 								</v-list-tile>
 							</v-list>
 							<v-card-actions>								
-								<v-btn small block @click.prevent="getDetails(props.item)">Xem chi tiết</v-btn>
+								<v-btn small block @click.prevent="getDetails(props.item)" round>Xem chi tiết</v-btn>
 							</v-card-actions>
 						</v-card>
 					</v-flex>
@@ -515,7 +514,7 @@
 				</strong>
 			</span>
 			<v-spacer></v-spacer>
-			<v-btn color="blue darken-1" dark @click.native="dialog = false">Đóng</v-btn>
+			<v-btn color="blue darken-1" dark @click.native="dialog = false" small round>Đóng</v-btn>
 		</v-card-actions>
 	</v-card>
 </v-dialog>
@@ -530,7 +529,7 @@
 		<v-card-actions>
 			<v-spacer></v-spacer>
 			<v-btn @click.native="cancelDialog = false">Hủy</v-btn>
-			<v-btn color="red accent-3" dark @click.native="cancelOrder">Chấp nhận</v-btn>
+			<v-btn color="red accent-3" dark @click.native="cancelOrder" small round>Chấp nhận</v-btn>
 		</v-card-actions>
 	</v-card>
 </v-dialog>

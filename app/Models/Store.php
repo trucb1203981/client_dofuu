@@ -89,4 +89,14 @@ class Store extends Model
     {
         return $this->morphMany('App\Models\StoreComment', 'commentable');
     }
+
+    public function likes()
+    {
+        return $this->morphMany('App\Models\Like', 'likeable');
+    }
+
+    public function haveLikes() {
+        return $this->belongsToMany('App\Models\User', 'ec_store_likes', 'store_id', 'user_id');
+    }
+
 }

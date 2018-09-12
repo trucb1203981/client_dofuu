@@ -37,7 +37,7 @@ module.exports = laravelNuxt({
 	*/
 	plugins: ['~/plugins/vuetify', '~/plugins/filters', '~/plugins/vee-validate', '~/plugins/numeral', '~/plugins/vue-google-map', {src:'~/plugins/ga', ssr:false}, {src: '~/plugins/axios', ssr:false}, {src: '~/plugins/auth', ssr:false}, {src: '~/plugins/vue-croppie', ssr:false}],
 	build: {
-		vendor: ['vuetify', 'js-cookie', 'moment', 'vee-validate', 'numeral', 'vue2-google-maps'],
+		vendor: ['~/plugins/vuetify.js', 'js-cookie', 'moment', 'vee-validate', 'numeral', 'vue2-google-maps', 'babel-polyfill'],
 		extend (config, { isDev, isClient }) {
 			if(!isClient) {
 				config.externals.splice(0, 0, function (context, request, callback) {

@@ -125,7 +125,7 @@ const actions = {
 
 const getters = {
 	isAuth(state) {
-		return state.isAuth
+		return (state.isAuth && state.currentUser != null) ? true : false
 	},
 	getUser() {
 		return state.currentUser

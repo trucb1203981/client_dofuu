@@ -2,7 +2,7 @@
 	<v-layout row wrap>
 		<v-flex v-if="$vuetify.breakpoint.mdAndUp" md3 d-flex v-for="(item, i) in stores" :key="i">
 
-			<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" hover ripple >
+			<v-card nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" hover ripple class="card-radius" >
 				<v-system-bar status color="red darken-4" dark>
 					<v-icon left>access_time</v-icon>
 					<span v-for="(item, i) in item.activities" v-if="i==0">		
@@ -15,28 +15,37 @@
 						{{item.type.name}}
 					</span>
 				</v-system-bar>
-				<v-img :src="image(item.avatar)" :aspect-ratio="16/9">
-		        </v-img>
+				<v-img :src="image(item.avatar)" :aspect-ratio="16/9" :lazy-src="`https://picsum.photos/10/6?image=${1 * 5 + 10}`">
+					<v-layout
+					slot="placeholder"
+					fill-height
+					align-center
+					justify-center
+					ma-0
+					>
+					<v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+				</v-layout>
+			</v-img>
 
-				<v-system-bar v-if="item.coupon != null " status color="transparent">
-					<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>
-				</v-system-bar>
+			<v-system-bar v-if="item.coupon != null " status color="transparent">
+				<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>
+			</v-system-bar>
 
-				<v-divider light></v-divider>
-				<v-card-text >
-					<v-tooltip top>												
-						<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"><strong >{{item.name}}</strong>
-						</div>
-						<span>{{item.name}}</span>
-					</v-tooltip>
-					<v-tooltip top>												
-						<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
-						<span>{{item.address}}</span>
-					</v-tooltip>
-				</v-card-text>
-			</v-card>
-		</v-flex>
-	</v-layout>
+			<v-divider light></v-divider>
+			<v-card-text >
+				<v-tooltip top>												
+					<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap"><strong >{{item.name}}</strong>
+					</div>
+					<span>{{item.name}}</span>
+				</v-tooltip>
+				<v-tooltip top>												
+					<div slot="activator" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.address}}</div>
+					<span>{{item.address}}</span>
+				</v-tooltip>
+			</v-card-text>
+		</v-card>
+	</v-flex>
+</v-layout>
 </template>
 
 <script>
@@ -46,3 +55,9 @@ export default {
 	props: ['stores', 'currentCity'],
 }
 </script>
+
+<style scoped>
+.card-radius {
+	border-radius: 15px;
+}
+</style>

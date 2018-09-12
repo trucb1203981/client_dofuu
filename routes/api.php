@@ -82,6 +82,22 @@ Route::group(['namespace' => 'Site'], function() {
 	Route::get('/Search/Types', 'StoreController@searchStoreByType');
 	//SEARCH STORE BY PRODUCT
 	Route::get('/Search/Products', 'StoreController@searchStoreByProduct');
+	//TOGGLE LIKE STORE
+	Route::post('/LikeStore/{storeId}/Toggle', 'LikeController@toggleLikeStore');
+	//CHECK LIKE STORE
+	Route::post('/LikeStore/{storeId}/Check', 'LikeController@checkLikeStore');
+	//FAVORITE STORE
+	Route::post('/FavoriteStore/{storeId}/Toggle', 'FavoriteController@toggleFavoriteStore');
+	//CHECK FAVORITE STORE
+	Route::post('/FavoriteStore/{storeId}/Check', 'FavoriteController@checkFavoriteStore');
+	//GET FAVORITE STORE
+	Route::post('/Favorite/Stores', 'FavoriteController@fetchFavoriteStore');
+	//REMOVE FAVORITE STORE
+	Route::post('/FavoriteStore/{storeId}/Remove', 'FavoriteController@removeFavoriteStore');
+	//FETCH COMMENT
+	Route::post('/CommentStore/{storeId}/FetchComments', 'CommentController@fetchComments');
+	//ADD COMMENT
+	Route::post('/CommentStore/{storeId}/Add', 'CommentController@addComment');
 });
 
 Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function() {

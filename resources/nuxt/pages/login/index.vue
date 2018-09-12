@@ -2,12 +2,14 @@
 	<v-container fluid fill-height>
 		<v-layout align-center justify-center>
 			<v-flex xs12 sm8 md4>
-				<v-card class="grey lighten-4">
+				<v-card class="card-radius">
 					<v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 					<v-toolbar color="transparent" dense class="elevation-0" > 
-						<v-toolbar-title>
-							Đăng nhập
-						</v-toolbar-title>
+						<v-layout row wrap justify-center align-center>							
+							<v-toolbar-title>
+								Đăng nhập
+							</v-toolbar-title>
+						</v-layout>
 					</v-toolbar>
 					
 					<!-- LOGIN FACEBOOK -->
@@ -41,22 +43,19 @@
 							type="password"
 							:error-messages="errors.collect('password')"
 							v-validate="'required'"
-							data-vv-name="password" 
-							@keyup.enter="login"></v-text-field>
+							data-vv-name="password"
+							:type="showPassword ? 'text' : 'password'"
+							:append-icon="showPassword ? 'visibility' : 'visibility_off'"
+							@click:append="showPassword = !showPassword" 
+							@keyup.enter.exact.prevent="login"></v-text-field>
 						</v-form>
 						<v-spacer></v-spacer>
-						<nuxt-link :to="{path: '/forget-password'}">Quên mật khẩu?</nuxt-link>
+						<nuxt-link :to="{path: '/forget-password'}" class="blue--text" >Quên mật khẩu?</nuxt-link>
 					</v-card-text>
 					<v-card-actions>
-						<v-btn round color="red accent-3" dark block :loading="process" @click.stop.prevent="login" small>Đăng nhập</v-btn>
-					</v-card-actions>
-					<v-card-actions>
-						<v-layout row wrap justify-center>
-							<v-flex xs12>
-								Bạn chưa có tài khoản?
-								<nuxt-link :to="{path: '/register'}">Đăng ký</nuxt-link>
-							</v-flex>
-						</v-layout>	
+						<v-btn flat :loading="process":to="{path: '/register'}" small class="blue--text">Tạo tài khoản</v-btn>
+						<v-spacer></v-spacer>
+						<v-btn color="red accent-3" dark :loading="process" @click.prevent="login" small>Đăng nhập</v-btn>
 					</v-card-actions>
 				</v-card>
 			</v-flex>
@@ -85,46 +84,51 @@ export default {
 			password: '',
 			loading: false,
 			locale: 'vi',
-			process:false,
+			process: false,
+			showPassword: false,
 		}
 	},
 	methods: {
 		login() {
+		
 			var vm = this
 			let data = {email: vm.email, password: vm.password}
 			vm.$validator.validateAll().then(async function( result ) {
 				if( result ) {
-					vm.process = true
-					axios.post('/api/auth/login', data).then(response => {
-						if(response.status == 200) {
-							if(response.data.type === 'error') {
-								vm.$store.dispatch('alert', {name: vm.$route.name, alert:  {show: true, message: response.data.message, type: 'error'}})
-							}  else {
-								const data = response.data
-								vm.$store.commit('SET_TOKEN', data)
-								vm.$store.dispatch('getUser').then(response => {
-									if(response.data.type == 'success') {
-										if(typeof vm.redirect == 'undefined') {
-											vm.$router.push({path: '/'})
-										} else {
-											vm.$router.push({path: vm.redirect})	
-										}	
-									}
-									else if (response.data.type == 'error') {
-										vm.$store.commit('REVOKE_TOKEN')
-										vm.$store.dispatch('alert', {name: vm.$route.name, alert: {message: response.data.message, type: 'warning'}})
-									}
+					if(!vm.process) {
+							console.log('ok')
+						vm.process = true
+						axios.post('/api/auth/login', data).then(response => {
+							if(response.status == 200) {
+								if(response.data.type === 'error') {
+									vm.$store.dispatch('alert', {name: vm.$route.name, alert:  {show: true, message: response.data.message, type: 'error'}})
+								}  else {
+									const data = response.data
+									vm.$store.commit('SET_TOKEN', data)
+									vm.$store.dispatch('getUser').then(response => {
+										if(response.data.type == 'success') {
+											if(typeof vm.redirect == 'undefined') {
+												vm.$router.push({path: '/'})
+											} else {
+												vm.$router.push({path: vm.redirect})	
+											}	
+										}
+										else if (response.data.type == 'error') {
+											vm.$store.commit('REVOKE_TOKEN')
+											vm.$store.dispatch('alert', {name: vm.$route.name, alert: {message: response.data.message, type: 'warning'}})
+										}
 
-								})
+									})
+								}
 							}
-						}
-					}).catch(error => {
-						if(error.response.status === 401) {
-							vm.$store.dispatch('alert', {index:0, name: vm.$route.name, show: true, message: 'Email hoặc mật khẩu không đúng', type: 'error', close:true})
-						}
-					}).finally(() => {
-						vm.process = false
-					})					
+						}).catch(error => {
+							if(error.response.status === 401) {
+								vm.$store.dispatch('alert', {index:0, name: vm.$route.name, show: true, message: 'Email hoặc mật khẩu không đúng', type: 'error', close:true})
+							}
+						}).finally(() => {
+							vm.process = false
+						})					
+					}
 				}
 			})			
 		},
@@ -196,6 +200,3 @@ export default {
 }
 </script>
 
-<style>
-
-</style>

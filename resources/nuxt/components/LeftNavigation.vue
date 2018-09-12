@@ -1,23 +1,5 @@
 <template>
 	<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" class="hidden-md-and-up">
-		<v-toolbar 	color="red"	dark flat extended > 
-			<v-toolbar-title>
-				DOFUU
-			</v-toolbar-title>
-			<v-text-field
-			slot="extension"
-			solo-inverted
-			flat
-			class="mx-3"
-			v-model="keywords"
-			color="red accent-2"
-			label="Tìm kiếm (quán, món, ...)"
-			offset-x
-			@keyup.enter="search"
-			:append-icon="'search'"
-			@click:append="search"
-			></v-text-field>
-		</v-toolbar>
 		<v-list v-if="currentUser != null">
 			<v-list-tile avatar :to="{name:'information'}">
 				<v-list-tile-avatar>
@@ -75,13 +57,6 @@ export default {
 		}
 	},
 	methods: {
-		search() {
-			const keyword = this.keywords
-			if(keyword.length>0) {
-				this.$router.push({name: 'city-tim-kiem-tat-ca', query: {q: keyword}, params: {city: this.currentCity.slug}})
-			}
-			return 		
-		}
 	},
 	watch: {
 		'drawer': function(val) {

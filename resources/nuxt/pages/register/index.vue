@@ -2,12 +2,14 @@
 	<v-container fluid fill-height>
 		<v-layout align-center justify-center>
 			<v-flex xs12 sm8 md5>
-				<v-card class="grey lighten-4">
+				<v-card class="card-radius">
 					<v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 					<v-toolbar class="elevation-0" dense color="transparent">
-						<v-toolbar-title>
-							{{title}}
-						</v-toolbar-title>			
+						<v-layout row wrap justify-center align-center>
+							<v-toolbar-title>
+								{{title}}
+							</v-toolbar-title>		
+						</v-layout>						
 					</v-toolbar>
 					<v-card-text class="white">
 						
@@ -39,6 +41,7 @@
 									data-vv-name="password"
 									:error-messages="errors.collect('password')"
 									data-vv-delay="300"
+									:type="showPassword ? 'text' : 'password'"
 									hint="Sử dụng 8 ký tự trở lên và kết hợp chữ cái, chữ số và biểu tượng"
 									persistent-hint></v-text-field>
 								</v-flex>
@@ -48,6 +51,9 @@
 									data-vv-name="confirm"
 									:error-messages="errors.collect('confirm')"
 									data-vv-delay="300"
+									:type="showPassword ? 'text' : 'password'"
+									:append-icon="showPassword ? 'visibility' : 'visibility_off'"
+									 @click:append="showPassword = !showPassword"
 									></v-text-field>
 								</v-flex>
 								<v-flex xs12 md6>
@@ -70,7 +76,7 @@
 									></v-radio></v-radio-group>
 								</v-flex>
 								<v-flex xs12 md12>
-									<v-text-field color="red accent-3"  prepend-icon="phone" v-model="editedItem.phone" name="confirm" label="Số điện thoại"
+									<v-text-field color="red accent-3"  prepend-icon="phone" v-model.trim="editedItem.phone" name="confirm" label="Số điện thoại"
 									v-validate="'required|numeric|min:10|max:11'"
 									data-vv-name="phone"
 									:error-messages="errors.collect('phone')"
@@ -82,10 +88,10 @@
 						</v-form>
 					</v-card-text>
 					<v-card-actions>
-						<v-btn color="red accent-3" dark block :loading="loading" @click.stop.prevent="register" round>Đăng ký</v-btn>
+						<v-btn color="red accent-3" dark block :loading="loading" @click.stop.prevent="register" round small>Đăng ký</v-btn>
 					</v-card-actions>
 					<v-card-actions>
-						<v-btn color="primary" flat :to="{path: '/login'}">
+						<v-btn color="blue" flat :to="{path: '/login'}" small>
 							<v-icon>chevron_left</v-icon>
 							Quay lại
 						</v-btn>
@@ -105,12 +111,12 @@ export default {
 	layout: 'credential',
 	head() {
 		return {
-			title: 'Tạo tài khoản Dofuu'
+			title: 'Tạo tài khoản'
 		}
 	},
 	asyncData() {
 		return {
-			title: 'Tạo tài khoản Dofuu',
+			title: 'Tạo tài khoản',
 			editedItem: {
 				name: '',
 				email: '',
@@ -124,7 +130,8 @@ export default {
 			menu:false,
 			loading: false,
 			locale: 'vi',
-			test:false
+			test:false,
+			showPassword: false
 		}
 	},
 	watch: {

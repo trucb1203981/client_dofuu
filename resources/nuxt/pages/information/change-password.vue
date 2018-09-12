@@ -15,7 +15,7 @@
 		
 		<v-layout justify-center v-if="!loading">
 			<v-flex xs12>
-				<v-card color="grey lighten-4">
+				<v-card color="grey lighten-4" class="card-radius">
 					<v-toolbar color="transparent" dense class="elevation-0">
 						<v-toolbar-title>
 							{{title}}

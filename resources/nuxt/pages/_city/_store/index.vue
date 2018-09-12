@@ -51,26 +51,32 @@
 
 				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index">
 
-					<v-subheader :id="'item_'+data.id" v-show="data.products.length>0"><span >{{data.name | upperCase }} <div v-show="data._name != null" class="caption font-italic">{{data._name | upperCase}}</div></span></v-subheader>
+					<v-subheader :id="'item_'+data.id" v-show="data.products.length>0" class="text-uppercase">{{data.name}}</v-subheader>
 					<!-- MOBILE PRODUCT LIST-->
 					<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in data.products" :key="i">
-						<v-card hover ripple class="elevation-1 mb-2" v-on:click.native="openCartDialog(item)">
-							<v-layout row wrap class="px-2">
+						<v-card hover ripple class="elevation-1 mb-2 card-radius" raised v-on:click.native="openCartDialog(item)">
+							<v-layout row wrap class="pa-2"  align-center justify-center>
 								<v-flex xs3 class="text-xs-center">
-									<v-avatar :size="imageSize" color="red darken-4">
-										<img :src="image(item.image)" alt="item.name">
-									</v-avatar>
+									<v-layout  align-center justify-center>
+										<v-flex xs9>
+											<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
+												<v-avatar :size="imageSize" color="red darken-4">
+													<img :src="image(item.image)" alt="item.name">
+												</v-avatar>
+											</v-card>
+										</v-flex>
+									</v-layout>									
 								</v-flex>
+
 								<v-flex xs9 class="px-0">
 									<v-card-text class="py-0">
 										<v-system-bar status color="transparent" class="px-0">
-											<h4 style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item.name}}</h4>
+											<h4 class="text-truncate">{{item.name}}</h4>
 											<v-spacer></v-spacer>
 											<v-btn icon small class="ma-0"><v-icon color="success" size="20">add_shopping_cart</v-icon></v-btn>
 										</v-system-bar>	
 
-										<h5 class="grey--text" v-if="item._name !== null" style="overflow: hidden; text-overflow: ellipsis; white-space:nowrap">{{item._name}}</h5>
-										<v-layout row wrap>
+										<v-layout column>
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
 												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
 											</v-flex>	
@@ -86,342 +92,495 @@
 					<!-- DESKTOP PRODUCT LIST-->
 					<v-layout row wrap>
 						<v-flex md6  v-for="(item, i) in data.products" :key="i" v-if="$vuetify.breakpoint.mdAndUp">
-							<v-card hover ripple class="mb-2" v-on:click.native="openCartDialog(item)">	
+							<v-card hover ripple class="mb-2 card-radius" v-on:click.native="openCartDialog(item)">	
 
-								<v-system-bar status color="red darken-3" dark height="40">
-									<h5 class="white--text">{{item.name | upperCase}}</h5>
-									<v-spacer></v-spacer>
-									<h6 class="px-0 caption">{{item._name | upperCase}}</h6>
+								<v-system-bar status color="red darken-3" dark height="30">
+									<h5 class="white--text text-uppercase">{{item.name}}</h5>
 								</v-system-bar>
 
-								<v-layout row wrap class="px-2">
+								<v-layout row wrap class="px-2" align-center justify-center>
 
-									<v-flex xs12 md4 class="text-xs-center">
-										<v-avatar :size="imageSize"  color="grey lighten-3">
-											<img :src="image(item.image)" alt="item.name">
-										</v-avatar>										
+									<v-flex md4>
+										<v-layout align-center justify-center>
+											<v-flex xs9>
+												<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
+													<v-avatar :size="imageSize"  color="grey lighten-3">
+														<img :src="image(item.image)" alt="item.name">
+													</v-avatar>		
+												</v-card>	
+											</v-flex>	
+										</v-layout>					
 									</v-flex>
-									<v-flex xs12 md8 class="px-0">				
+
+									<v-flex md8 class="px-0">				
 										<v-layout row wrap class="pr-2">
 											<v-flex v-for="(size, i) in item.sizes" xs4 class="pa-0 text-xs-center" :key="i" v-if="size.price >0">
 												<div class="caption">{{size.name}}:</div>
 												<div><strong>{{size.price | formatPrice}}</strong></div>
 											</v-flex>
-										</v-layout>										
+											<div v-if="item.description != null" class="text-truncate">{{ item.description }}</div>	
+										</v-layout>											
 									</v-flex>
+
 									<v-flex xs12 md12>
-										<div v-if="item.description != null">Mô tả: {{ item.description }}</div>
+										
 									</v-flex>
 								</v-layout>
-							<!-- 	<v-system-bar status color="grey lighten-4">
-									<v-spacer></v-spacer>
-									<span>Đã được đặt <strong>{{item.count}}</strong></span>
-								</v-system-bar> -->
 							</v-card>
 						</v-flex>
 					</v-layout>										
 				</v-content>
+
 			</v-flex>
+
 			<!-- RIGHT NAVBAR DESKTOP -->
 			<v-flex offset-md-8 xs12 md4  ref="target_navbar_right" v-if="$vuetify.breakpoint.mdAndUp" class="hidden-sm-and-down row px-0 text-xs-right">
-				<v-card :class="{'card--sticky' : offsetTop>offsetNavbarRight-50 && $vuetify.breakpoint.mdAndUp}" style="z-index:4" :width="$vuetify.breakpoint.mdOnly ? '280' : '310'">
-					<v-tabs icons-and-text grow :value="`item-${tabIndex}`">
+				<v-card :class="{'card--sticky' : offsetTop>offsetNavbarRight-50 && $vuetify.breakpoint.mdAndUp}" style="z-index:4" :width="$vuetify.breakpoint.mdOnly ? '280' : '310'" class="card-radius elevation-1">
+					<v-tabs icons-and-text centered :value="`item-${tabIndex}`">
 
 						<v-tabs-slider color="yellow"></v-tabs-slider>
-
-						<v-tab v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)":href="`#item-${index}`" >
-							<h5>{{tab.title}}</h5>
-							<v-badge color="red" v-if="index == 1" overlap>
-								<span slot="badge" v-if="counts>0">{{counts}}</span>
-								<v-icon left size="20">shopping_cart</v-icon>						 
-							</v-badge>
-
-							<v-icon left v-if="index == 0" size="20">assignment</v-icon>
-
-						</v-tab>
+						<template v-for="(tab, index) in tabs">
+							<v-tab :key="index" @click="changeTab(index)":href="`#item-${index}`" >
+								<h5>{{tab.title}}</h5>
+								<v-badge color="red" v-if="index == 1" overlap>
+									<span slot="badge" v-if="counts>0">{{counts}}</span>
+									<v-icon left size="20">shopping_cart</v-icon>						 
+								</v-badge>
+								<v-icon left v-if="index == 0" size="20">assignment</v-icon>
+							</v-tab>
+						</template>
 					</v-tabs>
-					<v-card-text v-if="tabIndex==0">
-						<v-list  class="scroll-y" style="max-height: 400px">
-							<v-list-tile v-for="item in store.catalogues" v-if="item.products.length>0" @click="goTo('#item_'+item.id)" :key="item.name" >
-								<v-list-tile-content>
-									<v-list-tile-title>
-										{{item.name | upperCase}}
-									</v-list-tile-title>
-									<v-list-tile-sub-title v-if="item._name != null">
-										{{item._name | upperCase}}
-									</v-list-tile-sub-title>
+
+					<v-card  v-if="tabIndex==0" flat>
+						<v-card-text>
+							<a v-for="item in store.catalogues" @click="goTo('#item_'+item.id)">
+								<v-card ripple  v-if="item.products.length>0" @click="goTo('#item_'+item.id)" :key="item.name" max-height="35" class="mb-2 text-xs-center card-radius" color="grey lighten-3">					
+									<div class="body-2 text-uppercase">{{item.name}}</div>				
+								</v-card>
+							</a>
+						</v-card-text>
+					</v-card>
+					
+
+					<v-card v-else-if="tabIndex==1" class="transparent" >
+						<v-card-text>
+							<v-data-table v-if="cart && cart.items.length>0" :headers="headers" :items="cart.items" class="elevation-1 scroll-y" hide-actions hide-headers style="max-height:280px; overflow-x:hidden">
+								<template slot="items" slot-scope="props" >
+									<tr :key="props.item.rowId">
+										<td class="text-xs-center">
+											<div>{{props.item.name}}</div>
+											<div><v-btn  outline color="primary" icon @click="props.expanded = ! props.expanded" small><v-icon>edit</v-icon></v-btn></div>
+										</td>
+										<td class="text-xs-center">
+											<v-layout column>
+												<v-flex xs4 class="py-0">
+													<v-btn icon ripple @click.stop="addToCart(props.item)" class="ma-0">
+														<v-icon color="green">add_box</v-icon>
+													</v-btn>
+												</v-flex>
+
+												<v-flex xs4 class="py-0">
+													{{props.item.qty}}
+												</v-flex>
+
+												<v-flex xs4 class="py-0">
+													<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
+														<v-icon color="grey" >indeterminate_check_box</v-icon>
+													</v-btn>
+												</v-flex>
+											</v-layout>									
+										</td>
+										<td>{{totalProduct(props.item) | formatPrice}}</td>	
+									</tr>
+								</template>
+								<template slot="expand" slot-scope="props">
+									<v-container fluid grid-list-md class="grey lighten-3">			
+										<v-flex d-flex xs12>
+											<v-text-field v-model="props.item.memo" :label="`Ghi chú ${props.item.name}`" ></v-text-field>
+										</v-flex>
+									</v-container>
+								</template>
+							</v-data-table>
+						</v-card-text>
+
+						<v-divider></v-divider>
+
+						<!-- FIELD COUPON START -->
+						<v-toolbar color="white" flat dense>
+							<v-layout row justify-center align-center>
+
+								<v-flex v-if="coupon == null">
+									<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase">
+										<v-btn slot="append" class="ma-0" style="right: -10px" icon small color="white" @click.prevent="checkCoupon" :loading="loadingCoupon" >
+											<v-icon color="blue">send</v-icon>
+										</v-btn>	
+									</v-text-field>		
+								</v-flex>
+								
+								<v-flex v-else class="pa-0">
+									<v-chip close :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
+										<v-icon left>redeem</v-icon>
+										{{coupon.coupon}}											
+									</v-chip>
+									<span class="text-xs-end red--text text--accent-3 font-weight-bold font-italic">Giảm {{coupon.discountPercent}}%</span>	
+								</v-flex>
+
+								<span v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
+
+							</v-layout>			
+						</v-toolbar>
+						<!-- FIELD COUPON END -->
+
+						<v-divider></v-divider>
+
+						<v-layout row wrap>
+							<v-flex	xs12>
+								<v-list dense > 
+
+									<v-list-tile>
+
+										<v-list-tile-content>Tạm tính:</v-list-tile-content>
+
+										<v-list-tile-content class="align-end">
+											<v-list-tile-title class="text-xs-right"><h3  :style="coupon !=null ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h3></v-list-tile-title>
+											<v-list-tile-title v-if="coupon != null" class="text-xs-right red--text text--accent-3"><h3>{{total | formatPrice}}</h3></v-list-tile-title>
+										</v-list-tile-content>
+
+									</v-list-tile>
+
+									<v-divider></v-divider>
+									<v-list-tile>
+										<v-list-tile-content>											
+											<v-menu	:close-on-content-click="false"	v-model="showInfoDelivery" v-if="currentCity != null" top left offset-y>
+												<span slot="activator">Phí vận chuyển: <v-icon size="20" color="primary" v-on:mouseover="showDelivery" v-on:mouseleave="closeDelivery">help</v-icon></span>
+												<v-card v-show="$vuetify.breakpoint.mdAndUp">
+													<v-toolbar dense flat class="elevation-0">
+														<v-avatar size="24px" tile>
+															<img src="~/static/dofuu24x24.png">
+														</v-avatar>
+														<v-toolbar-title>
+															Thông báo
+														</v-toolbar-title>
+													</v-toolbar>
+													<v-card-text>
+														<v-list> 
+															<v-list-tile>
+																<v-list-tile-content><span>Phí vận chuyển tối thiểu của đơn đặt hàng: <strong class="red--text">{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
+															</v-list-tile>
+															<v-list-tile>
+																<v-list-tile-content><span>Phí vận chuyển sẽ tính theo khoảng cách: <strong class="red--text">{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
+															</v-list-tile>
+															<v-list-tile>
+																<v-list-tile-content><strong>Phí vận chuyển có thể thay đổi tùy theo thời điểm</strong></v-list-tile-content>
+																<v-list-tile-content class="align-end"></v-list-tile-content>
+															</v-list-tile>
+														</v-list>
+													</v-card-text>
+												</v-card>
+											</v-menu>
+										</v-list-tile-content>
+										<v-list-tile-content class="align-end" v-if="currentCity != null">
+											<h3>{{currentCity.deliveries[1].price | formatPrice}}/km</h3>
+										</v-list-tile-content>
+									</v-list-tile>
+								</v-list>
+							</v-flex>
+						</v-layout>
+						<v-divider></v-divider>
+						<div class="text-xs-center font-weight-bold" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</div>
+						<v-card-actions>
+							<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
+								Gửi đơn hàng
+							</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-card>			
+			</v-flex>
+		</v-layout>
+
+		<!-- RIGHT NAVBAR MOBILE START -->
+		<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" right class="hidden-lg-only hidden-md-only">
+			<v-tabs icons-and-text grow :value="`item-${tabIndex}`" centered>
+
+				<v-tabs-slider color="yellow"></v-tabs-slider>
+
+				<v-tab v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)":href="`#item-${index}`" >
+					<h5>{{tab.title}}</h5>
+					<v-badge color="red" v-if="index == 1" overlap>
+						<span slot="badge" v-if="counts>0">{{counts}}</span>
+						<v-icon left size="20">shopping_cart</v-icon>						 
+					</v-badge>
+
+					<v-icon left v-if="index == 0" size="20">assignment</v-icon>
+
+				</v-tab>
+			</v-tabs>
+
+			<v-card v-if="tabIndex==0" flat >
+				<v-card-text >
+					<a v-for="item in store.catalogues" @click="goTo('#item_'+item.id)">
+						<v-card ripple  v-if="item.products.length>0" @click="goTo('#item_'+item.id)" :key="item.name" max-height="35" class="mb-2 text-xs-center card-radius" color="grey lighten-3">					
+							<div class="body-2 text-uppercase">{{item.name}}</div>				
+						</v-card>
+					</a>
+				</v-card-text>
+			</v-card>
+
+
+			<v-card v-else-if="tabIndex==1" class="transparent">
+				<v-card-text>
+
+					<v-data-table v-if="cart && cart.items.length>0" :headers="headers" :items="cart.items" class="elevation-1 scroll-y" hide-actions hide-headers style="max-height:280px; overflow-x:hidden">
+						<template slot="items" slot-scope="props">
+							<tr>
+								<td class="text-xs-center">
+									<div>{{props.item.name}}</div>
+									<div><v-btn  outline color="primary" icon @click="props.expanded = ! props.expanded" small><v-icon>edit</v-icon></v-btn></div>
+								</td>
+								<td class="text-xs-center">
+									<v-layout column>
+										<v-flex xs4 class="py-0">
+											<v-btn icon ripple @click.stop="addToCart(props.item)" class="ma-0">
+												<v-icon color="green">add_box</v-icon>
+											</v-btn>
+										</v-flex>
+
+										<v-flex xs4 class="py-0">
+											{{props.item.qty}}
+										</v-flex>
+
+										<v-flex xs4 class="py-0">
+											<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
+												<v-icon color="grey" >indeterminate_check_box</v-icon>
+											</v-btn>
+										</v-flex>
+									</v-layout>									
+								</td>
+								<td>{{totalProduct(props.item) | formatPrice}}</td>	
+							</tr>
+						</template>
+						<template slot="expand" slot-scope="props">
+							<v-container fluid grid-list-md class="grey lighten-3">			
+								<v-flex d-flex xs12>
+									<v-text-field
+									v-model="props.item.memo"
+									:label="`Ghi chú ${props.item.name}`"
+									></v-text-field>
+								</v-flex>
+							</v-container>
+						</template>
+					</v-data-table>
+
+				</v-card-text>
+
+				<v-divider></v-divider>
+
+				<!-- FIELD COUPON START -->
+				<v-toolbar color="white" flat dense>
+					<v-layout row justify-center align-center>
+
+						<v-flex v-if="coupon == null">
+							<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase">
+								<v-btn slot="append" class="ma-0" style="right: -10px" icon small color="white" @click.prevent="checkCoupon" :loading="loadingCoupon" >
+									<v-icon color="blue">send</v-icon>
+								</v-btn>	
+							</v-text-field>		
+						</v-flex>
+
+						<v-flex v-else class="pa-0">
+							<v-chip close :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
+								<v-icon left>redeem</v-icon>
+								{{coupon.coupon}}											
+							</v-chip>
+							<span class="text-xs-end red--text text--accent-3 font-weight-bold font-italic">Giảm {{coupon.discountPercent}}%</span>	
+						</v-flex>
+
+						<span v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
+
+					</v-layout>			
+				</v-toolbar>
+				<!-- FIELD COUPON END -->
+
+				<v-divider></v-divider>
+
+				<v-layout row wrap>
+					<v-flex	xs12>
+
+						<v-list dense> 
+							<v-list-tile>
+
+								<v-list-tile-content>Tạm tính:</v-list-tile-content>
+
+								<v-list-tile-content class="align-end">
+									<v-list-tile-title class="text-xs-right"><h3  :style="coupon !=null ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h3></v-list-tile-title>
+									<v-list-tile-title v-if="coupon != null" class="text-xs-right red--text text--accent-3"><h3>{{total | formatPrice}}</h3></v-list-tile-title>
+								</v-list-tile-content>
+
+							</v-list-tile>
+
+							<v-divider></v-divider>
+							<v-list-tile>
+								<v-list-tile-content>											
+									<v-menu	:close-on-content-click="false"	v-model="showInfoDelivery" v-if="currentCity != null" top left offset-y>
+										<span slot="activator">Phí vận chuyển: <v-icon size="20" color="primary" @click="showInfoDelivery = true">help</v-icon></span>
+									</v-menu>
+								</v-list-tile-content>
+								<v-list-tile-content class="align-end" v-if="currentCity != null">
+									<h3>{{currentCity.deliveries[1].price | formatPrice}}/km</h3>
 								</v-list-tile-content>
 							</v-list-tile>
 						</v-list>
-					</v-card-text>
-					<v-card v-else-if="tabIndex==1" class="transparent" >
-						<v-card-text>
-							<v-data-table
-							v-if="cart && cart.items.length>0" :headers="headers" :items="cart.items" class="elevation-1 scroll-y" hide-actions hide-headers style="max-height:280px; overflow-x:hidden"
-							>
-							<template slot="items" slot-scope="props" >
-								<tr :key="props.item.rowId">
-									<td class="text-xs-center">
-										<div>{{props.item.name}}</div>
-										<div><v-btn  outline color="primary" icon @click="props.expanded = ! props.expanded" small><v-icon>edit</v-icon></v-btn></div>
-									</td>
-									<td class="text-xs-center">
-										<v-layout column>
-											<v-flex xs4 class="py-0">
-												<v-btn icon ripple @click.stop="addToCart(props.item)" class="ma-0">
-													<v-icon color="green">add_box</v-icon>
-												</v-btn>
-											</v-flex>
 
-											<v-flex xs4 class="py-0">
-												{{props.item.qty}}
-											</v-flex>
-
-											<v-flex xs4 class="py-0">
-												<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
-													<v-icon color="grey" >indeterminate_check_box</v-icon>
-												</v-btn>
-											</v-flex>
-										</v-layout>									
-									</td>
-									<td>{{totalProduct(props.item) | formatPrice}}</td>	
-								</tr>
-							</template>
-							<template slot="expand" slot-scope="props">
-								<v-container fluid grid-list-md class="grey lighten-3">			
-									<v-flex d-flex xs12>
-										<v-text-field
-										v-model="props.item.memo"
-										:label="`Ghi chú ${props.item.name}`"
-										></v-text-field>
-									</v-flex>
-								</v-container>
-							</template>
-						</v-data-table>
-					</v-card-text>
-
-					<v-divider></v-divider>
-
-					<v-list-tile class="yellow accent-3">
-						<v-list-tile-content class="pl-4">			
-							<v-text-field v-if="coupon == null" single-line color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-outer-icon="'send'" :append-outer-icon-cb="checkCoupon" solo class="text-xs-center"></v-text-field>		
-
-							<v-chip close v-else :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
-								<v-icon left>redeem</v-icon>
-								{{coupon.coupon}}											
-							</v-chip>				
-						</v-list-tile-content>
-
-						<v-list-tile-action v-if="coupon != null">
-							<strong class="red--text text--accent-3">Giảm {{coupon.discountPercent}}%</strong>
-						</v-list-tile-action>
-
-					</v-list-tile>
-
-					<span v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
-
-					<v-divider></v-divider>
-
-					<v-layout row wrap>
-						<v-flex	xs12>
-							<v-list dense > 
-
-								<v-list-tile>
-
-									<v-list-tile-content>Tạm tính:</v-list-tile-content>
-
-									<v-list-tile-content class="align-end">
-										<v-list-tile-title class="text-xs-right"><h3  :style="coupon !=null ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h3></v-list-tile-title>
-										<v-list-tile-title v-if="coupon != null" class="text-xs-right red--text text--accent-3"><h3>{{total | formatPrice}}</h3></v-list-tile-title>
-									</v-list-tile-content>
-
-								</v-list-tile>
-
-								<v-divider></v-divider>
-								<v-list-tile>
-									<v-list-tile-content>											
-										<v-menu	:close-on-content-click="false"	v-model="showInfoDelivery" v-if="currentCity != null" top left offset-y>
-											<span slot="activator">Phí vận chuyển: <v-icon size="20" color="primary" v-on:mouseover="showDelivery" v-on:mouseleave="closeDelivery">help</v-icon></span>
-											<v-card v-show="$vuetify.breakpoint.mdAndUp">
-												<v-toolbar dense flat class="elevation-0">
-													<v-avatar size="24px" tile>
-														<img src="~/static/dofuu24x24.png">
-													</v-avatar>
-													<v-toolbar-title>
-														Thông báo
-													</v-toolbar-title>
-												</v-toolbar>
-												<v-card-text>
-													<v-list> 
-														<v-list-tile>
-															<v-list-tile-content><span>Phí vận chuyển tối thiểu của đơn đặt hàng: <strong class="red--text">{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
-														</v-list-tile>
-														<v-list-tile>
-															<v-list-tile-content><span>Phí vận chuyển sẽ tính theo khoảng cách: <strong class="red--text">{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
-														</v-list-tile>
-														<v-list-tile>
-															<v-list-tile-content><strong>Phí vận chuyển có thể thay đổi tùy theo thời điểm</strong></v-list-tile-content>
-															<v-list-tile-content class="align-end"></v-list-tile-content>
-														</v-list-tile>
-													</v-list>
-												</v-card-text>
-											</v-card>
-										</v-menu>
-									</v-list-tile-content>
-									<v-list-tile-content class="align-end" v-if="currentCity != null">
-										<h3>{{currentCity.deliveries[1].price | formatPrice}}/km</h3>
-									</v-list-tile-content>
-								</v-list-tile>
-							</v-list>
-						</v-flex>
-					</v-layout>
-					<v-divider></v-divider>
-					<div class="text-xs-center font-weight-bold" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</div>
-					<v-card-actions>
-						<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
-							Gửi đơn hàng
-						</v-btn>
-					</v-card-actions>
-				</v-card>
-			</v-card>			
-		</v-flex>
-	</v-layout>
-
-	<!-- RIGHT NAVBAR MOBILE START -->
-	<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer"
-	right class="hidden-lg-only hidden-md-only">
-	<v-tabs icons-and-text grow :value="`item-${tabIndex}`" color="">
-
-		<v-tabs-slider color="yellow"></v-tabs-slider>
-
-		<v-tab v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)":href="`#item-${index}`" >
-			<h5>{{tab.title}}</h5>
-			<v-badge color="red" v-if="index == 1" overlap>
-				<span slot="badge" v-if="counts>0">{{counts}}</span>
-				<v-icon left size="20">shopping_cart</v-icon>						 
-			</v-badge>
-
-			<v-icon left v-if="index == 0" size="20">assignment</v-icon>
-
-		</v-tab>
-	</v-tabs>
-
-	<v-card-text v-if="tabIndex==0">
-		<v-list>
-			<v-list-tile v-for="item in store.catalogues" v-if="item.products.length>0" @click="goTo('#item_'+item.id)" :key="item.name">
-				<v-list-tile-content>
-					<v-list-tile-title>
-						{{item.name}}
-					</v-list-tile-title>
-					<v-list-tile-sub-title>
-						{{item._name}}
-					</v-list-tile-sub-title>
-				</v-list-tile-content>
-			</v-list-tile>
-		</v-list>
-	</v-card-text>
-
-	<v-card v-else-if="tabIndex==1" class="transparent">
-		<v-card-text>
-			<v-data-table
-			v-if="cart && cart.items.length>0" :headers="headers" :items="cart.items" class="elevation-1 scroll-y" hide-actions hide-headers style="max-height:280px; overflow-x:hidden"
-			>
-			<template slot="items" slot-scope="props">
-				<tr>
-					<td class="text-xs-center">
-						<div>{{props.item.name}}</div>
-						<div><v-btn  outline color="primary" icon @click="props.expanded = ! props.expanded" small><v-icon>edit</v-icon></v-btn></div>
-					</td>
-					<td class="text-xs-center">
-						<v-layout column>
-							<v-flex xs4 class="py-0">
-								<v-btn icon ripple @click.stop="addToCart(props.item)" class="ma-0">
-									<v-icon color="green">add_box</v-icon>
-								</v-btn>
-							</v-flex>
-
-							<v-flex xs4 class="py-0">
-								{{props.item.qty}}
-							</v-flex>
-
-							<v-flex xs4 class="py-0">
-								<v-btn icon ripple @click.stop="minusToCart(props.item)"  class="ma-0">
-									<v-icon color="grey" >indeterminate_check_box</v-icon>
-								</v-btn>
-							</v-flex>
-						</v-layout>									
-					</td>
-					<td>{{totalProduct(props.item) | formatPrice}}</td>	
-				</tr>
-			</template>
-			<template slot="expand" slot-scope="props">
-				<v-container fluid grid-list-md class="grey lighten-3">			
-					<v-flex d-flex xs12>
-						<v-text-field
-						v-model="props.item.memo"
-						:label="`Ghi chú ${props.item.name}`"
-						></v-text-field>
+						<v-dialog v-model="showInfoDelivery" max-width="500px" v-if="currentCity != null && $vuetify.breakpoint.smAndDown">
+							<v-card>
+								<v-toolbar dense flat class="elevation-0">
+									<v-avatar size="24px" tile>
+										<img src="~/static/dofuu24x24.png">
+									</v-avatar>
+									<v-toolbar-title>
+										Thông báo
+									</v-toolbar-title>
+								</v-toolbar>
+								<v-card-text>
+									<v-list> 
+										<v-list-tile>
+											<v-list-tile-content><span>Phí vận chuyển tối thiểu của đơn đặt hàng: <strong class="red--text">{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
+										</v-list-tile>
+										<v-list-tile>
+											<v-list-tile-content><span>Phí vận chuyển sẽ được tính theo khoảng cách: <strong class="red--text">{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
+										</v-list-tile>
+										<v-list-tile>
+											<v-list-tile-content><strong>Phí vận chuyển có thể thay đổi tùy theo thời điểm</strong></v-list-tile-content>
+											<v-list-tile-content class="align-end"></v-list-tile-content>
+										</v-list-tile>
+									</v-list>
+								</v-card-text>
+							</v-card>
+						</v-dialog>
 					</v-flex>
-				</v-container>
-			</template>
-		</v-data-table>
-	</v-card-text>
-
-	<v-divider></v-divider>
-
-	<v-list-tile class="yellow accent-3">
-
-		<v-list-tile-content class="pl-4">			
-
-			<v-text-field v-if="coupon == null" single-line solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi" :append-outer-icon="'send'" :append-outer-icon-cb="checkCoupon"></v-text-field>		
-
-			<v-chip close v-else :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
-				<v-icon left>redeem</v-icon>
-				{{coupon.coupon}}											
-			</v-chip>				
-
-		</v-list-tile-content>
-
-		<v-list-tile-action v-if="coupon != null">
-			<strong class="red--text text--accent-3">Giảm {{coupon.discountPercent}}%</strong>
-		</v-list-tile-action>
-
-	</v-list-tile>
-
-	<span v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
-
-	<v-divider></v-divider>
-
-	<v-layout row wrap>
-		<v-flex	xs12>
-			<v-list dense> 
-
-				<v-list-tile>
-
-					<v-list-tile-content>Tạm tính:</v-list-tile-content>
-
-					<v-list-tile-content class="align-end">
-						<v-list-tile-title class="text-xs-right"><h3  :style="coupon !=null ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h3></v-list-tile-title>
-						<v-list-tile-title v-if="coupon != null" class="text-xs-right red--text text--accent-3"><h3>{{total | formatPrice}}</h3></v-list-tile-title>
-					</v-list-tile-content>
-
-				</v-list-tile>
+				</v-layout>
 
 				<v-divider></v-divider>
-				<v-list-tile>
-					<v-list-tile-content>											
-						<v-menu	:close-on-content-click="false"	v-model="showInfoDelivery" v-if="currentCity != null" top left offset-y>
-							<span slot="activator">Phí vận chuyển: <v-icon size="20" color="primary" @click="showInfoDelivery = true">help</v-icon></span>
-						</v-menu>
-					</v-list-tile-content>
-					<v-list-tile-content class="align-end" v-if="currentCity != null">
-						<h3>{{currentCity.deliveries[1].price | formatPrice}}/km</h3>
-					</v-list-tile-content>
-				</v-list-tile>
-			</v-list>
-			<v-dialog v-model="showInfoDelivery" max-width="500px" v-if="currentCity != null && $vuetify.breakpoint.smAndDown">
+
+				<h4 class="text-xs-center" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</h4>
+				<v-card-actions>
+					<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
+						Gửi đơn hàng
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+
+		</v-navigation-drawer>
+		<!-- RIGHT NAVBAR MOBILE END -->
+
+		<v-dialog v-model="optionDialog" persistent scrollable disabled max-width="1000">
+			<v-card v-if="editedItem != null" class="grey lighten-4">
+				<v-toolbar color="red accent-4" dense class="elevation-0" dark flat height="30">
+					<v-toolbar-title class="body-1 px-0 text-uppercase"> {{editedItem.name}}</v-toolbar-title>
+					<v-spacer></v-spacer>
+					<div class="font-weight-bold">{{totalProduct(editedItem) | formatPrice}}</div>
+				</v-toolbar>
+
+				<v-card-text class="white">
+					<v-container fluid grid-list-xs>
+						<v-layout row wrap>
+
+							<v-flex  xs12 md4>
+								<v-card>
+									<v-img :src="image(editedItem.image)" :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'">								
+									</v-img>
+								</v-card>				
+							</v-flex>
+
+							<v-flex xs12 md8>
+								<v-container class="py-0 my-0">
+									<v-layout row wrap>
+										<v-flex xs12>
+											<v-card v-if="editedItem.description != null" class="card-radius" color="grey lighten-3 mt-2">
+												<div class="pa-2">{{ editedItem.description }}</div>				
+											</v-card>
+											<v-radio-group mandatory v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp">
+												<v-radio color="primary" :value="size" v-for="(size, i) in sizes" :key="i">
+													<span slot="label" class="black--text body-1">{{size.name}} <strong>({{size.price | formatPrice}})</strong></span>
+												</v-radio>
+											</v-radio-group>
+
+										</v-flex>
+
+										<v-flex xs12>
+
+											<v-combobox v-if="editedItem.haveTopping" v-model="editedItem.toppings" :items="store.toppings" hint="Chọn thêm topping"  label="Phần thêm" multiple persistent-hint small-chips solo>
+
+												<template slot="selection" slot-scope="{ item, parent, selected }">
+													<v-chip	:selected="selected" label small>
+														{{ item.name }}
+														<v-icon small @click="parent.selectItem(item)" >close</v-icon>
+													</v-chip>
+												</template>
+
+												<template slot="item" slot-scope="{ index, item, parent }">
+													<v-list-tile-content>							
+														{{item.name}}
+													</v-list-tile-content>
+
+													<v-list-tile-action>
+														{{item.price |formatPrice}}
+													</v-list-tile-action>
+												</template>
+
+											</v-combobox>				
+
+										</v-flex>
+
+										<v-flex xs12>
+											<div>Số lượng: 
+												<span>
+													<v-btn icon ripple @click.stop="editedItem.qty++" class="ma-0">
+														<v-icon color="green darken-3">add_box</v-icon>
+													</v-btn>
+												</span>
+												<span>												
+													{{editedItem.qty}}
+												</span>
+												<span>
+													<v-btn icon ripple @click.stop="editedItem.qty > 0 ? editedItem.qty-- :''"  class="ma-0">
+														<v-icon color="grey" >indeterminate_check_box</v-icon>
+													</v-btn>
+												</span>				
+											</div>
+
+										</v-flex>
+
+										<v-flex xs12>
+											<v-text-field
+											solo
+											class="btn-custom"
+											background-color="grey lighten-4"
+											v-model="editedItem.memo"
+											label="Ghi chú" 
+											flat
+											></v-text-field>
+										</v-flex>
+
+									</v-layout>		
+								</v-container>
+							</v-flex>
+						</v-layout>
+					</v-container>			
+				</v-card-text>
+				<v-divider></v-divider>
+				<v-card-actions>
+					<v-btn color="red" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
+					<v-spacer></v-spacer>									
+					<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="editedItem.qty == 0" small>
+						{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
+			<!-- DIALOG ALERT START-->
+			<v-dialog v-model="dialog" max-width="400">
 				<v-card>
-					<v-toolbar dense flat class="elevation-0">
+					<v-toolbar dense color="transparent" class="elevation-0">
 						<v-avatar size="24px" tile>
 							<img src="~/static/dofuu24x24.png">
 						</v-avatar>
@@ -429,184 +588,45 @@
 							Thông báo
 						</v-toolbar-title>
 					</v-toolbar>
-					<v-card-text>
-						<v-list> 
-							<v-list-tile>
-								<v-list-tile-content><span>Phí vận chuyển tối thiểu của đơn đặt hàng: <strong class="red--text">{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
-							</v-list-tile>
-							<v-list-tile>
-								<v-list-tile-content><span>Phí vận chuyển sẽ được tính theo khoảng cách: <strong class="red--text">{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
-							</v-list-tile>
-							<v-list-tile>
-								<v-list-tile-content><strong>Phí vận chuyển có thể thay đổi tùy theo thời điểm</strong></v-list-tile-content>
-								<v-list-tile-content class="align-end"></v-list-tile-content>
-							</v-list-tile>
-						</v-list>
+					<v-divider></v-divider>
+					<v-card-text class="text-xs-center" v-if="checkOutSuccess">
+						<div class="green--text">Quý khách đã đặt hàng thành công</div>
+						<v-btn color="success" :to="{name:'history'}" @click="$store.commit('CLOSE_CHECKOUT_SUCCESS')" >Lịch sử đặt món</v-btn>
 					</v-card-text>
+					<v-card-text v-if="dayOff">
+						<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
+						<div>{{message}}</div>
+						<div>Quán phục vụ vào lúc 
+							<span v-for="(item, i) in store.activities" v-if="i==0"> 
+								<span v-for="(time, index) in item.times" class="green--text text--darken-1">
+									<strong>
+										{{time.from}} - {{time.to}} 
+									</strong>
+								</span>	
+								<span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span>
+							</span>
+						</div>
+						<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
+					</v-card-text>
+					<v-card-actions v-if="dayOff">
+						<v-btn block color="green darken-1" dark @click.native="dialog = false">Đồng ý</v-btn>
+					</v-card-actions>
 				</v-card>
 			</v-dialog>
-		</v-flex>
-	</v-layout>
-	<v-divider></v-divider>
-	<h4 class="text-xs-center" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</h4>
-	<v-card-actions>
-		<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
-			Gửi đơn hàng
-		</v-btn>
-	</v-card-actions>
-</v-card>
+			<!-- DIALOG ALERT END-->
+			<vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
+		</v-container>
+	</template>
 
-</v-navigation-drawer>
-<!-- RIGHT NAVBAR MOBILE END -->
-<v-dialog v-model="optionDialog" persistent scrollable disabled max-width="1000">
-	<v-card v-if="editedItem != null">
-		<v-toolbar color="red accent-4" dense class="elevation-0" dark flat :extended="editedItem._name != null" extension-height="15" height="20">
-			<v-toolbar-title class="body-1 px-0"> {{editedItem.name |upperCase}}</v-toolbar-title>
-			<h4 slot="extension" class="body-1 white--text"><span v-if="editedItem._name != null">{{editedItem._name | upperCase}}</span></h4>
-			<v-spacer></v-spacer>
-			<div>{{totalProduct(editedItem) | formatPrice}}</div>
-		</v-toolbar>
-
-		<v-card-text>
-			<v-container fluid grid-list-xs>
-				<v-layout row wrap>
-
-					<v-flex  xs12 md4>
-						<v-card>
-							<v-img :src="image(editedItem.image)" :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'">								
-							</v-img>
-						</v-card>				
-					</v-flex>
-
-					<v-flex xs12 md8>
-						<v-container class="py-0 my-0">
-							<v-layout row wrap>
-								<v-flex xs12>
-
-									<v-radio-group mandatory v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp">
-										<v-radio color="primary" :value="size" v-for="(size, i) in sizes" :key="i">
-											<span slot="label" class="black--text body-1">{{size.name}} <strong>({{size.price | formatPrice}})</strong></span>
-										</v-radio>
-									</v-radio-group>
-
-								</v-flex>
-
-								<v-flex xs12>
-
-									<v-combobox v-if="editedItem.haveTopping" v-model="editedItem.toppings" :items="store.toppings" hint="Chọn thêm topping"  label="Phần thêm" multiple persistent-hint small-chips solo>
-
-										<template slot="selection" slot-scope="{ item, parent, selected }">
-											<v-chip	:selected="selected" label small>
-												{{ item.name }}
-												<v-icon small @click="parent.selectItem(item)" >close</v-icon>
-											</v-chip>
-										</template>
-
-										<template slot="item" slot-scope="{ index, item, parent }">
-											<v-list-tile-content>							
-												{{item.name}}
-											</v-list-tile-content>
-
-											<v-list-tile-action>
-												{{item.price |formatPrice}}
-											</v-list-tile-action>
-										</template>
-
-									</v-combobox>				
-
-								</v-flex>
-
-								<v-flex xs12>
-									<div>Số lượng: 
-										<span>
-											<v-btn icon ripple @click.stop="editedItem.qty++" class="ma-0">
-												<v-icon color="green darken-3">add_box</v-icon>
-											</v-btn>
-										</span>
-										<span>												
-											{{editedItem.qty}}
-										</span>
-										<span>
-											<v-btn icon ripple @click.stop="editedItem.qty > 0 ? editedItem.qty-- :''"  class="ma-0">
-												<v-icon color="grey" >indeterminate_check_box</v-icon>
-											</v-btn>
-										</span>				
-									</div>
-
-								</v-flex>
-
-								<v-flex xs12>
-									<v-text-field
-									v-model="editedItem.memo"
-									label="Ghi chú" 
-									></v-text-field>
-								</v-flex>
-
-							</v-layout>		
-						</v-container>
-					</v-flex>
-				</v-layout>
-			</v-container>			
-		</v-card-text>
-		<v-divider></v-divider>
-		<v-card-actions>
-			<v-btn color="red" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
-			<v-spacer></v-spacer>									
-			<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="editedItem.qty == 0" small>
-				{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
-			</v-card-actions>
-		</v-card>
-	</v-dialog>
-	<!-- DIALOG ALERT START-->
-	<v-dialog v-model="dialog" max-width="400">
-		<v-card>
-			<v-toolbar dense color="transparent" class="elevation-0">
-				<v-avatar size="24px" tile>
-					<img src="~/static/dofuu24x24.png">
-				</v-avatar>
-				<v-toolbar-title>
-					Thông báo
-				</v-toolbar-title>
-			</v-toolbar>
-			<v-divider></v-divider>
-			<v-card-text class="text-xs-center" v-if="checkOutSuccess">
-				<div class="green--text">Quý khách đã đặt hàng thành công</div>
-				<v-btn color="success" :to="{name:'history'}" @click="$store.commit('CLOSE_CHECKOUT_SUCCESS')" >Lịch sử đặt món</v-btn>
-			</v-card-text>
-			<v-card-text v-if="dayOff">
-				<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
-				<div>{{message}}</div>
-				<div>Quán phục vụ vào lúc 
-					<span v-for="(item, i) in store.activities" v-if="i==0"> 
-						<span v-for="(time, index) in item.times" class="green--text text--darken-1">
-							<strong>
-								{{time.from}} - {{time.to}} 
-							</strong>
-						</span>	
-						<span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span>
-					</span>
-				</div>
-				<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
-			</v-card-text>
-			<v-card-actions v-if="dayOff">
-				<v-btn block color="green darken-1" dark @click.native="dialog = false">Đồng ý</v-btn>
-			</v-card-actions>
-		</v-card>
-	</v-dialog>
-	<!-- DIALOG ALERT END-->
-	<vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
-</v-container>
-</template>
-
-<script>
-import numeral from 'numeral'
-import Cookies from 'js-cookie'
-import moment from 'moment'
-import axios from 'axios'
-import {getStoreURL, getHeader} from '@/config'
-import index from '@/mixins/index'
-import {mapState} from 'vuex'
-import CheckoutDialog from '@/components/CheckoutDialog'
+	<script>
+		import numeral from 'numeral'
+		import Cookies from 'js-cookie'
+		import moment from 'moment'
+		import axios from 'axios'
+		import {getStoreURL, getHeader} from '@/config'
+		import index from '@/mixins/index'
+		import {mapState} from 'vuex'
+		import CheckoutDialog from '@/components/CheckoutDialog'
 // const CheckoutDialog = () => ({
 //   // The component to load (should be a Promise)
 //   component: import('@/components/CheckoutDialog'),
@@ -683,7 +703,7 @@ export default {
 			},
 			sizes: [],
 			processAddCart: false,
-			dayOff:false,
+			dayOff:false
 		}
 	},
 	methods: {
@@ -692,9 +712,11 @@ export default {
 			if(vm.code == null) {
 				vm.alert = Object.assign({}, {show: true, message: 'Vui lòng nhập mã giảm giá', type: 'error'})
 			} else {
+
 				const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id})
-				vm.loadingCoupon = await !vm.loadingCoupon
-				if(vm.loadingCoupon) {
+				
+				if(!vm.loadingCoupon) {
+					vm.loadingCoupon = await !vm.loadingCoupon
 					await setTimeout(function() {
 						
 						axios.post('/api/Dofuu/CheckCouponCode', data, {withCredentials:true}).then(response => {
@@ -707,14 +729,12 @@ export default {
 								vm.alert = Object.assign({}, {show: true, message: response.data.message, type: 'error'})	
 							}
 
+						}).finally(() => {
+							vm.loadingCoupon = !vm.loadingCoupon
 						})
 
 					},300)
 				}
-				
-				setTimeout(() => {
-					vm.loadingCoupon = !vm.loadingCoupon
-				}, 500)
 
 				setTimeout(() => {
 					vm.alert = Object.assign({}, {show: false, message: '', type: 'error'})
@@ -964,7 +984,10 @@ export default {
 			}
 			product.subTotal = total*product.qty
 			return total*product.qty
-		}
+		},
+		forceUppercase(e) {
+			this.code = e.toUpperCase()
+		},
 	},
 	computed: {
 		...mapState({
@@ -1022,6 +1045,8 @@ export default {
 		},
 		imageSize () {
 			switch (this.$vuetify.breakpoint.name) {
+				case 'xs': return '50'
+				case 'sm': return '50'
 				case 'md': return '50'
 				case 'lg': return '60'
 				case 'xl': return '80'
@@ -1029,13 +1054,6 @@ export default {
 		}
 	},
 	watch: {
-		'loading': function(val) {
-			if(!val) {
-				setTimeout(() => {
-					this.offsetNavbarRight = this.$refs.target_navbar_right.offsetTop
-				}, 300)
-			}
-		},
 		'cartDrawer': function(val) {
 			if(val) {
 				this.drawer = true
@@ -1063,10 +1081,16 @@ export default {
 				this.isLoading = false
 			})
 
+		},
+		code: function(val) {
+			return val.toUpperCase()
 		}
 	},	
 	created: function() {
 
+	},
+	beforeUpdate() {
+		this.offsetNavbarRight = this.$refs.target_navbar_right.offsetTop
 	},
 	beforeDestroy() {
 		this.$store.commit('REMOVE_COUPON')

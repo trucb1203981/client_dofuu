@@ -1,3 +1,16 @@
 {
-  "presets": ["@babel/preset-env"]
+  	"presets": ["@babel/preset-env"],
+   	"plugins": [
+   	"transform-vue-jsx",
+   	"@babel/plugin-transform-runtime",
+	    [
+	      "transform-imports",
+	      {
+	        "vuetify": {
+	          "transform": "vuetify/es5/components/${member}",
+	          "preventFullImport": true
+	        }
+	      }
+	    ]
+	  ]
 }

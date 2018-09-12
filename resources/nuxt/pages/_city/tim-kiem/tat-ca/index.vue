@@ -1,23 +1,24 @@
 <template>
 	<v-container grid-list-lg v-scroll="onScroll">
-		<v-layout row wrap column>
+		<v-layout row wrap>
+			<v-flex xs12>
+				<v-card flat>				
+					<v-toolbar color="white" flat dense>
+						<v-toolbar-title>
+							DANH SÁCH CỬA HÀNG
+						</v-toolbar-title>
+					</v-toolbar>					
+					<v-container>
 
-			<v-card flat>				
-				<v-toolbar color="white" flat dense>
-					<v-toolbar-title>
-						DANH SÁCH CỬA HÀNG
-					</v-toolbar-title>
-				</v-toolbar>					
-				<v-container>
-					
-					<!-- STORE LIST -->								
-					<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
-					
-					<!-- STORE GRID -->										
-					<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+						<!-- STORE LIST -->								
+						<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
 
-				</v-container>
-			</v-card>
+						<!-- STORE GRID -->										
+						<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+
+					</v-container>
+				</v-card>
+			</v-flex>
 		</v-layout>
 	</v-container>
 </template>
@@ -39,7 +40,7 @@ export default {
 	data() {
 		return {
 			stores: [],
-			pageSize: 8,
+			pageSize: 50,
 			offset: 0,
 			bottom: false,
 			trigger:300,
@@ -79,7 +80,6 @@ export default {
 	},
 	watch: {
 		'$route.query.q': function(val) {
-			console.log(val)
 			this.searchStore(val)
 		}
 	},

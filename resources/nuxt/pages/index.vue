@@ -1,12 +1,12 @@
 <template>
-	<v-container grey-lighten-4 lighten-2 :grid-list-xs="$vuetify.breakpoint.smAndDown" :grid-list-lg="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
+	<v-container grey-lighten-4 lighten-2 :grid-list-md="$vuetify.breakpoint.smAndDown" :grid-list-lg="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
 		<v-layout grey-lighten-4 row wrap v-if="!loading">
 			<v-flex xs12>
 				<v-layout column> 
 					<v-flex xs12>
 						<v-carousel :style="$vuetify.breakpoint.mdAndUp ? `height: 315px` : `height: 200px`" hide-delimiters :hide-controls="$vuetify.breakpoint.smAndDown" interval="3000">
 						    <v-carousel-item >
-						    	<v-img src="img/deal_banner.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+						    	<v-img  src="img/deal_banner.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
 								</v-img>
 						    </v-carousel-item>
 						    <v-carousel-item >
@@ -222,30 +222,6 @@
 			<v-icon dark>expand_less</v-icon>
 		</v-btn>
 
-		<!-- <v-dialog v-model="notify" max-width="500">
-	      <v-card>
-	        <v-toolbar dense color="transparent" class="elevation-0">
-				<v-avatar size="24px" tile>
-					<img src="~/static/dofuu24x24.png">
-				</v-avatar>
-				<v-toolbar-title class="red--text">
-					Thông báo nghỉ lễ 02/09
-				</v-toolbar-title>
-			</v-toolbar>
-			<v-divider></v-divider>
-	        <v-card-text>
-	        	<h3 class="font-weight-bold">Xin thông báo Dofuu nghỉ lễ 02/09 và sẽ phục vụ trở lại vào ngày 03/09.</h3>
-	        	<br/>
-	        	<h3 class="font-weight-bold">Chúc quý khách hàng có 1 kỳ nghỉ lễ thật vui vẻ và hạnh phúc bên gia đình.</h3>  
-	        	<br/>
-	        	<h3 class="font-weight-bold">Xin trân trọng cám ơn quý khách hàng đã ủng hộ Dofuu.</h3>  
-	        </v-card-text>
-	        <v-divider></v-divider>
-	        <v-card-actions>
-	          <v-btn color="green darken-1" flat @click.native="notify = false" block>Đóng</v-btn>
-	        </v-card-actions>
-	      </v-card>
-	  </v-dialog> -->
 	</v-container>
 </template>
 
@@ -269,7 +245,6 @@ export default {
 		return {
 			slide: 0,
 			sliding: null,
-			notify:true,
 			deal: {
 				tabs: 0,
 				list_flag: 0,
@@ -517,44 +492,4 @@ export default {
 
 <style>
 
-#section04 a {
-	padding-top: 60px;
-}
-#section04 a span {
-	position: absolute;
-	top: 0;
-	left: 50%;
-	width: 18px;
-	height: 18px;
-	margin-left: -9px;
-	border-left: 1px solid #fff;
-	border-bottom: 1px solid #fff;
-	-webkit-transform: rotate(-45deg);
-	transform: rotate(-45deg);
-	-webkit-animation: sdb04 2s infinite;
-	animation: sdb04 2s infinite;
-	box-sizing: border-box;
-}
-@-webkit-keyframes sdb04 {
-	0% {
-		-webkit-transform: rotate(-45deg) translate(0, 0);
-	}
-	20% {
-		-webkit-transform: rotate(-45deg) translate(-10px, 10px);
-	}
-	40% {
-		-webkit-transform: rotate(-45deg) translate(0, 0);
-	}
-}
-@keyframes sdb04 {
-	0% {
-		transform: rotate(-45deg) translate(0, 0);
-	}
-	20% {
-		transform: rotate(-45deg) translate(-10px, 10px);
-	}
-	40% {
-		transform: rotate(-45deg) translate(0, 0);
-	}
-}
 </style>

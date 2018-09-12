@@ -207,8 +207,8 @@ class AuthController extends Controller
                 $data = [
                     'id'         => $user->id,
                     'name'       => $user->name,
-                    'birthday' => $user->birthday,
-                    'gender'   => $user->gender,
+                    'birthday'   => $user->birthday,
+                    'gender'     => $user->gender,
                     'email'      => $user->email,
                     'image'      => $user->image,
                     'address'    => $user->address,
@@ -295,6 +295,7 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token, $time)
     {
+        auth('api')->factory()->setTTL(44640);
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'bearer',

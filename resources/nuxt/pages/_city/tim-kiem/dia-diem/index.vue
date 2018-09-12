@@ -1,21 +1,22 @@
 <template>
 	<v-container grid-list-lg v-scroll="onScroll">
-		<v-layout row wrap column>
+		<v-layout row wrap>
+			<v-flex xs12>
+				<v-card flat>				
+					<v-toolbar color="white" flat dense>
+						<v-toolbar-title>
+							DANH SÁCH CỬA HÀNG
+						</v-toolbar-title>
+					</v-toolbar>					
+					<v-container>
+						<!-- STORE LIST -->								
+						<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
 
-			<v-card flat>				
-				<v-toolbar color="white" flat dense>
-					<v-toolbar-title>
-						DANH SÁCH CỬA HÀNG
-					</v-toolbar-title>
-				</v-toolbar>					
-				<v-container>
-					<!-- STORE LIST -->								
-					<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
-					
-					<!-- STORE GRID -->										
-					<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
-				</v-container>
-			</v-card>
+						<!-- STORE GRID -->										
+						<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+					</v-container>
+				</v-card>
+			</v-flex>
 		</v-layout>
 	</v-container>
 </template>

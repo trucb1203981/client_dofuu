@@ -4,7 +4,7 @@ namespace App\Http\Resources\Site;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StoreResource extends JsonResource
+class FavoriteStoreResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -33,17 +33,6 @@ class StoreResource extends JsonResource
             'citySlug'     => $this->district->city->city_slug,
             'views'        => $this->views,
             'likes'        => $this->likes,
-            'coupon'       => $this->whenLoaded('coupons', function() {
-                return $this->coupons->map(function($query) {
-                    $res = [
-                        'title'    => $query->title,
-                        'code'     => $query->coupon,
-                        'discount' => $query->discount_percent,
-                        'endedAt'  => $query->ended_at 
-                    ];
-                    return $res;
-                })->sortByDesc('created_at')->take(1)->first();
-            }),
             'activities'    => $this->whenLoaded('activities', function() {
                 return $this->activities->map(function($query) {
                     $query->times = unserialize($query->pivot->times);
@@ -56,17 +45,11 @@ class StoreResource extends JsonResource
                     return $res;
                 });
             }),
-            'catalogues'    => $this->whenLoaded('catalogues', function() {
-                return CatalogueResource::collection($this->catalogues->where('catalogue_show', 1));
-            }),
-            'district'      => $this->whenLoaded('district', function() {
+            'district'     => $this->whenLoaded('district', function() {
                 return new DistrictResource($this->district);
             }),
             'type'          => $this->whenLoaded('type', function() {
                 return new TypeResource($this->type);
-            }),
-            'toppings'      => $this->whenLoaded('toppings', function() {
-                return ToppingResource::collection($this->toppings);
             })
         ];
     }

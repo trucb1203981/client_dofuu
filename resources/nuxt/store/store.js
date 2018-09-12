@@ -2,15 +2,18 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import Cookie from 'cookie'
 import CookieParser from 'cookieparser'
+import {getStoreURL, getHeader} from '@/config'
 
 const state = {
 	tabIndex:0,
 	store: null,
 	loading:false,
 	rightDrawer:false,
+	like: false,
+	favorite:false,
 	headers: [
-		{title: 'Danh mục'},
-		{title: 'Giỏ hàng'}
+	{title: 'Danh mục'},
+	{title: 'Giỏ hàng'}
 	]
 }
 
@@ -19,6 +22,12 @@ const mutations = {
 		if(state.tabIndex != tabIndex ){
 			state.tabIndex = tabIndex
 		}
+	},
+	UPDATE_FAVORITE(state) {
+		state.favorite = !state.favorite
+	},
+	UPDATE_LIKE(state) {
+
 	},
 	GET_STORE(state, payload) {
 		state.store = payload
@@ -49,6 +58,16 @@ const actions = {
 		})
 
 	}),
+
+	removeFavoriteStore: ({commit}, storeId) => new Promise((resolve, reject) => {
+		const data   = {}
+		const params = {name: 'favoriteEndpoint'}
+		axios.post('/api/FavoriteStore/'+storeId+'/Remove', data, {params, headers: getHeader(), withCredentials:true}).then(response => {
+			if(response.status === 200) {
+				resolve(response)
+			}
+		})
+	})
 	
 }
 

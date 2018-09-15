@@ -203,12 +203,13 @@ class StoreController extends Controller
     //SHOW STORE
     public function getStore(Request $request)
     {
-        $cid      = $request->_CID;
-        $sid      = $request->_SID;
+        $cid      = $request->cityId;
+        $sid      = $request->storeId;
         $statusID = $this->productStatusIDCease;
         $now      = Carbon::now()->toDateTimeString();
         $city     = City::where('city_slug', '=', $cid)->first();
-        if($request->filled('_CID') && $request->filled('_SID')) {
+
+        if($request->filled('cityId') && $request->filled('storeId')) {
 
             $store = Store::where(function($query) use ($city, $sid, $statusID) {
                 $query->where('store_slug', '=', $sid);

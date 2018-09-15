@@ -17,10 +17,11 @@ class CommentResource extends JsonResource
         return [
             'id'         => $this->id,
             'body'       => $this->body,
-            'totalReply' => $this->where('parent_id', $this->id)->count(),
+            'totalReply' => $this->totalReply($this->id),
             'name'       => $this->user->name,
             'avatar'     => $this->user->avatar,
-            'created_at' => $this->created_at
+            'likes'      => $this->likes,
+            'createdAt'  => $this->created_at
         ];
     }
 }

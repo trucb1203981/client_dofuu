@@ -103,10 +103,14 @@ class User extends Authenticatable implements AuthenticatableUserContract, Authe
     }
 
     public function likes() {
-        return $this->belongsToMany('App\Models\Store','ec_store_likes','user_id', 'store_id');
+        return $this->belongsToMany('App\Models\Store', 'ec_likes', 'user_id', 'likeable_id');
     }
 
     public function favoriteStores() {
-        return $this->belongsToMany('App\Models\Store','ec_favorite_stores', 'user_id', 'store_id');
+        return $this->belongsToMany('App\Models\Store', 'ec_favorite_stores', 'user_id', 'store_id');
+    }
+
+    public function commentLikes() {
+        return $this->belongsToMany('App\Models\Comment', 'ec_comments', 'user_id', 'commentable_id');
     }
 }

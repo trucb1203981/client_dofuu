@@ -23,9 +23,9 @@
 				</v-btn>
 			</template>
 		</v-autocomplete>	 -->	
-		<v-text-field class="btn-custom" solo flat background-color="grey lighten-4" label="Tìm kiếm (quán, món, ...)"  @keyup.enter="search" v-model="keywords" >
-			<v-btn color="white" icon  class="ma-0"  style="right: -10px" @click="search" small slot="append">
-				<v-icon color="blue" >search</v-icon>
+		<v-text-field class="btn-custom" solo :flat="!focusSearchInput" :background-color="focusSearchInput ? 'white' : 'grey lighten-3'" label="Tìm kiếm (quán, món, ...)"  @keyup.enter="search" v-model="keywords" @focus="focusSearchInput = true " @blur="focusSearchInput = false" style="border-radius: 1px solid blue">
+			<v-btn :color="focusSearchInput ? 'blue' : 'grey lighten-3'" :outline="focusSearchInput" icon  class="ma-0"  style="right: -10px" @click.prevent="search" small slot="append">
+				<v-icon :color="focusSearchInput ? 'blue' : 'grey'" >search</v-icon>
 			</v-btn>
 		</v-text-field>
 		<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
@@ -75,6 +75,7 @@
 						</v-list-tile>
 					</v-list>
 					<v-divider></v-divider>
+
 					<v-list dense>
 
 						<v-list-tile avatar :to="{name:'favorite'}">
@@ -96,6 +97,7 @@
 						</v-list-tile>
 
 					</v-list>
+					
 					<v-card-actions>					
 						<v-btn color="error" block  @click="$store.dispatch('logout')" small round>
 							Đăng xuất
@@ -127,40 +129,41 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
-import axios from 'axios'
-import index from '@/mixins/index'
-export default {
-	mixins: [index],
-	data() {
-		return {
-			keywords: typeof this.$route.query.q != 'undefined' ? this.$route.query.q : null,
-			stores: [],
-			loading: false,
-			select: [],
-			leftDrawer: true,
-			model:null
-		}
-	},
-	computed: {
-		...mapState({
-			currentUser: state => state.authStore.currentUser,
-			currentCity: state => state.cityStore.currentCity
-		}),
-		isAuth() {
-			return this.$store.getters.isAuth
+	import {mapState} from 'vuex'
+	import axios from 'axios'
+	import index from '@/mixins/index'
+	export default {
+		mixins: [index],
+		data() {
+			return {
+				keywords: typeof this.$route.query.q != 'undefined' ? this.$route.query.q : null,
+				stores: [],
+				loading: false,
+				select: [],
+				leftDrawer: true,
+				model:null,
+				focusSearchInput: false
+			}
 		},
-		cities: function() {
-			return Array.from(this.$store.getters.getAllCity);
+		computed: {
+			...mapState({
+				currentUser: state => state.authStore.currentUser,
+				currentCity: state => state.cityStore.currentCity
+			}),
+			isAuth() {
+				return this.$store.getters.isAuth
+			},
+			cities: function() {
+				return Array.from(this.$store.getters.getAllCity);
+			},
+			types: function() {
+				return Array.from(this.$store.getters.getAllType)
+			},
+			cityCurrent: function() {
+				return this.$store.getters.getCurrentID
+			}
 		},
-		types: function() {
-			return Array.from(this.$store.getters.getAllType)
-		},
-		cityCurrent: function() {
-			return this.$store.getters.getCurrentID
-		}
-	},
-	watch: {
+		watch: {
 		// keywords (val) {
 		// 	if(val.length>0) {
 		// 		this.querySelections(val)
@@ -196,8 +199,10 @@ export default {
 		},
 		search () {
 			const keyword = this.keywords
-			if( keyword !== null || keyword.length>0) {
-				this.$router.push({name: 'city-tim-kiem-tat-ca', query: {q: keyword}, params: {city: this.currentCity.slug}})
+			if(keyword !== null) {
+				if(keyword.length>0) {
+					this.$router.push({name: 'city-tim-kiem-tat-ca', query: {q: keyword}, params: {city: this.currentCity.slug}})
+				}
 			}
 			return 		
 		}

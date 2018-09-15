@@ -10,7 +10,7 @@ module.exports = laravelNuxt({
 		title: 'Hệ thống đặt và giao thức ăn trực tuyến',
 		meta: [
 		{ charset: 'utf-8' },
-		{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+		{ name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui' },
 		{ name: 'google-site-verification', content: 'L9F_TQ3aSeHInFr-BqOqZ3lGhOyOVIj02tRAHiu_2fQ' },
 		{ hid: 'description', name: 'description', content: 'Dofuu website' }
 		],

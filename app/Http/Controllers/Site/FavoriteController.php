@@ -121,7 +121,7 @@ class FavoriteController extends Controller
 			$res    = [
 				'type'     => 'success',
 				'messsage' => 'Get store successfully!!!',
-				'stores'   => FavoriteStoreResource::collection($favoriteStores)
+				'stores'   => FavoriteStoreResource::collection($favoriteStores->load('activities'))
 			];
 
 			return response($res, 200);

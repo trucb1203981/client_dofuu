@@ -1,5 +1,5 @@
 <template>
-	<v-app id="inspire"  standalone class="grey lighten-2">
+	<v-app id="app" standalone class="grey lighten-2">
 		<vue-toolbar></vue-toolbar>
 		<vue-left-navigation class="hidden-md-and-up"></vue-left-navigation>
 		<v-content>
@@ -64,6 +64,6 @@ export default {
 	top: 4px
 }
 .btn-custom.theme--light.v-text-field--solo .v-input__slot {
-	border-radius: 15px;
+	border-radius: 20px;
 }
 </style>

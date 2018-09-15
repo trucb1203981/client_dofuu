@@ -1,11 +1,12 @@
 <template>
 	<v-container>
 		<v-card>
-			<v-toolbar flat>
+			<v-toolbar color="transparent" flat dense>
 				<v-toolbar-title>
 					{{title}}
 				</v-toolbar-title>
 			</v-toolbar>
+			<v-divider></v-divider>
 			<v-card-title>
 				<v-layout row wrap align-center justify-center>
 
@@ -81,6 +82,8 @@
 					content-tag="v-layout"
 					row
 					wrap
+					no-data-text="Không tìm thấy đơn đặt hàng"
+					:hide-actions="orders.length===0"
 					>
 					<v-flex	slot="item"	slot-scope="props" xs12 sm6 md6	lg6>
 						<v-card class="card-radius">

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 Relation::morphMap([
     'store' => 'App\Models\Store',
+    'comment' => 'App\Models\Comment'
 ]);
 
 
@@ -19,6 +20,10 @@ class Like extends Model
 	public function likeable()
 	{
 		return $this->morphTo();
+	}
+
+	public function scopeByUser($query, $user_id) {
+		return $query->where('user_id', $user_id);
 	}
 
 	public function user() {

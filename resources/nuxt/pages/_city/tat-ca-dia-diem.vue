@@ -62,14 +62,6 @@ export default {
 		}
 	},
 	methods: {
-		bottomVisible() {
-			const scrollY      = window.scrollY
-			const visible      = document.documentElement.clientHeight
-			const pageHeight   = document.documentElement.scrollHeight
-			const bottomOfPage = visible + scrollY >= pageHeight
-			this.offset        = Math.floor(this.offset + this.pageSize)
-			return bottomOfPage || pageHeight < visible
-		},
 		onScroll: async function(e) {
 			var vm = this
 			if(window.innerHeight + window.scrollY >= (document.body.offsetHeight - vm.trigger) ) {

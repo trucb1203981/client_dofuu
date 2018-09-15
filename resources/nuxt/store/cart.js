@@ -89,7 +89,10 @@ const actions = {
 			}
 			
 		}
-	})
+	}),
+	removeCoupon:({commit}) => {
+		commit('REMOVE_COUPON')
+	} 
 }
 const getters = {
 	counts: (state) => {

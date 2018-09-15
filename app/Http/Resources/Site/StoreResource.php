@@ -31,6 +31,7 @@ class StoreResource extends JsonResource
             'cityId'       => $this->district->city_id,
             'cityName'     => $this->district->city->city_name,
             'citySlug'     => $this->district->city->city_slug,
+            'totalComment' => $this->comments()->where('parent_id', 0)->count(),
             'views'        => $this->views,
             'likes'        => $this->likes,
             'coupon'       => $this->whenLoaded('coupons', function() {

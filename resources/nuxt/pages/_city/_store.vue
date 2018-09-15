@@ -29,7 +29,10 @@
 						Thực Đơn
 					</v-tab>
 					<v-tab nuxt exact :to="{name: 'city-store-comment', params: {city: $route.params.city, store: $route.params.store}}">
-						Bình luận
+						<v-badge color="blue">
+							<span slot="badge" v-if="store.totalComment > 0">{{store.totalComment}}</span>
+							<span>Bình luận</span>			 
+						</v-badge>						
 					</v-tab>
 					<!-- <v-tab nuxt exact :to="{name: 'city-store-about', params: {city: $route.params.city, store: $route.params.store}}">
 						Giới thiệu
@@ -110,10 +113,14 @@
 						</v-list>
 						<v-divider></v-divider>
 						<v-card-actions>
-							<v-btn @click.prevent="toggle('like')" flat :ripple="false">
-								<v-icon left color="pink">{{like ? 'favorite' : 'favorite_border'}}</v-icon>
-								{{store.likes}}
-							</v-btn>
+							<v-tooltip top>
+								<v-btn slot="activator" @click.prevent="toggle('like')" flat :ripple="false">
+									<v-icon left color="pink">{{like ? 'favorite' : 'favorite_border'}}</v-icon>
+									{{store.likes}}
+								</v-btn>
+								<span>{{like ? 'Bỏ thích' : 'Thích'}}</span>
+							</v-tooltip>
+							
 							<v-menu v-model="likePopup" offset-y >
 								<div slot="activator"></div>
 								<v-card>
@@ -129,10 +136,16 @@
 									</v-card-actions>
 								</v-card>
 							</v-menu>
+
 							<v-spacer></v-spacer>
-							<v-btn icon @click.prevent="toggle('favorite')" :ripple="false">
-								<v-icon color="blue">{{favorite ? 'bookmark' : 'bookmark_border'}}</v-icon>
-							</v-btn>
+
+							<v-tooltip top>
+								<v-btn slot="activator" icon @click.prevent="toggle('favorite')" :ripple="false">
+									<v-icon color="blue">{{favorite ? 'bookmark' : 'bookmark_border'}}</v-icon>
+								</v-btn>
+								<span>{{favorite ? 'Bỏ lưu' : 'Lưu'}}</span>
+							</v-tooltip>							
+
 							<v-menu v-model="favoritePopup" offset-y >
 								<div slot="activator"></div>
 								<v-card>
@@ -148,6 +161,7 @@
 									</v-card-actions>
 								</v-card>
 							</v-menu>
+
 						</v-card-actions>
 					</v-card>
 				</v-container>	
@@ -197,7 +211,7 @@
 		methods: {
 			getStore() {
 				var vm       = this
-				const params = {_CID: this.$route.params.city, _SID: this.$route.params.store}
+				const params = {cityId: this.$route.params.city, storeId: this.$route.params.store}
 				return new Promise((resolve, reject) => {
 					vm.$store.dispatch('getStore', params).then(response => {
 						if(response.status == 200) {
@@ -214,24 +228,33 @@
 				const params = { name: 'likeEndpoint' }
 				if(!vm.processLike) {
 					vm.processLike = true
-					axios.post('/api/LikeStore/'+this.store.id+'/Toggle', data, { params, headers: getHeader(), withCredentials:true }).then(response => {
-						if(response.status === 200) {			
-							vm.like = ! vm.like
-							vm.$store.commit('GET_STORE', response.data.store)
-							if(response.data.type === 'success') {
-								vm.snackbar        = true
-								vm.snackbarMessage = 'Đã thích cửa hàng này.'
+
+					setTimeout(() => {
+
+						axios.post('/api/LikeStore/'+vm.store.id+'/Toggle', data, { params, withCredentials:true }).then(response => {
+							if(response.status === 200) {			
+								vm.like = ! vm.like
+								vm.$store.commit('GET_STORE', response.data.store)
+								if(response.data.type === 'success') {
+									vm.snackbar        = true
+									vm.snackbarMessage = 'Đã thích cửa hàng này.'
+								}
 							}
-						}
-					}).finally(() => {
-						this.processLike = false
-					})
+						}).finally(() => {
+							vm.processLike = false
+						})
+
+					}, 300)
+					
 				}
 				
 			},	
 			toggle(name) {
+
 				var btnName = new String(name).toLowerCase()
+
 				switch(btnName) {
+
 					case 'like':
 					if(this.isAuth && this.currentUser != null) {
 						this.likePopup = false
@@ -241,6 +264,7 @@
 					}
 					return
 					break
+
 					case 'favorite':
 					if(this.isAuth && this.currentUser != null) {
 						this.favoritePopup = false
@@ -252,41 +276,54 @@
 					break
 				}
 			},	
+			//CHECK LIKE BY USER
 			checkLike() {
 				var vm = this
 				var data = {}
 				const params = {name: 'likeEndpoint'}
-				return axios.post('/api/LikeStore/'+this.store.id+'/Check', data, { params, headers: getHeader(), withCredentials:true }).then(response => {
+
+				return axios.post('/api/LikeStore/'+vm.store.id+'/Check', data, { params, withCredentials:true }).then(response => {
 					if(response.data.type === 'success') {						
 						vm.like = ! vm.like
 					}
 				})
 			},
+			//CLICK FAVORITE
 			favoriteStore() {
 				var vm   = this
 				var data = {}
 				const params = {name: 'favoriteEndpoint'}
-				if(!this.processFavorite) {
-					this.processFavorite = true
-					axios.post('/api/FavoriteStore/'+this.store.id+'/Toggle', data, { params, headers: getHeader(), withCredentials:true }).then(response => {
-						if(response.status === 200) {
-							vm.favorite = !vm.favorite
-							if(response.data.type === 'success') {
-								vm.snackbar        = true
-								vm.snackbarMessage = response.data.message
+
+				if(!vm.processFavorite) {
+
+					vm.processFavorite = true
+
+					setTimeout(() => {
+
+						axios.post('/api/FavoriteStore/'+vm.store.id+'/Toggle', data, { params, withCredentials:true }).then(response => {
+							if(response.status === 200) {
+								vm.favorite = !vm.favorite
+								if(response.data.type === 'success') {
+									vm.snackbar        = true
+									vm.snackbarMessage = response.data.message
+								}
 							}
-						}
-					}).finally(() => {
-						this.processFavorite = false
-					})
+						}).finally(() => {
+							vm.processFavorite = false
+						})
+
+					}, 300)
+					
 				}
 				
 			},
+			// CHECK FAVORITE BY USER
 			checkFavorite() {
 				var vm = this
 				var data = {}
 				const params = {name: 'favoriteEndpoint'}
-				return axios.post('/api/FavoriteStore/'+this.store.id+'/Check', data, { params, headers: getHeader(), withCredentials:true }).then(response => {
+
+				return axios.post('/api/FavoriteStore/'+vm.store.id+'/Check', data, { params, headers: getHeader(), withCredentials:true }).then(response => {
 					if(response.data.type === 'success') {						
 						vm.favorite = ! vm.favorite
 					}

@@ -15,7 +15,7 @@ Vue.filter('formatTime', function(time) {
 
 Vue.filter('formatDateTimeHumanize', function(date) {
 	if(date) {
-		var start = moment(date, 'DD-MM-YYYY HH:mm')
+		var start = moment(date, 'YYYY-MM-DD HH:mm:ss')
 		return start.startOf().locale('vi').fromNow()
 	}
 })

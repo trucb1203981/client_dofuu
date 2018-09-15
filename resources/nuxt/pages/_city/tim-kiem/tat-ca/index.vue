@@ -25,50 +25,57 @@
 
 <script>
 
-import {mapState} from 'vuex'
-import index from '@/mixins/index'
-import axios from 'axios'
-import StoreList from '@/components/StoreList'
-import StoreGrid from '@/components/StoreGrid'
+	import {mapState} from 'vuex'
+	import index from '@/mixins/index'
+	import axios from 'axios'
+	import StoreList from '@/components/StoreList'
+	import StoreGrid from '@/components/StoreGrid'
 
-export default {
-	mixins: [index],
-	components: {
-		'vue-store-list': StoreList,
-		'vue-store-grid': StoreGrid
-	},
-	data() {
-		return {
-			stores: [],
-			pageSize: 50,
-			offset: 0,
-			bottom: false,
-			trigger:300,
-			end: false,
-			loading: true
-		}
-	},
-	methods: {
-		onScroll: async function(e) {
-			var vm = this
-			if(window.innerHeight + window.scrollY >= (document.body.offsetHeight - vm.trigger) ) {
-				if(!this.loading) {
+	export default {
+		mixins: [index],
+		components: {
+			'vue-store-list': StoreList,
+			'vue-store-grid': StoreGrid
+		},
+		data() {
+			return {
+				stores: [],
+				pageSize: 50,
+				offset: 0,
+				bottom: false,
+				trigger:300,
+				end: false,
+				loading: true
+			}
+		},
+		methods: {
+			onScroll: async function(e) {
+				var vm = this
+				if(window.innerHeight + window.scrollY >= (document.body.offsetHeight - vm.trigger) ) {
+					if(!this.loading) {
 					// await vm.searchStore(this.$route.query.q)
 				}
 			}
 		},
 		searchStore: async function(keywords) {
-			const city = this.$store.getters.getCityBySlug(this.$route.params.city)
-			const params = {keywords: keywords, citySlug: this.$route.params.city, pageSize: this.pageSize, offset: this.offset}
-			if(!this.end) {
-				this.loading = await true
-				await axios.get('/api/Search/All', {params, withCredentials:true}).then(response => {
-					if(response.status === 200) {
-						this.stores = response.data.data
-					}
-				})
-				this.loading = false
-				this.offset = Math.floor(this.offset + this.pageSize)
+			if(keywords.length > 0) {
+
+				const city = this.$store.getters.getCityBySlug(this.$route.params.city)
+				const params = {keywords: keywords, citySlug: this.$route.params.city, pageSize: this.pageSize, offset: this.offset}
+				if(!this.end) {
+					
+					this.loading = await true
+
+					await axios.get('/api/Search/All', {params, withCredentials:true}).then(response => {
+						if(response.status === 200) {
+							this.stores = response.data.data
+						}
+					}).finally(() => {
+						this.loading = false
+					})
+					
+					this.offset = Math.floor(this.offset + this.pageSize)
+				}
 			}
 			
 		}

@@ -85,13 +85,13 @@
 												</v-menu>										
 											</v-flex>
 
-											<v-flex>
+											<v-flex xs12>
 												<v-textarea
 												prepend-icon="short_text"
 												v-model="editedItem.memo"
 												label="Ghi chú"
 												hint="Vui lòng dặn dò nếu có"
-												rows="4"
+												rows="3"
 												persistent-hint
 												></v-textarea>
 											</v-flex>
@@ -140,7 +140,7 @@
 													</v-avatar>
 												</v-list-tile-avatar>										
 												<v-list-tile-action>
-													<strong>{{item.subTotal}}</strong>
+													<strong>{{item.subTotal | formatPrice}}</strong>
 												</v-list-tile-action>
 											</v-list-tile>
 										</v-list>

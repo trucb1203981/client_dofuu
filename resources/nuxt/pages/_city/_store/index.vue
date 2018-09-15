@@ -2,8 +2,14 @@
 	<v-container fluid :grid-list-lg="$vuetify.breakpoint.mdAndUp" :grid-list-xs="$vuetify.breakpoint.smAndDown">
 		<v-layout child-flex v-show="!loading" justify-end>
 			<v-flex xs12 md8>
-
-				<v-autocomplete prepend-inner-icon="search" :items="products" :loading="isLoading" :search-input.sync="search" cache-items class="mx-3" flat  label="Tìm món ăn, thức uống" outline height="10" item-text="name"  clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu" color="red accent--3" return-object @input="openCartDialog" :menu-props="{maxHeight: '200'}">
+				<v-autocomplete prepend-inner-icon="search" :items="products" :loading="isLoading" :search-input.sync="search" cache-items class="mx-3 btn-custom" solo label="Tìm món ăn, thức uống" height="10" item-text="name" clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu"  @focus="focusSearchInput = true" @blur="focusSearchInput = false" :color="focusSearchInput ? 'blue' : 'black'" :background-color="focusSearchInput ? 'white' : 'grey lighten-3'"  :flat="!focusSearchInput" return-object @input="openCartDialog" :menu-props="{maxHeight: '200px'}">
+					<template slot="no-data">
+						<v-list-tile>
+							<v-list-tile-title>
+								Không tìm thấy món <span class="font-weight-bold">{{search}}</span>
+							</v-list-tile-title>
+						</v-list-tile>
+					</template>
 					<template slot="item" slot-scope="data" >
 						<v-list-tile-avatar>
 							<img :src="image(data.item.image)">
@@ -15,7 +21,7 @@
 				</v-autocomplete>
 
 				<!-- CARD DEAL START -->
-				<v-card color="white" v-if="store.coupon != null" flat>
+				<v-card color="white" v-if="store.coupon" flat>
 					<v-tooltip v-model="showTooltip" top>
 						<div slot="activator"></div>
 						<span>{{messageTooltip}}</span>
@@ -49,7 +55,7 @@
 					</v-alert>
 				</v-card><!-- CARD DEAL END -->
 
-				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index">
+				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index" class="pb-0">
 
 					<v-subheader :id="'item_'+data.id" v-show="data.products.length>0" class="text-uppercase">{{data.name}}</v-subheader>
 					<!-- MOBILE PRODUCT LIST-->
@@ -60,7 +66,7 @@
 									<v-layout  align-center justify-center>
 										<v-flex xs9>
 											<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
-												<v-avatar :size="imageSize" color="red darken-4">
+												<v-avatar :size="imageSize" color="grey lighten-3">
 													<img :src="image(item.image)" alt="item.name">
 												</v-avatar>
 											</v-card>
@@ -194,11 +200,11 @@
 									</tr>
 								</template>
 								<template slot="expand" slot-scope="props">
-									<v-container fluid grid-list-md class="grey lighten-3">			
+									<v-content class="grey lighten-3 pb-0">			
 										<v-flex d-flex xs12>
 											<v-text-field v-model="props.item.memo" :label="`Ghi chú ${props.item.name}`" ></v-text-field>
 										</v-flex>
-									</v-container>
+									</v-content>
 								</template>
 							</v-data-table>
 						</v-card-text>
@@ -206,13 +212,13 @@
 						<v-divider></v-divider>
 
 						<!-- FIELD COUPON START -->
-						<v-toolbar color="white" flat dense>
+						<v-toolbar color="grey lighten-3" flat dense>
 							<v-layout row justify-center align-center>
 
 								<v-flex v-if="coupon == null">
-									<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase">
-										<v-btn slot="append" class="ma-0" style="right: -10px" icon small color="white" @click.prevent="checkCoupon" :loading="loadingCoupon" >
-											<v-icon color="blue">send</v-icon>
+									<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase" @focus="focusCouponInput = true" @blur="focusCouponInput = false" :color="focusCouponInput ? 'blue' : 'black'" :background-color="focusCouponInput ? 'white' : 'grey lighten-3'"  :flat="!focusCouponInput">
+										<v-btn slot="append" class="ma-0" style="right: -10px" icon small :color="focusCouponInput ? 'blue' : 'grey lighten-3'" :outline="focusCouponInput" @click.prevent="checkCoupon" :loading="loadingCoupon">
+											<v-icon :color="focusCouponInput ? 'blue' : 'grey'">send</v-icon>
 										</v-btn>	
 									</v-text-field>		
 								</v-flex>
@@ -289,7 +295,7 @@
 						<v-divider></v-divider>
 						<div class="text-xs-center font-weight-bold" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</div>
 						<v-card-actions>
-							<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
+							<v-btn block :disabled="processCheckout" color="red darken-1 white--text" dense @click.native="checkOut" round>
 								Gửi đơn hàng
 							</v-btn>
 						</v-card-actions>
@@ -376,13 +382,13 @@
 				<v-divider></v-divider>
 
 				<!-- FIELD COUPON START -->
-				<v-toolbar color="white" flat dense>
+				<v-toolbar color="grey lighten-3" flat dense>
 					<v-layout row justify-center align-center>
 
 						<v-flex v-if="coupon == null">
-							<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase">
-								<v-btn slot="append" class="ma-0" style="right: -10px" icon small color="white" @click.prevent="checkCoupon" :loading="loadingCoupon" >
-									<v-icon color="blue">send</v-icon>
+							<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase" @focus="focusCouponInput = true" @blur="focusCouponInput = false" :color="focusCouponInput ? 'blue' : 'black'" :background-color="focusCouponInput ? 'white' : 'grey lighten-3'"  :flat="!focusCouponInput">
+								<v-btn slot="append" class="ma-0" style="right: -10px" icon small :color="focusCouponInput ? 'blue' : 'grey lighten-3'" :outline="focusCouponInput" @click.prevent="checkCoupon" :loading="loadingCoupon">
+									<v-icon :color="focusCouponInput ? 'blue' : 'grey'">send</v-icon>
 								</v-btn>	
 							</v-text-field>		
 						</v-flex>
@@ -464,7 +470,7 @@
 
 				<h4 class="text-xs-center" v-if="currentCity != null && subTotal < currentCity.service.minAmount">Đơn đặt hàng tối thiểu là: {{currentCity.service.minAmount | formatPrice}}</h4>
 				<v-card-actions>
-					<v-btn block :disabled="processCheckout" color="red accent-2 white--text" dense @click.native="checkOut" round>
+					<v-btn block :disabled="processCheckout" color="red darken-1 white--text" dense @click.native="checkOut" round>
 						Gửi đơn hàng
 					</v-btn>
 				</v-card-actions>
@@ -572,7 +578,7 @@
 				<v-card-actions>
 					<v-btn color="red" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
 					<v-spacer></v-spacer>									
-					<v-btn color="green darken-3" class="white--text" round @click.native="addToCart(editedItem)" :loading="processAddCart" :disabled="editedItem.qty == 0" small>
+					<v-btn color="green darken-3" class="white--text" round @click.prevent="addToCart(editedItem)" :loading="processAddCart" :disabled="editedItem.qty == 0" small>
 						{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
 					</v-card-actions>
 				</v-card>
@@ -644,7 +650,7 @@ export default {
 	asyncData() {
 		return {
 			duration: 300,
-			offset: 0,
+			offset: -50,
 			easing: 'easeInOutCubic',
 			offsetNavbarRight: 0,
 			headers: [
@@ -678,6 +684,7 @@ export default {
 			showInfoDelivery: false,
 			loadingCoupon: false,
 			code: null,
+			focusCouponInput: false,
 			couponChip: true,
 			alert: {
 				show: false,
@@ -703,7 +710,8 @@ export default {
 			},
 			sizes: [],
 			processAddCart: false,
-			dayOff:false
+			dayOff:false,
+			focusSearchInput: false
 		}
 	},
 	methods: {
@@ -713,14 +721,13 @@ export default {
 				vm.alert = Object.assign({}, {show: true, message: 'Vui lòng nhập mã giảm giá', type: 'error'})
 			} else {
 
-				const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id})
-				
 				if(!vm.loadingCoupon) {
 					vm.loadingCoupon = await !vm.loadingCoupon
-					await setTimeout(function() {
+					const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id})
+					setTimeout(function() {						
 						
 						axios.post('/api/Dofuu/CheckCouponCode', data, {withCredentials:true}).then(response => {
-							
+
 							if(response.data.type === 'success') {
 								vm.$store.commit('ADD_COUPON', response.data)
 							}
@@ -735,15 +742,14 @@ export default {
 
 					},300)
 				}
-
-				setTimeout(() => {
-					vm.alert = Object.assign({}, {show: false, message: '', type: 'error'})
-				},3000)			
 			}
+			setTimeout(() => {
+				vm.alert = Object.assign({}, {show: false, message: '', type: 'error'})
+			},3000)		
 			
 		},
 		removeCoupon: function() {
-			this.$store.commit('REMOVE_COUPON')
+			this.$store.dispatch('removeCoupon')
 		},
 		showDelivery: function() {
 			this.showInfoDelivery = true
@@ -765,21 +771,18 @@ export default {
 				if(day) {
 					day.times.forEach(time => {
 						if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.from, 'HH:mm:ss').format('HH:mm') && moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-							resolve(true)
+							this.dayOff = false
 						} else {
 							if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
-								this.dialog  = true
 								this.dayOff  = true
 								this.message = 'Quán hiện tại chưa mở cửa'
 							} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-								this.dialog  = true
 								this.dayOff  = true
 								this.message = 'Quán hiện tại đã đóng cửa'
 							}
 						}
 					})
 				} else {
-					this.dialog  = true
 					this.dayOff  = true
 					this.message = 'Quán hôm nay nghỉ'
 				}			
@@ -792,46 +795,48 @@ export default {
 		},
 		//SET TIMEOUT AT END TIME FOR COUPON
 		start: function (date) {
-			setTimeout(() => {
-				let timeNow   = new Date().getTime()
-				
-				let endedTime = new Date(date.date).getTime()				
+			if(this.store.coupon) {
+				setTimeout(() => {
+					let timeNow   = new Date().getTime()
 
-				let distance  = Math.floor(endedTime - timeNow)/1000
-				
-				let day       = Math.floor(distance / (60 * 60 * 24));
-				
-				let hour      = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
-				
-				let minutes   = Math.floor((distance % (60 * 60)) / 60);
-				
-				var seconds   = Math.floor(distance % (60));
-				
-				this.time     = {dd: day, hh: hour, mm: minutes, ss: seconds}
-			}, 1000)
+					let endedTime = new Date(date.date).getTime()				
+
+					let distance  = Math.floor(endedTime - timeNow)/1000
+
+					let day       = Math.floor(distance / (60 * 60 * 24));
+
+					let hour      = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+
+					let minutes   = Math.floor((distance % (60 * 60)) / 60);
+
+					var seconds   = Math.floor(distance % (60));
+
+					this.time     = {dd: day, hh: hour, mm: minutes, ss: seconds}
+				}, 1000)
+			}			
 		},
 		openCartDialog: async function(item) {
-			this.checkDayOff().then(async(response) => {
-				if(response) {
-					this.editedItem   =  Object.assign({}, this.default)
-					this.sizes        =  []		
-					var uuid = require("uuid");
-					var rowId = uuid.v4();
-					if(item.sizes.length >0) {
-						await item.sizes.forEach(size => {
-							if(size.price > 0) {					
-								this.sizes.push(size)
-								if(this.editedItem.size === null) {
-									this.editedItem.size = size
-								}
+			if(!this.dayOff) {
+				this.editedItem   =  Object.assign({}, this.default)
+				this.sizes        =  []		
+				var uuid = require("uuid");
+				var rowId = uuid.v4();
+				if(item.sizes.length >0) {
+					await item.sizes.forEach(size => {
+						if(size.price > 0) {					
+							this.sizes.push(size)
+							if(this.editedItem.size === null) {
+								this.editedItem.size = size
 							}
-						})
-					}
-					this.editedItem       = Object.assign(this.editedItem, item)
-					this.editedItem.rowId = rowId
-					this.optionDialog     = true
+						}
+					})
 				}
-			})
+				this.editedItem       = Object.assign(this.editedItem, item)
+				this.editedItem.rowId = rowId
+				this.optionDialog     = true
+			} else {				
+				this.dialog  = true
+			}
 		},
 		closeCartDialog: async function() {
 			this.optionDialog = false
@@ -841,25 +846,26 @@ export default {
 		// ADD ITEM TO CART
 		addToCart: async function (product) {
 			var vm              = this
-			vm.processAddCart = true
-
-			setTimeout(async () => {
-				const productIndex  = await vm.cart.items.findIndex(item => {
-					return item.rowId === product.rowId
-				})
-				if (productIndex > -1) {
-					vm.cart.items[productIndex].qty++
-				} else {
-					vm.cart.items.push(product)
-				}
-				vm.$store.commit('FETCH_CART', vm.cart)
-				window.localStorage.setItem('cart', JSON.stringify(vm.cart))
-			}, 500)
-			
-			this.processAddCart = false
-			this.closeCartDialog()
-			this.$store.commit('CHANGE_TAB', 1)
-
+			if(!vm.processAddCart) {
+				vm.processAddCart = true
+				setTimeout(() => {
+					var addToCart = new Promise(async (resolve, reject) => {
+						const productIndex  = await vm.cart.items.findIndex(item => {
+							return item.rowId === product.rowId
+						})
+						if (productIndex > -1) {
+							vm.cart.items[productIndex].qty++
+						} else {
+							vm.cart.items.push(product)
+						}
+						vm.$store.commit('FETCH_CART', vm.cart)
+						window.localStorage.setItem('cart', JSON.stringify(vm.cart))
+					})
+					vm.processAddCart = false
+					vm.closeCartDialog()
+					this.changeTab(1)
+				}, 300)				
+			}	
 		},
 		// MINUS ITEM TO CART
 		minusToCart: function (product) {
@@ -909,44 +915,45 @@ export default {
 		//CHECK OUT CART
 		checkOut: async function() {
 			var vm    = this
-			vm.checkDayOff().then(response => {
-				if(response) {
-					const city = this.$store.getters.getCityBySlug(this.$route.params.city)
-					vm.$store.dispatch('getUser').then(async (response) => {
-						if(response.status == 200) {
-							await vm.getProducts().then(async (response) => {
-								if(response.status == 200) {
-									var array = []
-									await vm.products.find(product => {
-										vm.cart.items.forEach(item => {
-											if(product.id == item.id) {
-												array.push(item)
-											}
-										})
+			if(this.dayOff) {
+				this.dialog  = true
+				return
+			} else {
+				const city = this.$store.getters.getCityBySlug(this.$route.params.city)
+				vm.$store.dispatch('getUser').then((response) => {
+					if(response.status == 200) {
+						vm.getProducts().then(async (response) => {
+							if(response.status == 200) {
+								var array = []
+								await vm.products.find(product => {
+									vm.cart.items.forEach(item => {
+										if(product.id == item.id) {
+											array.push(item)
+										}
 									})
-									var cart = {
-										instance: this.store.id,
-										items: array	
-									}
-									this.$store.commit('FETCH_CART', cart)
+								})
+								var cart = {
+									instance: this.store.id,
+									items: array	
 								}
-							})
-							vm.$store.commit('SHOW_CHECKOUT')
-						}
-					}).catch(error => {
-						vm.$router.push({name: 'login', query: {redirect: this.$route.path}})
-					})
-				}
-			})	
+								this.$store.commit('FETCH_CART', cart)
+							}
+						})
+						vm.$store.commit('SHOW_CHECKOUT')
+					}
+				}).catch(error => {
+					vm.$router.push({name: 'login', query: {redirect: this.$route.path}})
+				})
+			}
 		},
 		//SEARCH PRODUCT BY KEYWORD
 		getByKeyWords: function(list, value) {
-
 			var search   = value
 			var products = []
 			var data     = this.store.catalogues.slice(0)
 
-			if(search === null || !search.length) {
+			if(search == null || typeof search === 'undefined') {
+
 				return data
 			}
 
@@ -957,7 +964,6 @@ export default {
 		},
 		//GET ALL PRODUCT BY STORE
 		getProducts: function() {
-			var vm = this
 			return new Promise((resolve, reject) => {
 				var vm = this 
 				const data = {storeId: vm.store.id} 
@@ -1054,6 +1060,11 @@ export default {
 		}
 	},
 	watch: {
+		'loading': function(val) {
+			if(!val) {
+				this.checkDayOff()
+			}
+		},
 		'cartDrawer': function(val) {
 			if(val) {
 				this.drawer = true
@@ -1080,20 +1091,16 @@ export default {
 			this.getProducts().finally(() => {
 				this.isLoading = false
 			})
-
-		},
-		code: function(val) {
-			return val.toUpperCase()
 		}
 	},	
-	created: function() {
+	beforeUpdate() {
+		if(this.$vuetify.breakpoint.mdAndUp) {
+			this.offsetNavbarRight = this.$refs.target_navbar_right.offsetTop
+		}
 
 	},
-	beforeUpdate() {
-		this.offsetNavbarRight = this.$refs.target_navbar_right.offsetTop
-	},
 	beforeDestroy() {
-		this.$store.commit('REMOVE_COUPON')
+		this.$store.dispatch('removeCoupon')
 		this.$store.commit('CLOSE_CHECKOUT')
 	}
 }

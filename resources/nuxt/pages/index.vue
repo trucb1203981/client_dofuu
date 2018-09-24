@@ -315,7 +315,6 @@
 				if(response.status == 200) {
 					vm.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
 					vm.all.stores     = response.data.data
-					vm.matrixStore(vm.all.stores)
 					vm.all.pagination = response.data.pagination
 				}
 			})
@@ -436,13 +435,15 @@
 		},
 		matrixStore(stores) {
 			var vm = this
-			if(!!vm.myLocation.address) {
+			if(vm.myLocation.address != null) {
 				stores.map(store => {
 					distanceMatrixService(vm.myLocation, store).then(response => {
 						Object.assign(store, response)
+						return store						
 					})
 					return store
 				})
+				return stores
 			}
 		},
 		scrollDown: function() {

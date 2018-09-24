@@ -44,9 +44,6 @@
 						<v-icon left>timer</v-icon>
 						{{item.prepareTime}}p
 					</span>
-					<span class="pl-2" v-if="myLocation.address">
-						<v-icon left>near_me</v-icon>&ge;{{item.distance}}
-					</span>
 				</v-system-bar>		
 			</v-card>
 		</v-flex>

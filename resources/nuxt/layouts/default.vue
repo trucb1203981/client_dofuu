@@ -43,14 +43,13 @@
 		},
 		watch: {
 			'tracking': function(val) {
-				console.log('tracking:', val)
 				if(val) {
 					this.$store.dispatch('currentLocation')
 				}
 			}
 		},
 		created: function() {			
-			
+
 			this.$store.dispatch("fetchCity").then(response => {
 				if(response.status == 200) {
 					if(typeof this.$route.params.city != 'undefined') {

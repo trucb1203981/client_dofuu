@@ -17,10 +17,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Mail\ActiveUserMail;
 use Redirect;
 use Mail;
+use Carbon\Carbon;
 class AuthController extends Controller
 {
 
-    protected $customer, $partner, $employee;
+    protected $customer, $partner, $employee; 
 
     public function __construct()
     {
@@ -39,45 +40,28 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = request(['email', 'password']);
-
         $token = auth('api')->attempt($credentials);
 
-
         if (!$token) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->respondUnauthorized();
         }
         
         $user = auth('api')->user();
-
-        if($user->role_id != $this->admin->id) {
+        
+        if(!$user->isAdmin()) {
             if($user->actived) {
                 if(!$user->banned) {
-                    if($user->role_id === $this->partner->id) {
-                        return $this->respondWithToken($token, 1000);
-                    } else {
-                        return $this->respondWithToken($token, 1000);
-                    }
-                } else {
-                    auth('api')->logout();
-                    $res = [
-                        'type'    => 'error',
-                        'message' => 'Tài khoản bị khóa tạm thời',
-                        'data'    => []
-                    ];
-                    return response($res);
+                    return $this->respondWithToken($token, 1000);
+                } else {                    
+                    return $this->respondError('error', 'Tài khoản bị khóa tạm thời');
                 }
             } else {
-                auth('api')->logout();
-                $res = [
-                    'type'    => 'error',
-                    'message' => 'Tài khoản chưa được kích hoạt. Vui lòng truy cập vào hộp thư để kích hoạt tài khoản',
-                    'data'    => []
-                ];
-                return response($res, 200);
+                return $this->respondError('error', 'Tài khoản chưa được kích hoạt. Vui lòng truy cập vào hộp thư để kích hoạt tài khoản');
             }
         }
+
         auth('api')->logout();
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return $this->respondUnauthorized();
     }
     /**
      * Register user.
@@ -85,25 +69,27 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(UserRequest $request) {
+
         if($request->filled(['name', 'email', 'password', 'gender', 'birthday', 'phone'])) {
-            $user           = new User;
-            $user->name     = $request->_n;
-            $user->email    = $request->_e;
-            $user->password = bcrypt($request->_pw);
-            $user->birthday = $request->_b;
-            $user->gender   = $request->_g;
-            $user->phone    = $request->_p;
-            $user->role_id  = $this->customer->id;
-            $user->free_ship= 1;
-            $user->actived  = 1;
-            $user->save();
+
+            $user = User::create([
+                'name'      => $request->name,
+                'email'     => $request->email,
+                'password'  => bcrypt($request->password),
+                'birthday'  => $request->birthday,
+                'gender'    => $request->gender,
+                'phone'     => $request->phone,
+                'role_id'   => $this->customer->id,
+                'free_ship' => 1,
+                'actived'   => 1
+            ]);
 
             $activation = Activation::create([
                 'user_id' => $user->id,
                 'token'   => hash_hmac('sha256', str_random(40), config('app.key'))
             ]);
             
-            // Mail::to($user->email)->send(new ActiveUserMail($user));
+            Mail::to($user->email)->send(new ActiveUserMail($user));
             return response('Create account Successfully!!!', 201);
         }
         return response('Something went wrong', 500);
@@ -301,6 +287,21 @@ class AuthController extends Controller
             'token_type'   => 'bearer',
             'expires_in'   => auth('api')->factory()->getTTL() * $time
         ]);
+    }
+
+    protected function respondUnauthorized() {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    protected function respondError($type, $message) 
+    {
+        auth('api')->logout();
+        $res = [
+            'type'    => $type,
+            'message' => $message,
+            'data'    => []
+        ];
+        return response($res, 200);
     }
 
 }

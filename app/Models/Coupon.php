@@ -23,9 +23,18 @@ class Coupon extends Model
 		return $this->where('status_id', 2);
 	}
 
-	public function scopeUnexpired() {
+	public function scopeUnexpired($query) {
 		$now = Carbon::now()->toDateTimeString();
-		return $this->where('status_id', 1)->where('started_at', '<=', $now)->where('ended_at', '>=', $now);
+		return $query->where('status_id', 1)->where('started_at', '<=', $now)->where('ended_at', '>=', $now);
+	}
+
+	public function scopeGetUnexpired() {
+		// if($this->scopeUnexpired()->get()) {
+		// 	var_dump('true');
+		// 	return true;
+		// }
+		// var_dump('false');
+		// return false;
 	}
 
 	public function stores() {

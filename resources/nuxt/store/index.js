@@ -5,6 +5,7 @@ import authStore from './auth'
 import cityStore from './city'
 import storeStore from './store'
 import cartStore from './cart'
+
 const store = () => {
 	return new Vuex.Store({
 		state: {
@@ -21,6 +22,7 @@ const store = () => {
 				state.offsetTop = value
 			},
 			LEFT_NAVIGATION_SHOW(state) {
+				console.log(state)
 				state.leftDrawer = true
 			},
 			LEFT_NAVIGATION_CLOSE(state) {
@@ -30,21 +32,22 @@ const store = () => {
 				state.myLocation.address = payload[0].formatted_address.slice(0, -10)
 				state.myLocation.lat     = payload[0].geometry.location.lat()
 				state.myLocation.lng     = payload[0].geometry.location.lng()
+				console.log(state.myLocation)
 			}
 		},
 		actions: {
-			currentLocation: ({commit}, params) => new Promise((resolve, reject) => {
-				var vm = this
-				if(navigator.geolocation) {
-					navigator.geolocation.getCurrentPosition(function(position){
-						var geocoder = new google.maps.Geocoder()
-						geocoder.geocode({'location': {lat: position.coords.latitude, lng: position.coords.longitude}}, function(results, status) {
-							if(status === 'OK') {
-								commit('UPDATE_LOCATION', results)
-							}
-						})
+			currentLocation: ({commit}) => new Promise((resolve, reject) => {
+				var vm      = this			
+				var results = null	
+				navigator.geolocation.getCurrentPosition(function(position){
+					var geocoder = new google.maps.Geocoder()
+					geocoder.geocode({'location': {lat: position.coords.latitude, lng: position.coords.longitude}}, function(results, status) {
+						if(status === 'OK') {
+							commit('UPDATE_LOCATION', results)
+						}
 					})
-				}
+				})
+				
 			})
 		},
 		modules: {

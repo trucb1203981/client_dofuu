@@ -28,14 +28,39 @@ class Store extends Model
         return false;
     }
 
-    public function scopeShow() {
-        return $this->where('store_show', 1);
+    public function scopeById($query, $store_id) {
+        return $query->where('store_id', $store_id);
+    }
+    
+    public function scopeByTypeId($query, $type_id) {
+        return $query->where('type_id', $type_id);
     }
 
-    public function scopeOfCity($cityId) {
-        return $this->whereHas('district', function($query) use($cityId) {
-            $query->where('city_id', $cityId);
+    public function scopeBySlug($query, $slug) {
+        return $query->where('store_slug', $slug);
+    }
+
+    public function scopeOrderByPriority($query, $name) {
+        return $query->orderBy('priority', $name);
+    }
+
+    public function scopeLikePlace($query, $keywords) {
+        return $query->where('store_name', 'like',  '%'.$keywords.'%')->orWhere('store_address', 'like', '%'.$keywords.'%');
+    }
+
+    public function scopeShow($query) {
+        return $query->where('store_show', 1);
+    }
+
+    public function scopeOfCity($query, $cityId) {
+        $cityId = (int) $cityId;
+        return $this->whereHas('district', function($query) use ($cityId) {
+            $query->byCityId($cityId);
         });
+    }
+
+    public function scopeActive() {
+        return $this->where('status_id', '!=', 3);
     }
 
     public function scopeHasCoupon() {
@@ -95,8 +120,8 @@ class Store extends Model
         return $this->morphMany('App\Models\Like', 'likeable');
     }
 
-    public function haveLikes() {
-        return $this->belongsToMany('App\Models\User', 'ec_store_likes', 'store_id', 'user_id');
+    public function ratings() {
+        return $this->morphMany('App\Models\Rating', 'ratingtable');
     }
 
 }

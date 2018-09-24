@@ -11,6 +11,7 @@ use App\Models\Store;
 use App\Models\City;
 use App\Models\ProductStatus;
 use Carbon\Carbon;
+
 class StoreController extends Controller
 {
     public function __construct() {
@@ -20,123 +21,90 @@ class StoreController extends Controller
 
     //SEARCH STORE BY TYPE
     public function searchStoreByType(Request $request) {
-        $keywords  = $request->keywords;
-        $citySlug  = $request->citySlug;
-        $pageSize  = $request->pageSize;
-        $offset    = $request->offset;
+        $keywords = $request->keywords;
+        $citySlug = $request->citySlug;
+        $pageSize = 8;
+        $offset   = $request->offset;
         
-        $city = City::where('city_slug', '=', $citySlug)->with(['stores' => function($query) use ($keywords, $pageSize) {
-            return $query
-            ->where('store_show', '=', 1)
+        $city = City::bySlug($citySlug)->with(['stores' => function($query) use ($keywords, $pageSize, $offset) {
+            return $query->show()
             ->whereHas('type', function($queryChild) use ($keywords) {
-                $queryChild->where('type_name', 'like', '%'.$keywords.'%');
+                $queryChild->likeName($keywords);
             })
             ->limit($pageSize)
+            ->offset($offset)
             ->get();
         }])->first();
 
-        $res = [
-            'type'    => 'success',
-            'message' => 'Search store successfully.',
-            'data'    => StoreResource::collection($city->stores->load('coupons', 'activities'))
-        ];
-
-        return response($res, 200);
+        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
     }
     //SEARCH STORE BY PRODUCT 
     public function searchStoreByProduct(Request $request) {
         $keywords = $request->keywords;
         $citySlug = $request->citySlug;
-        $pageSize = $request->pageSize;
+        $pageSize = 8;
         $offset   = $request->offset;
         
-        $city     = City::where('city_slug', '=', $citySlug)->with(['stores' => function($query) use ($keywords, $pageSize) {
+        $city     = City::bySlug($citySlug)->with(['stores' => function($query) use ($keywords, $pageSize, $offset) {
 
-            return $query
-            ->where('store_show', '=', 1)
+            return $query->show()
             ->where(function($query) use($keywords) {
                 $query->whereHas('products', function($queryChild) use ($keywords) {
-                    $queryChild->where('name', 'like', '%'.$keywords.'%');
-                    $queryChild->orWhere('_name', 'like', '%'.$keywords.'%');
+                    $queryChild->likeName($keywords);
                 });
                 $query->orWhereHas('catalogues', function($queryChild) use ($keywords) {
-                    $queryChild->where('catalogue', 'like', '%'.$keywords.'%');
-                    $queryChild->orWhere('_catalogue', 'like', '%'.$keywords.'%');
+                    $queryChild->likeName($keywords);
                 });
             })            
             ->limit($pageSize)
+            ->offset($offset)
             ->get();
 
         }])->first();
         
-        $res = [
-            'type'    => 'success',
-            'message' => 'Search store successfully.',
-            'data'    => StoreResource::collection($city->stores->load('coupons', 'activities'))
-        ];
-
-        return response($res, 200);
+        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
     }
     //SEARCH STORE BY PLACE 
     public function searchStoreByPlace(Request $request) {
         $keywords = $request->keywords;
         $citySlug = $request->citySlug;
-        $pageSize = $request->pageSize;
+        $pageSize = 8;
         $offset   = $request->offset;
-        $city     = City::where('city_slug', '=', $citySlug)->with(['stores' => function($query) use ($keywords, $pageSize) {
 
+        $city     = City::bySlug($citySlug)->with(['stores' => function($query) use ($keywords, $pageSize, $offset) {
             return $query
-            ->where('store_show', '=', 1)
-            ->where(function($queryChild) use ($keywords) {
-                $queryChild->where('store_name', 'like',  '%'.$keywords.'%');  
-                $queryChild->orWhere('store_address', 'like', '%'.$keywords.'%');
-            })
+            ->show()->likePlace($keywords)
             ->limit($pageSize)
+            ->offset($offset)
             ->get();
 
         }])->first();
 
-        $res = [
-            'type'    => 'success',
-            'message' => 'Search store successfully.',
-            'data'    => StoreResource::collection($city->stores->load('coupons', 'activities'))
-        ];
-
-        return response($res, 200);
+        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
     }
     //SEARCH STORE ALL
     public function searchStore(Request $request) {
         $keywords = $request->keywords;
         $citySlug = $request->citySlug;
-        $pageSize = $request->pageSize;
+        $pageSize = 8;
         $offset   = $request->offset;
-        $city     = City::where('city_slug', '=', $citySlug)->with(['stores' => function($query) use ($keywords, $pageSize) {
 
-            return $query->where('store_show', '=', 1)
-            ->where(function($query) use ($keywords) {
-                $query->where('store_name', 'like',  '%'.$keywords.'%');
-                $query->orWhere('store_address', 'like', '%'.$keywords.'%');
+        $city     = City::bySlug($citySlug)->with(['stores' => function($query) use ($keywords, $pageSize, $offset) {
+            return $query->show()->where(function($query) use ($keywords) {
+                $query->likePlace($keywords);
                 $query->orWhereHas('products', function($queryChild) use ($keywords) {
-                    $queryChild->where('name', 'like', '%'.$keywords.'%');
-                    $queryChild->orWhere('_name', 'like', '%'.$keywords.'%');
+                    $queryChild->likeName($keywords);
                 });
                 $query->orWhereHas('catalogues', function($queryChild) use ($keywords) {
-                    $queryChild->where('catalogue', 'like', '%'.$keywords.'%');
-                    $queryChild->orWhere('_catalogue', 'like', '%'.$keywords.'%');
+                    $queryChild->likeName($keywords);
                 });
             })
             ->limit($pageSize)
+            ->offset($offset)
             ->get();
-
         }])->first();
 
-        $res = [
-            'type'    => 'success',
-            'message' => 'Search store successfully.',
-            'data'    => StoreResource::collection($city->stores->load('coupons', 'activities'))
-        ];
-
-        return response($res, 200);
+        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
     }
     //SEACH STORE QUERY
     public function searchQuery(Request $request) {
@@ -166,66 +134,48 @@ class StoreController extends Controller
             }])->first();
         }
 
-        $res = [
-            'type'    => 'success',
-            'message' => 'Search store successfully.',
-            'data'    => StoreResource::collection($city->stores->load('coupons', 'activities'))
-        ];
-
-        return response($res, 200);
+        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
     }
     //GET ALL STORE BY TYPE
     public function storeByType(Request $request, $id) {
         $typeId   = $request->typeId;
         $cityId   = $id;
-        $pageSize = $request->pageSize;
+        $statusID = $this->productStatusIDCease;
+        $pageSize = 8;
         $offset   = $request->offset;
+
         if($typeId == 0) {
-            $store = Store::whereHas('district', function($query) use ($cityId) {
-                $query->where('city_id', '=', $cityId);
-            })->where('store_show', 1)->orderBy('priority', 'desc')->limit($pageSize)->offset($offset)->get();
+            $stores = Store::ofCity($cityId)->show()->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
         } else {
-            $store = Store::whereHas('district', function($query) use ($cityId, $typeId) {
-                $query->where('city_id', '=', $cityId);
-            })->where('store_show', 1)->where('type_id', '=', $typeId)->orderBy('priority', 'desc')->limit($pageSize)->offset($offset)->get();
+            $stores = Store::ofCity($cityId)->show()->byTypeId($typeId)->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
         }
 
-        $res = [
-            'type'       => 'success',
-            'message'    => 'Get store successfully.',
-            'data'       => StoreResource::collection($store->load('coupons', 'activities')),
-            // 'pagination' => $pagination
-        ];
-
-        return response($res, 200);
+        return $this->respondSuccess('Search store', $stores, 200, 'many');
     }
 
     //SHOW STORE
     public function getStore(Request $request)
     {
-        $cid      = $request->cityId;
-        $sid      = $request->storeId;
-        $statusID = $this->productStatusIDCease;
-        $now      = Carbon::now()->toDateTimeString();
-        $city     = City::where('city_slug', '=', $cid)->first();
+        $citySlug  = $request->citySlug;
+        $storeSlug = $request->storeSlug;
+        $statusID  = $this->productStatusIDCease;
+        $now       = Carbon::now()->toDateTimeString();
+        $city      = City::bySlug($citySlug)->first();
+        $array     = [];
 
-        if($request->filled('cityId') && $request->filled('storeId')) {
+        if($request->filled('citySlug') && $request->filled('storeSlug')) {
 
-            $store = Store::where(function($query) use ($city, $sid, $statusID) {
-                $query->where('store_slug', '=', $sid);
-                $query->whereHas('district', function($query) use ($city) {
-                    $query->where('city_id', '=', $city->id);
-                });
-                $query->where('status_id', '!=', $statusID);
-            })->where('store_show', 1)->with(['coupons' => function($query) use ($now) {
-                return $query->where(function($q) use($now) {
-                    $q->where('started_at', '<=', $now);
-                    $q->where('ended_at', '>', $now);
-                });
+            $store = Store::where(function($query) use ($city, $storeSlug) {
+                $query->bySlug($storeSlug);
+                $query->ofCity($city->id);
+                $query->active();
+                $query->show();
+            })->with(['coupons' => function($query) use ($now) {
+                return $query->unexpired();
             },'products' => function($query) use ($statusID) {
                 return $query->where('ec_products.status_id', '!=', $statusID);
             }, 'catalogues' => function($query) {
-                return $query->where('ec_catalogues.catalogue_show', '=', 1);
+                return $query->show();
             }])->first();
             
             if(!is_null($store)) {
@@ -380,4 +330,23 @@ class StoreController extends Controller
 
         return response($res, 200)->withCookie(cookie('flag_c', $flag_c, 43200, '/', '', '', false));
     } 
+
+    protected function respondSuccess($message, $data, $status = 200, $type)
+    {   
+        $res = [
+            'type'    => 'success',
+            'message' => $message. ' successfully.',
+        ];
+
+        switch ($type) {
+            case 'one':
+            $res['data'] = new StoreResource($data->load('coupons', 'activities'));
+            break;
+            case 'many':
+            $res['data'] = StoreResource::collection($data->load('coupons', 'activities'));
+            break;
+        }
+
+        return response($res, $status);
+    }
 }

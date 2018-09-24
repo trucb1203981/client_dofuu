@@ -38,6 +38,11 @@ class City extends Model
         return $this->where('city_show', 0);
     }
 
+    public function scopeBySlug($query, $slug) {
+        return $query->where('city_slug', $slug);
+    }
+
+
     public function country() {
         return $this->belongsTo('App\Models\Country', 'country_id');
     }

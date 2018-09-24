@@ -83,29 +83,36 @@ Route::group(['namespace' => 'Site'], function() {
 	//SEARCH STORE BY PRODUCT
 	Route::get('/Search/Products', 'StoreController@searchStoreByProduct');
 	//TOGGLE LIKE STORE
-	Route::post('/LikeStore/{storeId}/Toggle', 'LikeController@toggleLikeStore');
-	//CHECK LIKE STORE
-	Route::post('/LikeStore/{storeId}/Check', 'LikeController@checkLikeStore');
+	Route::post('/LikeStore/{storeId}/Toggle', 'LikeController@toggleLikeStore');	
 	//FAVORITE STORE
 	Route::post('/FavoriteStore/{storeId}/Toggle', 'FavoriteController@toggleFavoriteStore');
 	//TOGGLE LIKE COMMENT
 	Route::post('/LikeComment/{commentId}/Toggle', 'LikeController@toggleLikeComment');
-	//CHECK LIKE COMMENT
-	Route::post('/LikeComment/{storeId}/Check', 'LikeController@checkLikeComment');
-	//CHECK FAVORITE STORE
-	Route::post('/FavoriteStore/{storeId}/Check', 'FavoriteController@checkFavoriteStore');
 	//GET FAVORITE STORE
 	Route::post('/Favorite/Stores', 'FavoriteController@fetchFavoriteStore');
 	//REMOVE FAVORITE STORE
 	Route::post('/FavoriteStore/{storeId}/Remove', 'FavoriteController@removeFavoriteStore');
-	//FETCH COMMENT
-	Route::post('/CommentStore/{storeId}/FetchComments', 'CommentController@fetchComments');
-	//FETCH COMMENT REPLIES
-	Route::post('/CommentStore/{storeId}/FetchCommentReplies', 'CommentController@fetchCommentReplies');
-	//ADD COMMENT REPLY
-	Route::post('/CommentStore/{storeId}/AddCommentReply', 'CommentController@addCommentReply');
-	//ADD COMMENT
-	Route::post('/CommentStore/{storeId}/AddComment', 'CommentController@addComment');
+
+	Route::group(['prefix' => 'CommentStore'], function() {
+		//FETCH COMMENT
+		Route::post('/{storeId}/FetchComments', 'CommentController@fetchComments');
+		//FETCH REPLIES
+		Route::post('/{storeId}/FetchReplies', 'CommentController@fetchReplies');
+		//ADD REPLY
+		Route::post('/{storeId}/AddReply', 'CommentController@addReply');
+		//ADD COMMENT
+		Route::post('/{storeId}/AddComment', 'CommentController@addComment');
+		//EDIT COMMENT
+		Route::post('/{storeId}/UpdateComment', 'CommentController@updateComment');
+		//REMOVE COMMENT
+		Route::post('/{storeId}/RemoveComment', 'CommentController@removeComment');
+	});
+	// ADD RATING
+	Route::post('/Store/{storeId}/NewRating', 'RatingController@addRating');
+	// FETCH RATING
+	Route::post('/Store/{storeId}/FetchRating', 'RatingController@fetchRating');
+	// REMOVE RATING
+	Route::post('/Store/{storeId}/RemoveRating', 'RatingController@removeRating');
 });
 
 Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function() {

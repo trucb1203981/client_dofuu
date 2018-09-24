@@ -57,7 +57,7 @@ class FavoriteController extends Controller
 			$store = Store::find($id);
 			if($store) {
 				$user     = auth()->user();
-				$favorite = $user->favoriteStores()->where('store_id', $id)->first();
+				$favorite = $user->favoriteStores()->byStore('store_id', $id)->first();
 
 				if($favorite) {
 

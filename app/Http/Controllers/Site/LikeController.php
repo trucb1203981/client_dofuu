@@ -39,7 +39,6 @@ class LikeController extends Controller
 						'user_agent' => $request->header('User-Agent'),
 						'user_id'    => $user->id
 					]);
-
 					$store->update(['likes' => ++$store->likes]); 
 
 					$status  = 'success';
@@ -57,62 +56,24 @@ class LikeController extends Controller
 				$res = [
 					'type'    => $status,
 					'message' => $message,
-					'store'   => new StoreResource($store->load('activities', 'catalogues', 'toppings'))
+					'likes'   => $store->likes,
 				];
 				
 				return response($res, 200);
 			}
 		}
 
-		$res    = [
-			'type'     => 'error',
-			'messsage' => 'Something went wrong!!!',
-			'data'     => []
-		];
-		return response($res, 500);
-	}
-
-	public function checkLikeStore(Request $request, $id) {
-		if($request->name === LikeController::END_POINT) {
-			$store = Store::find($id);
-			if($store) {
-				$user = auth()->user();
-				$like = $store->likes()->byUser($user->id)->first();
-
-				if($like) {
-
-					$status  = 'success';
-					$message = 'Đã like';
-					$update  = true;
-
-				} else {
-
-					$status  = 'error';
-					$message = 'Chưa like';
-					$update  = false;
-
-				}
-
-				$res = [
-					'type'    => $status,
-					'message' => $message,
-					'like'    => $update
-				];
-
-				return response($res, 200);
-			}
-		}
+		return $this->respondError();
 	}
 
 	public function toggleLikeComment(Request $request, $id) {
-		if($request->name === LikeController::LIKE_COMMENT_END_POINT) {
+		if($request->endpoint === LikeController::LIKE_COMMENT_END_POINT) {
 
 			$comment = Comment::find($id);
 
 			if($comment) {
 
 				$user = auth()->user();
-
 				$like = $comment->likes()->byUser($user->id)->first();
 
 				if(!$like) {
@@ -122,7 +83,7 @@ class LikeController extends Controller
 						'user_agent' => $request->header('User-Agent'),
 						'user_id'    => $user->id
 					]);
-
+					
 					$comment->update(['likes' => ++$comment->likes]); 
 
 					$status  = 'success';
@@ -140,52 +101,24 @@ class LikeController extends Controller
 				$res = [
 					'type'    => $status,
 					'message' => $message,
-					'comment' => new CommentResource($comment)
+					'likes'   => $comment->likes
 				];
 				
 				return response($res, 200);
 			}
 		}
 
-		$res    = [
-			'type'     => 'error',
-			'messsage' => 'Something went wrong!!!',
-			'data'     => []
-		];
-		return response($res, 500);
+		return $this->respondError();
 	}
 
-	public function checkLikeComment(Request $request, $id) {
-		if($request->name === LikeController::CHECK_LIKE_COMMENT_END_POINT) {
-			$store = Store::find($id);
-			if($store) {
-				$user = auth()->user();
-				var_dump($store->comments()->where('id', 32)->likes()->get());
-				die();
-				$like = $store->comments()->likes()->byUser($user->id)->first();
-
-				// if($like) {
-
-				// 	$status  = 'success';
-				// 	$message = 'Đã like';
-				// 	$update  = true;
-
-				// } else {
-
-				// 	$status  = 'error';
-				// 	$message = 'Chưa like';
-				// 	$update  = false;
-
-				// }
-
-				// $res = [
-				// 	'type'    => $status,
-				// 	'message' => $message,
-				// 	'like'    => $update
-				// ];
-
-				return response($like, 200);
-			}
-		}
+	protected function respondError()
+	{
+		$res = [
+			'type'    => 'error',
+			'message' => 'Something went wrongs.',
+			'data'    =>  []
+		];
+		
+		return response($res, 500);
 	}
 }

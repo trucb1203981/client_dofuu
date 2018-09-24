@@ -31,6 +31,37 @@ export function geocoder(type, location) {
 	})
 }
 
+export function distanceMatrixService(origin, destination) {
+	var start           = new google.maps.LatLng(origin.lat, origin.lng);
+	var end             = new google.maps.LatLng(destination.lat, destination.lng);
+	var service         = new google.maps.DistanceMatrixService()
+	var originList      = []
+	var destinationList = []
+	var distance        = '0 Km'
+	var duration        = '0 phút'
+	return new Promise((resolve, reject) => {
+		service.getDistanceMatrix({
+			origins: [start],
+			destinations: [end],
+			travelMode: 'DRIVING'
+		}, function(res, status) {
+			if (status === 'OK') {
+				originList      = res.originAddresses
+				destinationList = res.destinationAddresses
+				for (var i = 0; i < originList.length; i++) {
+					var results = res.rows[i].elements
+					for (var j = 0; j < results.length; j++) {
+						var element = results[j]
+						distance    = element.distance.text
+						duration    = element.duration.text
+					}
+					resolve({'distance': distance,'duration': duration})
+				}
+			}					
+		})
+	})
+}
+
 export function typeIcon(value) {
 	var status = new String(value).toLowerCase()
 	switch(status) {

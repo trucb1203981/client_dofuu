@@ -12,12 +12,9 @@ class Product extends Model
 
 	protected $hidden = [];
 
-	public function catalogue() {
-		return $this->belongsTo('App\Models\Catalogue', 'catalogue_id');
-	}    
 
-	public function status() {
-		return $this->belongsTo('App\Models\ProductStatus', 'status_id');
+	public function scopeLikeName($query, $keywords) {
+		return $query->where('name', 'like', '%'.$keywords.'%')->orWhere('_name', 'like', '%'.$keywords.'%');
 	}
 
 	public function getHaveSizeAttribute($value) {
@@ -32,6 +29,14 @@ class Product extends Model
 			return true;
 		} 
 		return false;
+	}
+
+	public function catalogue() {
+		return $this->belongsTo('App\Models\Catalogue', 'catalogue_id');
+	}    
+
+	public function status() {
+		return $this->belongsTo('App\Models\ProductStatus', 'status_id');
 	}
 
 	public function sizes() {

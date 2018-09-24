@@ -11,26 +11,18 @@ class User extends Authenticatable implements AuthenticatableUserContract, Authe
 {
     use Notifiable;
 
+
+    
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $table    = 'ec_users';
-    protected $fillable = ['name', 'email', 'password', 'phone'];
+    protected $fillable = ['name', 'email', 'password', 'phone', 'birthday', 'gender', 'role_id', 'actived', 'free_ship'];
     protected $hidden   = ['password', 'remember_token', 'api_token'];
 
-    public function store() {
-        return $this->hasOne('App\Models\Store', 'user_id');
-    }
 
-    public function role() {
-        return $this->belongsTo('App\Models\Role', 'role_id');
-    }
-    
-    public function active() {
-        return $this->hasOne('App\Models\Activation', 'user_id');
-    }
 
     public function hasAnyRole($roles) {
         if(is_array($roles)) {
@@ -48,10 +40,29 @@ class User extends Authenticatable implements AuthenticatableUserContract, Authe
     }
 
     public function hasRole($role) {
-        if($this->role()->where('name', '=', $role)->first()) {
+        if($this->role()->where('name', $role)->first()) {
             return true;
         }
         return false;
+    }
+    
+    public function scopeOfStore($query, $store_id) {
+        return $query->where('ratingtable_id', $store_id)->where('ratingtable_type', 'store');
+    }
+
+    public function scopeActived($query) {
+        return $query->where('actived', 1);
+    }
+
+    public function scopeBanned($query) {
+        return $query->where('banned', 1);
+    }
+
+    public function scopeIsAdmin() {
+        if($this->role()->admin()->first()) {
+            return true;
+        }
+        return false; 
     }
 
     public function getJWTIdentifier()
@@ -64,9 +75,7 @@ class User extends Authenticatable implements AuthenticatableUserContract, Authe
         return [];
     }
 
-    public function orders() {
-        return $this->hasMany('App\Models\RegularOrder', 'user_id');
-    }
+
     public function receivesBroadcastNotificationsOn()
     {
         return 'users.'.$this->id;
@@ -112,5 +121,25 @@ class User extends Authenticatable implements AuthenticatableUserContract, Authe
 
     public function commentLikes() {
         return $this->belongsToMany('App\Models\Comment', 'ec_comments', 'user_id', 'commentable_id');
+    }
+
+    public function orders() {
+        return $this->hasMany('App\Models\RegularOrder', 'user_id');
+    }
+
+    public function store() {
+        return $this->hasOne('App\Models\Store', 'user_id');
+    }
+
+    public function role() {
+        return $this->belongsTo('App\Models\Role', 'role_id');
+    }
+    
+    public function active() {
+        return $this->hasOne('App\Models\Activation', 'user_id');
+    }
+
+    public function ratings() {
+        return $this->belongsToMany('App\Models\RatingType', 'ec_ratings', 'user_id', 'rating_type_id')->withPivot(['id', 'value']);
     }
 }

@@ -1,26 +1,22 @@
 <template>
-	<v-container grid-list-lg v-scroll="onScroll">
-		<v-layout row wrap>
-			<v-flex xs12>
-				<v-card flat>				
-					<v-toolbar color="white" flat dense>
-						<v-toolbar-title>
-							DANH SÁCH CỬA HÀNG
-						</v-toolbar-title>
-					</v-toolbar>					
-					<v-container>
+	<div v-scroll="onScroll">				
+		<!-- STORE LIST -->								
+		<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
 
-						<!-- STORE LIST -->								
-						<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
+		<!-- STORE GRID -->										
+		<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
 
-						<!-- STORE GRID -->										
-						<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
-
-					</v-container>
-				</v-card>
-			</v-flex>
-		</v-layout>
-	</v-container>
+		<!-- LAZY LOADING START-->
+		<v-card v-if="loading" color="transparent" dark flat>
+			<v-card-text class="text-xs-center">
+				<v-progress-circular
+				indeterminate
+				color="grey"
+				></v-progress-circular>
+			</v-card-text>
+		</v-card>	
+		<!-- LAZY LOADING END-->
+	</div>
 </template>
 
 <script>
@@ -40,58 +36,59 @@
 		data() {
 			return {
 				stores: [],
-				pageSize: 50,
-				offset: 0,
-				bottom: false,
 				trigger:300,
 				end: false,
-				loading: true
+				loading: false
 			}
 		},
 		methods: {
+			//ONSCROLL LAZY LOAD
 			onScroll: async function(e) {
 				var vm = this
 				if(window.innerHeight + window.scrollY >= (document.body.offsetHeight - vm.trigger) ) {
-					if(!this.loading) {
-					// await vm.searchStore(this.$route.query.q)
+					if(!vm.loading) {
+						vm.searchStore(this.$route.query.q)
+					}
+				}
+			},
+			// SEARCH STORE
+			searchStore: function(keywords) {
+				var vm       = this
+				var offset   = vm.stores.length
+				const city   = vm.$store.getters.getCityBySlug(vm.$route.params.city)
+				const params = {keywords: keywords, citySlug: vm.$route.params.city, pageSize: this.pageSize, offset: offset}
+
+				if(keywords.length > 0) {
+					if(!vm.loading) {
+						vm.loading = true
+						setTimeout(() => {
+							axios.get('/api/Search/All', {params, withCredentials:true}).then(response => {
+								if(response.status === 200) {
+									response.data.data.map(store => {
+										vm.stores.push(store)
+										return store
+									})
+								}
+							}).finally(() => {
+								vm.loading = false
+							})
+						}, 300)						
+					}
 				}
 			}
 		},
-		searchStore: async function(keywords) {
-			if(keywords.length > 0) {
-
-				const city = this.$store.getters.getCityBySlug(this.$route.params.city)
-				const params = {keywords: keywords, citySlug: this.$route.params.city, pageSize: this.pageSize, offset: this.offset}
-				if(!this.end) {
-					
-					this.loading = await true
-
-					await axios.get('/api/Search/All', {params, withCredentials:true}).then(response => {
-						if(response.status === 200) {
-							this.stores = response.data.data
-						}
-					}).finally(() => {
-						this.loading = false
-					})
-					
-					this.offset = Math.floor(this.offset + this.pageSize)
-				}
+		computed: {
+			...mapState({
+				currentCity: state => state.cityStore.currentCity
+			})
+		},
+		watch: {
+			'$route.query.q': function(val) {
+				this.searchStore(val)
 			}
-			
+		},
+		mounted() {
+			this.searchStore(this.$route.query.q)
 		}
-	},
-	computed: {
-		...mapState({
-			currentCity: state => state.cityStore.currentCity
-		})
-	},
-	watch: {
-		'$route.query.q': function(val) {
-			this.searchStore(val)
-		}
-	},
-	mounted() {
-		this.searchStore(this.$route.query.q)
 	}
-}
 </script>

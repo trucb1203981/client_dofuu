@@ -28,16 +28,26 @@ class Comment extends Model
         return $query->where('parent_id', 0);
     }
 
-    public function scopeHasParentComment($query, $parent_id) {
+    public function scopeHasParentId($query, $parent_id) {
         return $query->where('parent_id', $parent_id);
     }
 
     public function scopeTotalReply($query, $parent_id) {
-        return $query->hasParentComment($parent_id)->count();
+        return $query->hasParentId($parent_id)->count();
+    }
+
+    public function scopeByUser($query, $user_id) {
+        return $query->where('user_id', $user_id);
+    }
+
+    public function scopeById($query, $id) {
+        return $query->where('id', $id);
     }
 
     public function likes()
     {
         return $this->morphMany('App\Models\Like', 'likeable');
     }
+
+    
 }

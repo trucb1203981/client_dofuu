@@ -551,6 +551,7 @@ function formatDate(str) {
 	}
 	return null
 }
+
 export default {
 	middleware: 'notAuthenticated',
 	data() {

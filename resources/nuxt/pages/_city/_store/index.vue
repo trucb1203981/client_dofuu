@@ -1,6 +1,6 @@
 <template>
 	<v-container fluid :grid-list-lg="$vuetify.breakpoint.mdAndUp" :grid-list-xs="$vuetify.breakpoint.smAndDown">
-		<v-layout child-flex v-show="!loading" justify-end>
+		<v-layout child-flex v-if="!loading" justify-end>
 			<v-flex xs12 md8>
 				<v-autocomplete prepend-inner-icon="search" :items="products" :loading="isLoading" :search-input.sync="search" cache-items class="mx-3 btn-custom" solo label="Tìm món ăn, thức uống" height="10" item-text="name" clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu"  @focus="focusSearchInput = true" @blur="focusSearchInput = false" :color="focusSearchInput ? 'blue' : 'black'" :background-color="focusSearchInput ? 'white' : 'grey lighten-3'"  :flat="!focusSearchInput" return-object @input="openCartDialog" :menu-props="{maxHeight: '200px'}">
 					<template slot="no-data">
@@ -633,6 +633,7 @@
 		import index from '@/mixins/index'
 		import {mapState} from 'vuex'
 		import CheckoutDialog from '@/components/CheckoutDialog'
+		import * as easings from 'vuetify/es5/util/easing-patterns'
 // const CheckoutDialog = () => ({
 //   // The component to load (should be a Promise)
 //   component: import('@/components/CheckoutDialog'),
@@ -649,10 +650,10 @@ export default {
 	},
 	asyncData() {
 		return {
-			duration: 300,
+			duration: 50,
 			offset: -50,
-			easing: 'easeInOutCubic',
-			offsetNavbarRight: 0,
+			easing: 'easeInOutQuint',
+			offsetNavbarRight: 184,
 			headers: [
 			{
 				text: 'Món',
@@ -1093,12 +1094,6 @@ export default {
 			})
 		}
 	},	
-	beforeUpdate() {
-		if(this.$vuetify.breakpoint.mdAndUp) {
-			this.offsetNavbarRight = this.$refs.target_navbar_right.offsetTop
-		}
-
-	},
 	beforeDestroy() {
 		this.$store.dispatch('removeCoupon')
 		this.$store.commit('CLOSE_CHECKOUT')

@@ -9,8 +9,7 @@ const state = {
 	store: null,
 	loading:false,
 	rightDrawer:false,
-	like: false,
-	favorite:false,
+
 	headers: [
 	{title: 'Danh mục'},
 	{title: 'Giỏ hàng'}
@@ -22,12 +21,6 @@ const mutations = {
 		if(state.tabIndex != tabIndex ){
 			state.tabIndex = tabIndex
 		}
-	},
-	UPDATE_FAVORITE(state) {
-		state.favorite = !state.favorite
-	},
-	UPDATE_LIKE(state) {
-
 	},
 	GET_STORE(state, payload) {
 		state.store = payload

@@ -5,22 +5,22 @@
 				<v-layout column> 
 					<v-flex xs12>
 						<v-carousel :style="$vuetify.breakpoint.mdAndUp ? `height: 315px` : `height: 200px`" hide-delimiters :hide-controls="$vuetify.breakpoint.smAndDown" interval="3000">
-						    <v-carousel-item >
-						    	<v-img  src="img/deal_banner.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+							<v-carousel-item >
+								<v-img  src="img/deal_banner.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
 								</v-img>
-						    </v-carousel-item>
-						    <v-carousel-item >
-						    	<v-img src="img/Banner1.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+							</v-carousel-item>
+							<v-carousel-item >
+								<v-img src="img/Banner1.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
 								</v-img>
-						    </v-carousel-item>
-						    <v-carousel-item >
-						    	<v-img src="img/Banner2.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+							</v-carousel-item>
+							<v-carousel-item >
+								<v-img src="img/Banner2.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
 								</v-img>
-						    </v-carousel-item>
-						    <v-carousel-item >
-						    	<v-img src="img/Banner3.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
+							</v-carousel-item>
+							<v-carousel-item >
+								<v-img src="img/Banner3.png" aspect-ratio="1.77778" alt="" :height="$vuetify.breakpoint.mdAndUp ? '315px' : '200px'" contain>
 								</v-img>
-						    </v-carousel-item>
+							</v-carousel-item>
 						</v-carousel>
 					</v-flex>
 
@@ -226,20 +226,21 @@
 </template>
 
 <script>
-import axios from 'axios'
-import index from "@/mixins/index.js";
-import StoreList from '@/components/StoreList'
-import StoreGrid from '@/components/StoreGrid'
-import {getCityHasDealURL, getStoreHasDealURL} from '@/config.js'
-import { mapState } from "vuex";
-import Cookies from "js-cookie";
-export default {
-	mixins: [index],
-	middleware: ["home"],
-	components: {
-		'vue-store-list': StoreList,
-		'vue-store-grid': StoreGrid
-	},
+	import axios from 'axios'
+	import index from "@/mixins/index.js";
+	import StoreList from '@/components/StoreList'
+	import StoreGrid from '@/components/StoreGrid'
+	import { getCityHasDealURL, getStoreHasDealURL } from '@/config.js'
+	import { distanceMatrixService } from '@/utils'
+	import { mapState } from "vuex";
+	import Cookies from "js-cookie";
+	export default {
+		mixins: [index],
+		middleware: ["home"],
+		components: {
+			'vue-store-list': StoreList,
+			'vue-store-grid': StoreGrid
+		},
 	// Async Data
 	async asyncData({ store }) {
 		return {
@@ -307,13 +308,15 @@ export default {
 		},
 		//FETCH STORE
 		fetchStore: function(data) {
-			var params = {_DID: data.did, _TID: data.tid, _s: this.deal.pageSize, page: data.page}
+			var vm     = this
+			var params = {_DID: data.did, _TID: data.tid, _s: vm.deal.pageSize, page: data.page}
 
 			axios.get('/api/LoadStore', {params, withCredentials:true}).then(response => {
 				if(response.status == 200) {
-					this.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
-					this.all.stores     = response.data.data
-					this.all.pagination = response.data.pagination
+					vm.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
+					vm.all.stores     = response.data.data
+					vm.matrixStore(vm.all.stores)
+					vm.all.pagination = response.data.pagination
 				}
 			})
 		},
@@ -431,6 +434,17 @@ export default {
 			}
 			
 		},
+		matrixStore(stores) {
+			var vm = this
+			if(!!vm.myLocation.address) {
+				stores.map(store => {
+					distanceMatrixService(vm.myLocation, store).then(response => {
+						Object.assign(store, response)
+					})
+					return store
+				})
+			}
+		},
 		scrollDown: function() {
 			window.scrollBy(0, 100);
 			this.height       = document.body.scrollHeight
@@ -455,32 +469,33 @@ export default {
     },
     computed: {
     	...mapState({
-    		currentCity: state => state.cityStore.currentCity
+    		currentCity: state => state.cityStore.currentCity,
+    		myLocation: state  => state.myLocation
     	}),
     	city: function() {
     		return this.$store.getters.getCityByID(this.currentCity)
     	}
     },
-    created: async function() {
+    created: function() {
     	const query = {did:0, tid:0, page:0}
     	if(Cookies.get('flag_c') != null || typeof Cookies.get('flag_c') != 'undefined') {
-    		setTimeout(async () => {
-    			await this.getCity(Cookies.get('flag_c')).then(response => {
+    		setTimeout(() => {
+    			this.getCity(Cookies.get('flag_c')).then(response => {
     				this.fetchStoreWithDeal(query)
     				this.fetchStore(query)		
     			})
-    			await this.getCityHasDeal(Cookies.get('flag_c'))
+    			this.getCityHasDeal(Cookies.get('flag_c'))
     			
     		},100)
 
     		this.loading = false
     	} else {
-    		setTimeout(async () => {
-    			await this.getCity(10001).then(response => {
+    		setTimeout(() => {
+    			this.getCity(10001).then(response => {
     				this.fetchStoreWithDeal(query)
     				this.fetchStore(query)
     			})
-    			await this.getCityHasDeal(10001)
+    			this.getCityHasDeal(10001)
     		}, 100)
 
     		this.loading = false

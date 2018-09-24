@@ -53,15 +53,24 @@
 									data-vv-delay="300"
 									:type="showPassword ? 'text' : 'password'"
 									:append-icon="showPassword ? 'visibility' : 'visibility_off'"
-									 @click:append="showPassword = !showPassword"
+									@click:append="showPassword = !showPassword"
 									></v-text-field>
 								</v-flex>
 								<v-flex xs12 md6>
 
-									<v-menu ref="menu" lazy :close-on-content-click="false" v-model="menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" >
-										<v-text-field color="red accent-3" slot="activator" label="Ngày sinh" v-model="dateFormatted" prepend-icon="event" v-validate="'required'" :error-messages="errors.collect('birthday')" data-vv-name="birthday" readonly data-vv-delay="3000"></v-text-field>
-										<v-date-picker color="red accent-3" locale="vi-vn" ref="picker" v-model="editedItem.birthday" min="1950-01-01" :max="new Date().toISOString().substr(0, 10)" @change="$refs.menu.save(editedItem.birthday)" ></v-date-picker>
+									<v-menu ref="menu" lazy :close-on-content-click="false" v-model="menu" transition="scale-transition" offset-y lazy full-width :nudge-right="40" min-width="290px" >
+										<v-text-field color="red accent-3" slot="activator" label="Ngày sinh" v-model="dateFormatted" prepend-icon="event" v-validate="'required'" :error-messages="errors.collect('birthday')" data-vv-name="birthday" readonly></v-text-field>
+
+										<v-date-picker 
+										ref="picker"
+										color="red accent-3" 
+										locale="vi-vn"  
+										v-model="editedItem.birthday" 
+										min="1950-01-01" 
+										:max="new Date().toISOString().substr(0, 10)" 
+										@change="$refs.menu.save(editedItem.birthday)" ></v-date-picker>
 									</v-menu>
+
 								</v-flex>
 								<v-flex xs12 md6>
 									<v-radio-group 
@@ -103,131 +112,133 @@
 </template>
 
 <script>
-import axios from 'axios'
-import {registerURL} from '@/config'
-import {mapState} from 'vuex'
-import vietnam from 'vee-validate/dist/locale/vi';
-export default {
-	layout: 'credential',
-	head() {
-		return {
-			title: 'Tạo tài khoản'
-		}
-	},
-	asyncData() {
-		return {
-			title: 'Tạo tài khoản',
-			editedItem: {
-				name: '',
-				email: '',
-				password: '',
-				gender: false,
-				birthday: null,
-				phone: ''
-			},
-			dateFormatted: null,
-			confirm: '',
-			menu:false,
-			loading: false,
-			locale: 'vi',
-			test:false,
-			showPassword: false
-		}
-	},
-	watch: {
-		menu(val) {
-			val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
-		},
-		'editedItem.birthday': function(val) {
-			this.dateFormatted = this.formatDate(this.editedItem.birthday)
-			if(val) {
-				this.errors
+	import axios from 'axios'
+	import {registerURL} from '@/config'
+	import {mapState} from 'vuex'
+	import vietnam from 'vee-validate/dist/locale/vi';
+	export default {
+		layout: 'credential',
+		head() {
+			return {
+				title: 'Tạo tài khoản'
 			}
-		}
-	},
-	methods: {
-		register: function() {
-			var vm = this
+		},
+		asyncData() {
+			return {
+				title: 'Tạo tài khoản',
+				editedItem: {
+					name: '',
+					email: '',
+					password: '',
+					gender: false,
+					birthday: null,
+					phone: ''
+				},
+				dateFormatted: null,
+				confirm: '',
+				menu:false,
+				loading: false,
+				locale: 'vi',
+				test:false,
+				showPassword: false
+			}
+		},
+		watch: {
+			menu(val) {
+				val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
+			},
+			'editedItem.birthday': function(val) {
+				this.dateFormatted = this.formatDate(this.editedItem.birthday)
+				if(val) {
+					this.errors.clear()
+				}
+			}
+		},
+		methods: {	
+			register: function() {
+				var vm = this
 
-			let data = Object.assign({}, vm.editedItem)			
+				let data = Object.assign({}, vm.editedItem)			
 
-			vm.$validator.validateAll().then(async function(result) {
-				if(result) {
+				vm.$validator.validateAll().then(async function(result) {
+					if(result) {
 
-					vm.loading = !vm.loading
-					await axios.post(registerURL, data).then(response => {
+						if(!vm.loading) {
+							vm.loading = !vm.loading
 
-						if(response.status === 201) {
+							setTimeout(() => {
+								axios.post('/api/register', data).then(response => {
 
-							vm.$store.dispatch('alert', {
-								name: 'login',
-								index:0,
-								type: 'success',
-								message: 'Tài khoản đã được tạo thành công',
-								close: true,
-							})
+									if(response.status === 201) {
 
-							vm.$router.push({name: 'login'})
+										vm.$store.dispatch('alert', {
+											name: 'login',
+											index:0,
+											type: 'success',
+											message: 'Tài khoản đã được tạo thành công',
+											close: true,
+										})
 
+										vm.$router.push({name: 'login'})
+
+									}
+								}).catch(error => {
+									if(error.response.status == 422) {
+										var mes = ''
+
+										Object.values(error.response.data.errors).map((item) => {
+											mes += item[0] + ' ';
+										})
+
+										vm.$store.dispatch('alert', {
+											name: vm.$route.name,
+											index:0,
+											type: 'error',
+											message: mes,
+											close: true
+										})
+									}
+								}).finally(() => {			
+									vm.loading = !vm.loading
+								})
+
+							}, 100)
 						}
-					}).catch(error => {
-						if(error.response.status == 422) {
-							
-							var mes = ''
-							
-							Object.values(error.response.data.errors).map((item) => {
-								mes += item[0] + ' ';
-							})
-
-							vm.$store.dispatch('alert', {
-								name: vm.$route.name,
-								index:0,
-								type: 'error',
-								message: mes,
-								close: true
-							})
-
-						}
-					}).finally(() => {					
-						
-						vm.loading = !vm.loading
-
-					})
+					}
+				})
+			},
+			formatDate (date) {
+				if (!date) return null
+					const [year, month, day] = date.split('-')
+				return `${day}/${month}/${year}`
+			},
+		},
+		computed: {
+			...mapState({
+				alert: state => state.alertStore.alert
+			}),
+			show() {
+				if(this.$route.name === this.alert.name && this.alert.show) {
+					return true
+				}
+				return false
+			}
+		},
+		created() {
+			this.$validator.localize(this.locale, {
+				messages:vietnam.messages,
+				attributes: {
+					name: 'Họ tên',
+					email: 'Email',
+					password: 'Mật khẩu',
+					confirm: 'Xác nhận mật khẩu',
+					birthday: 'Ngày sinh',
+					gender: 'Giới tính',
+					phone: 'Số điện thoại'
 				}
 			})
-		},
-		formatDate (date) {
-			if (!date) return null
-				const [year, month, day] = date.split('-')
-			return `${day}/${month}/${year}`
-		},
-	},
-	computed: {
-		...mapState({
-			alert: state => state.alertStore.alert
-		}),
-		show() {
-			if(this.$route.name === this.alert.name && this.alert.show) {
-				return true
-			}
-			return false
+			this.$validator.localize(this.locale)
 		}
-	},
-	created() {
-		this.$validator.localize(this.locale, {
-			messages:vietnam.messages,
-			attributes: {
-				name: 'Họ tên',
-				email: 'Email',
-				password: 'Mật khẩu',
-				confirm: 'Xác nhận mật khẩu',
-				birthday: 'Ngày sinh',
-				gender: 'Giới tính',
-				phone: 'Số điện thoại'
-			}
-		})
-		this.$validator.localize(this.locale)
-	}
-}	
+	}	
 </script>
 

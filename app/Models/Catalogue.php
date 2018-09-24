@@ -19,8 +19,12 @@ class Catalogue extends Model
 		return false;
 	}
 
-	public function scopeShow() {
-		return $this->where('catalogue_show', 1);
+	public function scopeShow($query) {
+		return $query->where('catalogue_show', 1);
+	}
+
+	public function scopeLikeName($query, $keywords) {
+		return $query->where('catalogue', 'like', '%'.$keywords.'%')->orWhere('_catalogue', 'like', '%'.$keywords.'%');
 	}
 
 	public function store() {

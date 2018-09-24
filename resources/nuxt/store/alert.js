@@ -1,5 +1,4 @@
 const state = {
-	name: '',
 	alert: {
 		close: false,
 		name: '',

@@ -78,7 +78,7 @@ const actions = {
 	// },
 	getUser: ({commit}) => new Promise((resolve, reject) => {
 		const data = []
-		axios.post('/api/auth/df', data ,{headers: getHeader()}).then(response => {
+		axios.post('/api/auth/df', data).then(response => {
 			if(response.status == 200) {
 				commit('SET_USER', response.data)
 			}
@@ -91,21 +91,30 @@ const actions = {
 		})
 	}),
 	getFBUser:({commit}) => new Promise((resolve, reject) => {
-		FB.api('/me', null , {'fields': 'email, name, birthday, gender, location, picture'}, function(response) {
+		FB.api('/me', null , {'fields': 'email, name, birthday, gender, location, picture.width(350).height(350)'}, function(response) {
 			commit('SET_FB_USER', response)
 		});
 	}),
+	setFBUser:({commit}, payload) => new Promise((resolve, reject) => {
+		commit('SET_FB_USER', payload)
+	}),
+	removeToken:({commit}) => new Promise((resolve, reject) => {
+		commit('REVOKE_TOKEN')
+	}),
+	setToken: ({commit}, token) => new Promise((resolve, reject) => {
+		commit('SET_TOKEN', token)
+	}),
 	refreshToken: ({commit}, payload) => new Promise((resolve, reject) => {
 		const data = []
-		axios.post('/api/auth/refresh', data, {headers: getHeader()}).then(response => {
+		axios.post('/api/auth/refresh', data).then(response => {
 			if(response.status == 200) {
-				commit("SET_TOKEN", response.data)
+				commit('SET_TOKEN', response.data)
 			}
 		})
 	}),
 	logout: ({commit}) => new Promise((resolve, reject)=> {
 		const data = []
-		axios.post('/api/auth/logout', data, {headers: getHeader()}).then(response => {
+		axios.post('/api/auth/logout', data).then(response => {
 			if(response.status == 200) {
 				commit('LOGOUT')
 			}

@@ -219,13 +219,13 @@ class CartController extends Controller
 					$actual_order->secret		   = $order->secret;
 					if(!is_null($order->coupon)) {
 						$actual_order->discount       = $coupon->discount_percent;
-						$actual_order->discount_total = $order->discount_total;
-						$actual_order->amount         = $order->amount;
+						$actual_order->discount_total = round($order->discount_total, -3);
+						$actual_order->amount         = round($order->amount, -3);
 
 					} else {
 						$actual_order->discount       = $store->discount;
-						$actual_order->discount_total = $this->discountTotal($order->subtotal_amount, $store->discount);
-						$actual_order->amount         = (float)$order->subtotal_amount - (float)$actual_order->discount_total;
+						$actual_order->discount_total = round($this->discountTotal($order->subtotal_amount, $store->discount), -3);
+						$actual_order->amount         = round((float)$order->subtotal_amount - (float)$actual_order->discount_total, -3);
 					}	
 					$actual_order->order_id		      = $order->id;
 					$actual_order->save();

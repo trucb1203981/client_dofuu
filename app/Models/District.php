@@ -10,6 +10,10 @@ class District extends Model
 
 	protected $guarded = [];
 
+	public function scopeByCityId($query, $city_id) {
+		return $query->where('city_id', $city_id);
+	}
+
 	public function getDistrictShowAttribute($value) {
 		if($value) {
 			return true;
@@ -17,6 +21,7 @@ class District extends Model
 		return false;
 
 	}
+
 	public function city() {
 		return $this->belongsTo('App\Models\City', 'city_id');
 	}

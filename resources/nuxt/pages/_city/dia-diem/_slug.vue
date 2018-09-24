@@ -16,14 +16,14 @@
 								<!-- STORE GRID -->
 								<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
 								<!-- INFINITE LOADING -->
-								<v-card v-if="loading" color="transparent" dark >
+								<v-card v-if="loading" color="transparent" dark flat >
 									<v-card-text class="text-xs-center">
 										<v-progress-circular
 										indeterminate
 										color="grey"
 										></v-progress-circular>
 									</v-card-text>
-								</v-card>			
+								</v-card>		
 							</v-content>
 						</v-flex>			
 					</v-layout>
@@ -34,78 +34,77 @@
 </template>
 
 <script>
-import StoreList from '@/components/StoreList'
-import StoreGrid from '@/components/StoreGrid'
-import axios from 'axios'
-import {getHeader} from '@/config'
-import index from "@/mixins/index.js";
+	import StoreList from '@/components/StoreList'
+	import StoreGrid from '@/components/StoreGrid'
+	import axios from 'axios'
+	import {getHeader} from '@/config'
+	import index from "@/mixins/index.js";
 
-export default {
-	mixins: [index],
-	components: {
-		'vue-store-list': StoreList,
-		'vue-store-grid': StoreGrid
-	},
-	data() {
-		return {
-			stores: [],
-			districts: [],
-			pageSize: 8,
-			offset: 0,
-			trigger:300,
-			currentCity: null,
-			end: false,
-			loading: false
-		}
-	},
-	methods: {
-		onScroll: async function(e) {
-			var vm = this
-			if(window.innerHeight + window.scrollY >= (document.body.offsetHeight - vm.trigger) ) {
-				if(!this.loading) {
-					await vm.getStoreByType(vm.currentCity.id)
+	export default {
+		mixins: [index],
+		components: {
+			'vue-store-list': StoreList,
+			'vue-store-grid': StoreGrid
+		},
+		data() {
+			return {
+				stores: [],
+				districts: [],
+				trigger:300,
+				currentCity: null,
+				end: false,
+				loading: false
+			}
+		},
+		methods: {
+			onScroll: async function(e) {
+				var vm = this
+				if(window.innerHeight + window.scrollY >= (document.body.offsetHeight - vm.trigger) ) {
+					if(!this.loading) {
+						await vm.getStoreByType(vm.currentCity.id)
+					}
+				}
+			},
+			getStoreByType: function(id) {
+				var vm     = this
+				var offset = vm.stores.length
+				const type = vm.$store.getters.getTypeBySlug(vm.$route.params.type)
+				const data = { typeId: type.id, offset: offset }
+				if(!vm.loading && !vm.end) {
+					vm.loading = true
+					setTimeout(() => {
+						axios.post('/api/GetStoreByType/'+id, data, {withCredentials:true}).then(response => {
+							if(response.status === 200) {
+								if(response.data.data.length === 0) {
+									vm.end = true
+								}
+								response.data.data.forEach(item => {
+									vm.stores.push(item)
+								})
+							}
+						}).finally(() => {					
+							vm.loading = false
+						})
+					}, 300)
 				}
 			}
 		},
-		getStoreByType: async function(id) {
-			const type = this.$store.getters.getTypeBySlug(this.$route.params.slug)
-			const data = {typeId: type.id, pageSize: this.pageSize, offset: this.offset}
-			if(!this.end) {
-				this.loading = true
-				axios.post('/api/GetStoreByType/'+id, data, {withCredentials:true}).then(response => {
-					if(response.status === 200) {
-
-						if(response.data.data.length>0) {
-							response.data.data.forEach(item => {
-								this.stores.push(item)
-							})
-						} else {
-							this.end = true
-						}	
-					}
-				}).finally(() => {					
-					this.loading = false
-				})
-				this.offset = Math.floor(this.offset + this.pageSize)
+		computed: {
+			currentType: function() {
+				return this.$store.getters.getTypeBySlug(this.$route.params.type)
 			}
-		}
-	},
-	computed: {
-		currentType: function() {
-			return this.$store.getters.getTypeBySlug(this.$route.params.slug)
-		}
-	},
-	mounted() {
-		this.$store.dispatch('fetchCity').then(response => {
-			if(response.status === 200) {
-				this.currentCity = this.$store.getters.getCityBySlug(this.$route.params.city)
-				this.$store.dispatch('fetchType').then(response => {
-					this.getStoreByType(this.currentCity.id)	
-				})			
-			}
-		})		
+		},
+		mounted() {
+			this.$store.dispatch('fetchCity').then(response => {
+				if(response.status === 200) {
+					this.currentCity = this.$store.getters.getCityBySlug(this.$route.params.city)
+					this.$store.dispatch('fetchType').then(response => {
+						this.getStoreByType(this.currentCity.id)	
+					})			
+				}
+			})		
 
+		}
 	}
-}
 </script>
 

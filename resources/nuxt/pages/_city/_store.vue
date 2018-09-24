@@ -1,5 +1,6 @@
 <template>
-	<div ref="target_store" fluid class="mt-4" v-scroll="onScroll" v-show="!loading">
+	<div ref="target_store" fluid class="mt-4" v-scroll="onScroll">
+		
 		<v-dialog v-model="loading" hide-overlay persistent width="300">
 			<v-card	color="red darken-3" dark>
 				<v-card-text>
@@ -12,7 +13,9 @@
 				</v-card-text>
 			</v-card>
 		</v-dialog>
-		<v-content v-show="!loading">
+
+		<v-content v-if="!loading">
+
 			<v-toolbar :fixed="offsetTop>offsetTab" color="white" class="elevation-0 scroll-y"  flat dense style="max-height: 400px" tabs  v-if="store != null"> 
 
 				<v-btn flat :to="{path: '/'}" icon>
@@ -28,9 +31,9 @@
 					<v-tab nuxt exact :to="{name: 'city-store', params: {city: $route.params.city, store: $route.params.store}}">
 						Thực Đơn
 					</v-tab>
-					<v-tab nuxt exact :to="{name: 'city-store-comment', params: {city: $route.params.city, store: $route.params.store}}">
+					<v-tab nuxt exact :to="{name: 'city-store-comments', params: {city: $route.params.city, store: $route.params.store}}">
 						<v-badge color="blue">
-							<span slot="badge" v-if="store.totalComment > 0">{{store.totalComment}}</span>
+							<span slot="badge" v-if="store.totalComment > 0" class="caption">{{store.totalComment}}</span>
 							<span>Bình luận</span>			 
 						</v-badge>						
 					</v-tab>
@@ -39,17 +42,18 @@
 					</v-tab> -->
 				</v-tabs>
 				<v-spacer></v-spacer>
-				<v-btn icon @click.native="$store.commit('SHOW_CART')" v-if="$vuetify.breakpoint.smAndDown">
+				<v-btn icon @click.native="$store.commit('SHOW_CART')" v-if="$vuetify.breakpoint.smAndDown && $route.name === 'city-store' ">
 					<v-badge color="red" overlap>
 						<span slot="badge" v-if="countItems>0">{{countItems}}</span>
 						<v-icon color="blue">shopping_cart</v-icon>
 					</v-badge>					
 				</v-btn>
 			</v-toolbar>
-			<v-layout row wrap v-if="store != null">
-				<v-flex xs12 md3>
-					<v-container>
-						<v-card color="white" tile class="card-radius">
+
+			<v-layout row wrap v-if="!!store">
+				<v-flex xs12 md3 v-if="$route.name === 'city-store' || $vuetify.breakpoint.mdAndUp">
+					<v-container :class="{'px-0': $vuetify.breakpoint.xsOnly}">
+						<v-card color="white" tile class="card-radius" >
 							<v-system-bar status color="red darken-3">
 								<div class="white--text">
 									<v-icon color="white">alarm</v-icon>
@@ -81,7 +85,7 @@
 						<v-list avatar dense three-line subheader>
 							<v-list-tile>
 								<v-list-tile-avatar>
-									<v-avatar slot="activator" size="22" color="white" >
+									<v-avatar size="22" color="white" >
 										<v-icon color="primary">place</v-icon>
 									</v-avatar>	
 								</v-list-tile-avatar>
@@ -97,7 +101,7 @@
 						<v-list  avatar dense>
 							<v-list-tile>
 								<v-list-tile-avatar>
-									<v-avatar slot="activator" size="22" color="white" >
+									<v-avatar size="22" color="white" >
 										<v-icon color="green darken-3">access_time</v-icon>
 									</v-avatar>	
 								</v-list-tile-avatar>
@@ -110,15 +114,40 @@
 									</v-list-tile-sub-title>
 								</v-list-tile-content>
 							</v-list-tile>
+
 						</v-list>
+						<v-divider></v-divider>
+						<v-card flat>
+							<v-list avatar dense>
+								<v-list-tile avatar v-for="(rating, index) in ratings" :key="index">
+									<v-list-tile-avatar>
+										<v-avatar size="22" color="white" >
+											<v-icon color="orange lighten-3">star</v-icon>
+										</v-avatar>	
+									</v-list-tile-avatar>
+									<v-list-tile-content>
+										{{rating.name}}
+									</v-list-tile-content>
+									<v-list-tile-action>
+										<v-avatar size="28" color="green" >
+											<span class="body-1 font-weight-bold white--text">{{rating.avg}}</span>
+										</v-avatar>	
+									</v-list-tile-action>
+								</v-list-tile>
+							</v-list>
+							<v-card-actions>
+								<v-btn v-if="store.ratedStore" small block flat color="red" @click.prevent="removeRating">Bỏ đánh giá</v-btn>
+								<v-btn v-else small block flat color="green" @click.prevent="toggle('rating')">Đánh giá</v-btn>
+							</v-card-actions>
+						</v-card>
 						<v-divider></v-divider>
 						<v-card-actions>
 							<v-tooltip top>
 								<v-btn slot="activator" @click.prevent="toggle('like')" flat :ripple="false">
-									<v-icon left color="pink">{{like ? 'favorite' : 'favorite_border'}}</v-icon>
+									<v-icon left color="pink">{{store.checkedLike ? 'favorite' : 'favorite_border'}}</v-icon>
 									{{store.likes}}
 								</v-btn>
-								<span>{{like ? 'Bỏ thích' : 'Thích'}}</span>
+								<span>{{store.checkedLike ? 'Bỏ thích' : 'Thích'}}</span>
 							</v-tooltip>
 							
 							<v-menu v-model="likePopup" offset-y >
@@ -141,9 +170,9 @@
 
 							<v-tooltip top>
 								<v-btn slot="activator" icon @click.prevent="toggle('favorite')" :ripple="false">
-									<v-icon color="blue">{{favorite ? 'bookmark' : 'bookmark_border'}}</v-icon>
+									<v-icon color="blue">{{store.checkedFavorite ? 'bookmark' : 'bookmark_border'}}</v-icon>
 								</v-btn>
-								<span>{{favorite ? 'Bỏ lưu' : 'Lưu'}}</span>
+								<span>{{store.checkedFavorite ? 'Bỏ lưu' : 'Lưu'}}</span>
 							</v-tooltip>							
 
 							<v-menu v-model="favoritePopup" offset-y >
@@ -170,17 +199,35 @@
 				<nuxt-child :key="$route.params.store" :store.sync="store"/>
 			</v-flex>		
 		</v-layout>			
-		<v-snackbar v-model="snackbar" :timeout="3000" bottom >
-			{{ snackbarMessage }}
-			<v-btn
-			color="pink"
-			flat
-			@click="snackbar = false"
-			>
-			Đóng
-		</v-btn>
-	</v-snackbar>
-</v-content>
+		<vue-snackbar ref="snackbar"/>
+	</v-content>
+	<v-dialog v-model="showRating" persistent scrollable max-width="500px" :hide-overlay="$vuetify.breakpoint.smAndDown"  :fullscreen="$vuetify.breakpoint.smAndDown">
+		<v-card>
+			<v-toolbar color="white" dense flat>
+				<v-toolbar-title>Đánh giá cửa hàng</v-toolbar-title>
+			</v-toolbar>
+			<v-divider></v-divider>
+			<v-card-actions v-for="(rating, i) in ratings" :key="i">
+				<v-flex xs4 class="caption text-xs-right font-weight-bold">
+					{{rating.name}}
+				</v-flex>
+				<v-flex xs8>
+					<v-rating
+					v-model="rating.value"
+					hover
+					background-color="orange lighten-3"
+					color="orange"
+					></v-rating>
+				</v-flex>
+			</v-card-actions>
+			<v-divider></v-divider>
+			<v-card-actions>
+				<v-btn color="black" outline small @click.native="showRating = false">Hủy</v-btn>
+				<v-spacer></v-spacer>
+				<v-btn color="blue" class="white--text" small :loading="processRating" @click.native="addRating">Gửi</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
 </div>
 </template>
 
@@ -188,67 +235,48 @@
 	import moment from 'moment'
 	import Cookies from 'js-cookie'
 	import axios from 'axios'
-	import { getStoreURL, getHeader } from '@/config'
+	import Snackbar from '@/components/commons/snackbar'
 	import index from '@/mixins/index'
 	import { mapState } from 'vuex'
+	const endpoint = 'ratingEndpoint'
 	export default {
 		mixins: [index],
+		components: {
+			'vue-snackbar': Snackbar
+		},
 		asyncData({params}) {
 			return {
 				city: {},
+				ratings: [],
 				activeSearch: false,
-				offsetTab: 0,
+				offsetTab: 160,
 				likePopup: false,
 				favoritePopup: false,
-				snackbar: false,
-				snackbarMessage: null,
-				favorite: false,
 				processFavorite: false,
-				like: false,
-				processLike: false
+				processLike: false,
+				processRating: false,
+				showRating: false,
+				editedRating: null
 			}
 		},
 		methods: {
 			getStore() {
-				var vm       = this
-				const params = {cityId: this.$route.params.city, storeId: this.$route.params.store}
+				var vm          = this
+				const citySlug  = vm.$route.params.city
+				const storeSlug = vm.$route.params.store
+				const params    = {citySlug: citySlug, storeSlug: storeSlug}
+
 				return new Promise((resolve, reject) => {
 					vm.$store.dispatch('getStore', params).then(response => {
-						if(response.status == 200) {
+						if(response.status == 200) {							
 							vm.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
 							vm.$store.commit('UPDATE_CITY', response.data.city)
-						}
+						}	
 						resolve(response)
 					})
 				})
+
 			},
-			likeStore() {
-				var vm       = this
-				var data     = {}
-				const params = { name: 'likeEndpoint' }
-				if(!vm.processLike) {
-					vm.processLike = true
-
-					setTimeout(() => {
-
-						axios.post('/api/LikeStore/'+vm.store.id+'/Toggle', data, { params, withCredentials:true }).then(response => {
-							if(response.status === 200) {			
-								vm.like = ! vm.like
-								vm.$store.commit('GET_STORE', response.data.store)
-								if(response.data.type === 'success') {
-									vm.snackbar        = true
-									vm.snackbarMessage = 'Đã thích cửa hàng này.'
-								}
-							}
-						}).finally(() => {
-							vm.processLike = false
-						})
-
-					}, 300)
-					
-				}
-				
-			},	
 			toggle(name) {
 
 				var btnName = new String(name).toLowerCase()
@@ -256,7 +284,7 @@
 				switch(btnName) {
 
 					case 'like':
-					if(this.isAuth && this.currentUser != null) {
+					if(this.isAuth) {
 						this.likePopup = false
 						this.likeStore()
 					} else {
@@ -266,7 +294,7 @@
 					break
 
 					case 'favorite':
-					if(this.isAuth && this.currentUser != null) {
+					if(this.isAuth) {
 						this.favoritePopup = false
 						this.favoriteStore()
 					} else {
@@ -274,63 +302,130 @@
 					}
 					return
 					break
+
+					case 'rating':
+					if(this.isAuth) {						
+						this.rating()
+					} else {
+						this.$router.push({name: 'login', query: {redirect: this.$route.path}})
+					}
+					return
+					break
 				}
 			},	
-			//CHECK LIKE BY USER
-			checkLike() {
-				var vm = this
-				var data = {}
-				const params = {name: 'likeEndpoint'}
+			likeStore() {
+				var vm        = this
+				var data      = {}
+				const storeId = vm.store.id
+				const params  = { name: 'likeEndpoint' }
+				if(!vm.processLike) {
+					vm.processLike       = true
+					vm.store.checkedLike = !vm.store.checkedLike
+					setTimeout(() => {
 
-				return axios.post('/api/LikeStore/'+vm.store.id+'/Check', data, { params, withCredentials:true }).then(response => {
-					if(response.data.type === 'success') {						
-						vm.like = ! vm.like
-					}
-				})
+						axios.post('/api/LikeStore/'+storeId+'/Toggle', data, { params, withCredentials:true }).then(response => {
+							if(response.status === 200) {			
+								vm.store.likes = response.data.likes					
+								if(response.data.type === 'success') {
+									vm.$refs.snackbar.open('Đã thích cửa hàng này')
+								}
+							}
+						}).finally(() => {
+							vm.processLike = false
+						})
+
+					}, 100)					
+				}				
 			},
 			//CLICK FAVORITE
 			favoriteStore() {
-				var vm   = this
-				var data = {}
-				const params = {name: 'favoriteEndpoint'}
+				var vm        = this
+				const storeId = vm.store.id
+				var data      = {}
+				const params  = {name: 'favoriteEndpoint'}
 
 				if(!vm.processFavorite) {
-
-					vm.processFavorite = true
-
+					vm.processFavorite       = true
+					vm.store.checkedFavorite = !vm.store.checkedFavorite
 					setTimeout(() => {
 
-						axios.post('/api/FavoriteStore/'+vm.store.id+'/Toggle', data, { params, withCredentials:true }).then(response => {
-							if(response.status === 200) {
-								vm.favorite = !vm.favorite
+						axios.post('/api/FavoriteStore/'+storeId+'/Toggle', data, { params, withCredentials:true }).then(response => {
+							if(response.status === 200) {								
 								if(response.data.type === 'success') {
-									vm.snackbar        = true
-									vm.snackbarMessage = response.data.message
+									vm.$refs.snackbar.open('Đã lưu cửa hàng này')
 								}
 							}
 						}).finally(() => {
 							vm.processFavorite = false
 						})
 
-					}, 300)
+					}, 100)
 					
 				}
 				
 			},
-			// CHECK FAVORITE BY USER
-			checkFavorite() {
-				var vm = this
-				var data = {}
-				const params = {name: 'favoriteEndpoint'}
+			onScroll (e) {
+				this.$store.commit('ON_SCROLL', window.scrollY)
+			},
+			rating() {
+				this.showRating = true
+				this.ratings.map(item => {
+					item.value  = 4
+					return item
+				})
+			},
+			addRating() {
+				var vm        = this
+				var data      = {ratings: vm.ratings} 
+				const storeId = vm.store.id
+				const params  = { endpoint: endpoint}
+				if(!vm.processRating) {
+					vm.processRating = !vm.processRating
+					setTimeout(() => {
+						axios.post('/api/Store/'+storeId+'/NewRating', data, {params, withCredentials: true }).then(response => {
+							if(response.status === 200) {
+								vm.store.ratedStore = true
+								vm.ratings          = JSON.parse(JSON.stringify(response.data.ratings))
+								vm.showRating       = false
+							}
+						}).finally(() => {
+							vm.processRating = !vm.processRating
+						})
+					})
+				}
 
-				return axios.post('/api/FavoriteStore/'+vm.store.id+'/Check', data, { params, headers: getHeader(), withCredentials:true }).then(response => {
-					if(response.data.type === 'success') {						
-						vm.favorite = ! vm.favorite
+			},
+			fetchRating() {
+				var vm        = this
+				var data      = {}
+				const storeId = vm.store.id
+				const params  = { endpoint: endpoint }
+				return axios.post('/api/Store/'+storeId+'/FetchRating', data, { params, withCredentials: true}).then(response => {
+					if(response.status === 200) {
+						this.ratings = JSON.parse(JSON.stringify(response.data.ratings))
 					}
 				})
 			},
-			onScroll (e) {
-				this.$store.commit('ON_SCROLL', window.scrollY)
+			removeRating() {
+				var vm        = this
+				var data      = { ratedStore: vm.store.ratedStore }
+				const storeId = vm.store.id
+				const params  = { endpoint: endpoint }
+				if(!vm.processRating) {
+					vm.processRating = !vm.processRating
+					setTimeout(() => {
+						return axios.post('/api/Store/'+storeId+'/RemoveRating', data, { params, withCredentials: true}).then(response => {
+							if(response.status === 200) {
+								vm.store.ratedStore = false
+								vm.ratings          = JSON.parse(JSON.stringify(response.data.ratings))
+							}
+						}).finally(() => {
+							vm.processRating = !vm.processRating
+						})
+					}, 100)
+					
+				}
+
 			}
 		},
 		computed: {
@@ -338,29 +433,25 @@
 				loading: state     => state.storeStore.loading,
 				offsetTop: state   => state.offsetTop,
 				store: state       => state.storeStore.store,
-				currentUser: state => state.authStore.currentUser
+				currentUser: state => state.authStore.currentUser,
+				myLocation: state  => state.myLocation
 			}),
 		//COUNT ITEM IN CART
 		countItems() {
 			return this.$store.getters.counts
 		},
+		//CHECK AUTH
 		isAuth() {
 			return this.$store.getters.isAuth
 		}
 	},
 	created() {
 		this.getStore().then(response => {
-			if(response.status === 200) {
-				if(this.isAuth) {
-					axios.all([this.checkLike(), this.checkFavorite()])
-				}				
+			if(response.status === 200) {				
+				this.fetchRating()
 				this.$store.dispatch('getToCart', response.data.store.id)	
 			}
 		})	
-
-	},
-	mounted() {
-		this.offsetTab = this.$refs.target_store.offsetTop
 	}
 }
 </script>

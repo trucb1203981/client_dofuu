@@ -1,10 +1,10 @@
 <template>
 	<div v-scroll="onScroll">				
 		<!-- STORE LIST -->								
-		<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
+		<vue-store-list v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
 
 		<!-- STORE GRID -->										
-		<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+		<vue-store-grid v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
 
 		<!-- LAZY LOADING START-->
 		<v-card v-if="loading" color="transparent" dark flat>

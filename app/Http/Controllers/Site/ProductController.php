@@ -10,8 +10,8 @@ class ProductController extends Controller
 {
 
 	public function getProductByStore(Request $request, $id) {
-
-		$store = Store::where('id', '=', $id)->first();
+		$store_id = (int) $id;
+		$store = Store::byId($id)->first();
 		
 		$res = [
 			'type'    => 'success',

@@ -1,6 +1,7 @@
 // import Vue from 'vue'
 // import Vuetify from 'vuetify'
 import 'babel-polyfill'
+import '@babel/polyfill'
 // import '@fortawesome/fontawesome-free/css/all.css'
 // Vue.use(Vuetify, {
 // 	iconfont: 'fa'
@@ -130,7 +131,7 @@ Vue.use(Vuetify, {
     VToolbar,
     VTooltip,
     transitions
-  },
-  iconfont: 'fa',
-  directives
+},
+iconfont: 'fa',
+directives
 });

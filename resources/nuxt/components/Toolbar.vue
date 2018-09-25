@@ -7,8 +7,9 @@
 		</v-system-bar>
 
 		<v-toolbar color="white" :clipped-left="$vuetify.breakpoint.lgAndUp" class="elevation-0" prominent tabs>
-			<v-toolbar-side-icon @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" class="hidden-md-and-up" small></v-toolbar-side-icon>
-
+			<v-btn v-if="$vuetify.breakpoint.smAndDown && isAuth" @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" icon small>
+				<v-icon>menu</v-icon>
+			</v-btn>
 			<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 280px': 'width: 200px'">		
 				<nuxt-link :to="{path: '/'}">					
 					<img src="/logo_page.png" alt="dofuu-logo">
@@ -108,7 +109,7 @@
 			</v-menu>
 		</v-toolbar-items>	
 
-		<v-tabs slot="extension" v-if="currentCity != null && types.length > 0" slider-color="red" fixed-tabs>
+		<v-tabs slot="extension" v-if="currentCity != null && types.length > 0" slider-color="red darken-3" fixed-tabs>
 			<v-tab nuxt :to="{path: '/'}">
 				<v-icon left color="red darken-3" size="20">home</v-icon> <h5>Trang chủ </h5>
 			</v-tab>

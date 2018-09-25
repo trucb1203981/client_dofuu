@@ -13,6 +13,7 @@ class Store extends Model
     
     protected $hidden  = ['pivot', 'city_id'];
 
+    //SET VERIFIED ATTRIBUTE
     public function getVerifiedAttribute($value) {
         if($value) {
             return true;
@@ -21,6 +22,7 @@ class Store extends Model
 
     }
 
+    //SET SHOW ATTRIBUTE  
     public function getStoreShowAttribute($value) {
         if($value) {
             return true;
@@ -28,45 +30,61 @@ class Store extends Model
         return false;
     }
 
+    // GET STORE BY ID
     public function scopeById($query, $store_id) {
-        return $query->where('store_id', $store_id);
-    }
-    
-    public function scopeByTypeId($query, $type_id) {
-        return $query->where('type_id', $type_id);
+        $storeId = (int) $store_id;
+        return $query->where('store_id', $storeId);
     }
 
+    // GET STORE BY TYPE ID
+    public function scopeByTypeId($query, $type_id) {
+        $typeId = (int) $type_id;
+        return $query->where('type_id', $typeId);
+    }
+
+    // GET STORE BY SLUG
     public function scopeBySlug($query, $slug) {
         return $query->where('store_slug', $slug);
     }
 
+    // ORDER BY PRIORITY
     public function scopeOrderByPriority($query, $name) {
         return $query->orderBy('priority', $name);
     }
 
+    // SEARCH STORE BY PLACE
     public function scopeLikePlace($query, $keywords) {
         return $query->where('store_name', 'like',  '%'.$keywords.'%')->orWhere('store_address', 'like', '%'.$keywords.'%');
     }
 
+    // GET STORE SHOWED
     public function scopeShow($query) {
         return $query->where('store_show', 1);
     }
 
-    public function scopeOfCity($query, $cityId) {
-        $cityId = (int) $cityId;
+    // GET STORE BY DISTRICT ID
+    public function scopeByDistrictId($query, $district_id) {
+        $districtId = (int) $district_id;
+        return $query->where('district_id', $districtId);
+    }
+
+    // GET STORE OF CITY
+    public function scopeOfCity($query, $city_id) {
+        $cityId = (int) $city_id;
         return $this->whereHas('district', function($query) use ($cityId) {
             $query->byCityId($cityId);
         });
     }
 
+    // GET STORE OPEN
     public function scopeActive() {
         return $this->where('status_id', '!=', 3);
     }
 
-    public function scopeHasCoupon() {
-        $now = Carbon::now()->toDateTimeString(); 
-        return $this->whereHas('coupons', function($query) use ($now) {
-            $query->actived()->unexpired();
+    // CHECK DEAL STORE
+    public function scopeHasCoupon($query) {
+        return $query->whereHas('coupons', function($query) {
+            $query->unexpired();
         });
     }
 

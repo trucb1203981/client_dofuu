@@ -15,8 +15,8 @@ class Coupon extends Model
 
 	protected $dates   = ['started_at', 'ended_at'];
 
-	public function scopeActived() {
-		return $this->where('actived', 1);
+	public function scopeActived($query) {
+		return $query->where('actived', 1)->where('status_id', 1);;
 	}
 
 	public function scopeExpired() {
@@ -25,16 +25,11 @@ class Coupon extends Model
 
 	public function scopeUnexpired($query) {
 		$now = Carbon::now()->toDateTimeString();
-		return $query->where('status_id', 1)->where('started_at', '<=', $now)->where('ended_at', '>=', $now);
+		return $query->actived()->where('started_at', '<=', $now)->where('ended_at', '>=', $now);
 	}
 
 	public function scopeGetUnexpired() {
-		// if($this->scopeUnexpired()->get()) {
-		// 	var_dump('true');
-		// 	return true;
-		// }
-		// var_dump('false');
-		// return false;
+		return $this->unexpired();
 	}
 
 	public function stores() {

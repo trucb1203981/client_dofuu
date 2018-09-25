@@ -5,21 +5,21 @@
 		<v-content>
 			<nuxt/>
 		</v-content>
-		<v-footer height="auto" absolute fixed color="white" app>
-			<span>&copy; 2018 Dofuu Company</span>
-		</v-footer>
+		<vue-footer />
 	</v-app>
 </template>
 
 <script>
 	import Toolbar from '@/components/Toolbar'
 	import LeftNavigation from '@/components/LeftNavigation'
+	import Footer from '@/components/Footer'
 	import { mapState } from "vuex";
 	import Cookies from 'js-cookie'
 	export default {
 		components: {
 			'vue-left-navigation': LeftNavigation,
-			'vue-toolbar' : Toolbar
+			'vue-toolbar' : Toolbar,
+			'vue-footer': Footer
 		},
 		data() {
 			return {

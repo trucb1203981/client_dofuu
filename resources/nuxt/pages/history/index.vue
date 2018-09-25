@@ -1,7 +1,7 @@
 <template>
-	<v-container>
-		<v-card>
-			<v-toolbar color="transparent" flat dense>
+	<v-container :class="{'px-0': $vuetify.breakpoint.xsOnly}">
+		<v-card color="grey lighten-4">
+			<v-toolbar color="white" flat dense>
 				<v-toolbar-title>
 					{{title}}
 				</v-toolbar-title>
@@ -87,7 +87,7 @@
 					>
 					<v-flex	slot="item"	slot-scope="props" xs12 sm6 md6	lg6>
 						<v-card class="card-radius">
-							<v-card-title>
+							<v-card-title class="grey lighten-5">
 								<v-flex xs6 class="font-weight-bold">
 									Mã đặt hàng
 								</v-flex>
@@ -96,52 +96,66 @@
 								</v-flex>
 							</v-card-title>
 							<v-divider></v-divider>
-							<v-list dense>
-								<v-list-tile>
-									<v-list-tile-content>Người đặt:</v-list-tile-content>
-									<v-list-tile-content class="align-end">{{ props.item.name }}</v-list-tile-content>
-								</v-list-tile>
-								<v-list-tile>
-									<v-list-tile-content>Nơi đặt:</v-list-tile-content>
-									<v-list-tile-content class="align-end">
-										<div><strong><nuxt-link :to="{name: 'city-store', params: {city: props.item.store.district.city.slug, store: props.item.store.slug}}">{{ props.item.store.name }}</nuxt-link></strong></div>
-									</v-list-tile-content>
-								</v-list-tile>
-								<v-list-tile>
-									<v-list-tile-content class="font-weight-medium font-italic">{{ props.item.store.address }}</v-list-tile-content>
-								</v-list-tile>
-								<v-list-tile>
-									<v-list-tile-content>Ngày đặt:</v-list-tile-content>
-									<v-list-tile-content class="align-end">{{ props.item.bookingDate }}</v-list-tile-content>
-								</v-list-tile>
-								<v-list-tile>
-									<v-list-tile-content>Ngày giao:</v-list-tile-content>
-									<v-list-tile-content class="align-end font-weight-bold">
+							<v-card-text>
+								<v-layout row wrap class="caption">
+									<v-flex xs4>
+										Người đặt:
+									</v-flex>
+									<v-flex xs8 class="text-xs-right">
+										{{ props.item.name }}
+									</v-flex>
+
+									<v-flex xs4>
+										Nơi đặt:
+									</v-flex>
+									<v-flex xs8 class="text-xs-right font-weight-bold">
+										<nuxt-link :to="{name: 'city-store', params: {city: props.item.store.district.city.slug, store: props.item.store.slug}}">{{ props.item.store.name }}</nuxt-link>
+									</v-flex>
+
+									<v-flex xs12 class="text-xs-right">
+										{{ props.item.store.address }}
+									</v-flex>
+
+									<v-flex xs4>
+										Ngày đặt:
+									</v-flex>
+									<v-flex xs8 class="text-xs-right">
+										{{ props.item.bookingDate }}
+									</v-flex>
+
+									<v-flex xs4>
+										Ngày giao:
+									</v-flex>
+									<v-flex xs8 class="text-xs-right font-weight-bold">
 										{{ props.item.receiveDate | formatDate }} {{ props.item.receiveTime }}
-									</v-list-tile-content>
-								</v-list-tile>
-								<v-list-tile>
-									<v-list-tile-content>CSKH:</v-list-tile-content>
-									<v-list-tile-content class="align-end">
+									</v-flex>
+
+									<v-flex xs4>
+										CSKH:
+									</v-flex>
+									<v-flex xs8 class="text-xs-right">
 										<div v-if="props.item.employee != null">{{ props.item.employee.name }}</div>	
-									</v-list-tile-content>
-								</v-list-tile>
-								<v-list-tile>
-									<v-list-tile-content>Giao hàng:</v-list-tile-content>
-									<v-list-tile-content class="align-end">
+									</v-flex>
+
+									<v-flex xs4>
+										Giao hàng:
+									</v-flex>
+									<v-flex xs8 class="text-xs-right">
 										<div v-if="props.item.shipper != null">{{ props.item.shipper.name }}</div>
-									</v-list-tile-content>
-								</v-list-tile>
-								<v-list-tile>
-									<v-list-tile-content>Tổng tiền:</v-list-tile-content>
-									<v-list-tile-content class="align-end">
+									</v-flex>
+
+									<v-flex xs4>
+										Tổng tiền:
+									</v-flex>
+									<v-flex xs8 class="text-xs-right">
 										<div><strong>{{ props.item.total | formatPrice}}</strong></div>
 										<div class="primary--text"><strong>{{ props.item.payment.paymentMethod}}</strong></div>
-									</v-list-tile-content>
-								</v-list-tile>
-								<v-list-tile>
-									<v-list-tile-content>Trạng thái:</v-list-tile-content>
-									<v-list-tile-content class="align-end">
+									</v-flex>
+
+									<v-flex xs4>
+										Trạng thái:
+									</v-flex>
+									<v-flex xs8 class="text-xs-right">
 										<div class="success--text" v-if="props.item.statusId == orderStatus('Thành công')"><strong>{{props.item.statusName}}</strong></div>
 										<!-- <div v-if="disableCancelOrder(props.item.statusName)">
 											<v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text" round>
@@ -151,9 +165,12 @@
 										</div> -->
 										<h4 v-if="props.item.statusId != orderStatus('Thành công')"><span v-if="disableCancelOrder(props.item.statusName)"><v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text" round>Hủy<v-icon small right>block</v-icon>
 										</v-btn></span>{{props.item.statusName}}</h4>
-									</v-list-tile-content>
-								</v-list-tile>
-							</v-list>
+									</v-flex>
+								</v-layout>
+								
+							</v-card-text>
+							
+							<v-divider></v-divider>
 							<v-card-actions>								
 								<v-btn small block @click.prevent="getDetails(props.item)" round>Xem chi tiết</v-btn>
 							</v-card-actions>
@@ -541,80 +558,80 @@
 </template>
 
 <script>
-import axios from 'axios'
-import moment from 'moment'
-import {getHeader} from '@/config'
+	import axios from 'axios'
+	import moment from 'moment'
+	import {getHeader} from '@/config'
 
-function formatDate(str) {
-	if(str != null) {
-		return str.substring(8, 10)+'/'+str.substring(5, 7)+'/'+str.substring(0, 4)
-	}
-	return null
-}
-
-export default {
-	middleware: 'notAuthenticated',
-	data() {
-		return {
-			title: 'Lịch sử đặt món',
-			headers: [
-			{
-				text: 'STT',
-				align: 'left',
-				sortable: false,
-				value: 'name'
-			},
-			{ text: 'Mã đặt hàng', sortable: false, },
-			{ text: 'Nơi đặt', sortable: false },
-			{ text: 'Ngày đặt', sortable: false },
-			{ text: 'CSKH/ Giao hàng', sortable: false },
-			{ text: 'Tổng tiền', sortable: false },
-			{ text: 'Trạng thái', sortable: false },
-			{ text: 'Chi tiết', sortable:false }
-			],
-			editedItem: {
-				fromDate: new Date(moment().subtract(7, 'days')).toISOString().substr(0, 10),
-				toDate: new Date().toISOString().substr(0, 10),
-				statusId: 0
-			},
-			status: [
-			{ id: 0, name: 'Tất cả'},
-			{ id: 5, name: 'Thành công'},
-			{ id: 6, name: 'Hủy'}
-			],
-			orders: [],
-			order: null,
-			fromModal:false,
-			fromDateString: formatDate(new Date(moment().subtract(7, 'days')).toISOString().substr(0, 10)),
-			toModal:false,
-			toDateString: formatDate(new Date().toISOString().substr(0, 10)),
-			loading:false,
-			dialog: false,
-			matrix: {
-				show:false,
-				start: '',
-				end: '',
-				duration: '0 phút',
-				distance: '0 Km'
-			},
-			tab: 0,
-			headerDetails: [
-			{ text: 'Món', sortable: false, },
-			{ text: 'Số lượng', sortable: false, },
-			{ text: 'Giá', sortable: false, },
-			{ text: 'Tổng', sortable:false}
-			],
-			cancelDialog: false,
-			reasons: [
-			{note: 'Nhập sai số điện thoại'},
-			{note: 'Nhập sai thông tin liên hệ'},
-			{note: 'Đơn hàng chậm trễ'},
-			],
-			cancelData: {}, 
-			notes: []
+	function formatDate(str) {
+		if(str != null) {
+			return str.substring(8, 10)+'/'+str.substring(5, 7)+'/'+str.substring(0, 4)
 		}
-	},
-	methods: {
+		return null
+	}
+
+	export default {
+		middleware: 'notAuthenticated',
+		data() {
+			return {
+				title: 'Lịch sử đặt món',
+				headers: [
+				{
+					text: 'STT',
+					align: 'left',
+					sortable: false,
+					value: 'name'
+				},
+				{ text: 'Mã đặt hàng', sortable: false, },
+				{ text: 'Nơi đặt', sortable: false },
+				{ text: 'Ngày đặt', sortable: false },
+				{ text: 'CSKH/ Giao hàng', sortable: false },
+				{ text: 'Tổng tiền', sortable: false },
+				{ text: 'Trạng thái', sortable: false },
+				{ text: 'Chi tiết', sortable:false }
+				],
+				editedItem: {
+					fromDate: new Date(moment().subtract(7, 'days')).toISOString().substr(0, 10),
+					toDate: new Date().toISOString().substr(0, 10),
+					statusId: 0
+				},
+				status: [
+				{ id: 0, name: 'Tất cả'},
+				{ id: 5, name: 'Thành công'},
+				{ id: 6, name: 'Hủy'}
+				],
+				orders: [],
+				order: null,
+				fromModal:false,
+				fromDateString: formatDate(new Date(moment().subtract(7, 'days')).toISOString().substr(0, 10)),
+				toModal:false,
+				toDateString: formatDate(new Date().toISOString().substr(0, 10)),
+				loading:false,
+				dialog: false,
+				matrix: {
+					show:false,
+					start: '',
+					end: '',
+					duration: '0 phút',
+					distance: '0 Km'
+				},
+				tab: 0,
+				headerDetails: [
+				{ text: 'Món', sortable: false, },
+				{ text: 'Số lượng', sortable: false, },
+				{ text: 'Giá', sortable: false, },
+				{ text: 'Tổng', sortable:false}
+				],
+				cancelDialog: false,
+				reasons: [
+				{note: 'Nhập sai số điện thoại'},
+				{note: 'Nhập sai thông tin liên hệ'},
+				{note: 'Đơn hàng chậm trễ'},
+				],
+				cancelData: {}, 
+				notes: []
+			}
+		},
+		methods: {
 		//GET ORDER LIST BY FILTER
 		getOrders: async function() {
 			var data     = this.editedItem

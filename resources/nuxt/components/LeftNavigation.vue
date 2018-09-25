@@ -1,7 +1,6 @@
 <template>
-	<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" class="hidden-md-and-up">
-		<v-list two-line v-if="isAuth">
-
+	<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" class="hidden-md-and-up" v-if="isAuth">
+		<v-list two-line>
 			<v-list-tile avatar :to="{name:'information'}">
 				<v-list-tile-avatar>
 					<img :src="image(currentUser.image)" alt="John">

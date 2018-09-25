@@ -1,20 +1,20 @@
 <template>
-	<v-container grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll" v-if="stores.length > 0">
+	<v-container grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll">
 		<v-layout row wrap>
 			<v-flex xs12>
 				<v-card flat >		
 					<v-layout grey lighten-4 fill-height row wrap class="elevation-1">		
-						<v-toolbar color="white" flat dense v-show="!loading">
+						<v-toolbar color="white" flat dense >
 							<v-toolbar-title>
-								ĐỊA ĐIỂM {{currentType.name.toUpperCase()}}
+								ĐỊA ĐIỂM <span v-show="!loading">{{currentType.name.toUpperCase()}}</span>
 							</v-toolbar-title>
 						</v-toolbar>					
 						<v-flex xs12>
 							<v-content>
 								<!-- STORE LIST -->
-								<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>
+								<vue-store-list v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>
 								<!-- STORE GRID -->
-								<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+								<vue-store-grid v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
 								<!-- INFINITE LOADING -->
 								<v-card v-if="loading" color="transparent" dark flat >
 									<v-card-text class="text-xs-center">

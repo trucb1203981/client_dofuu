@@ -32,7 +32,7 @@ const getters = {
 	},
 	// GET TYPE BY SLUG
 	getTypeBySlug: (state) => slug => {
-		return state.types.find(item => item.slug === slug)
+		return (state.types.length > 0) ? state.types.find(item => item.slug === slug) : null
 	},
 }
 

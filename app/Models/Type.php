@@ -17,6 +17,10 @@ class Type extends Model
 		return false;
 	}
 
+	public function scopeShow($query) {
+		return $query->where('type_show', '=', 1);
+	}
+
 	public function scopeLikeName($query, $keywords) {
 		return $query->where('type_name', 'like', '%'.$keywords.'%');
 	}

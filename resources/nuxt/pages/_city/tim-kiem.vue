@@ -1,9 +1,14 @@
 <template>
-	<v-container grid-list-lg  :class="{'px-0': $vuetify.breakpoint.xsOnly}">
+	<v-container :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 		<v-layout row wrap >
 			<v-flex xs12>
+				<v-toolbar color="white" flat dense>
+					<v-toolbar-title>
+						<span>Kết quả tìm kiếm</span>
+					</v-toolbar-title>
+				</v-toolbar>			
 				<v-card color="grey lighten-4" flat>	
-					<v-tabs color="red" dark slider-color="yellow">
+					<v-tabs color="transparent" slider-color="red darken-3">
 						<v-tab nuxt :to="{name: 'city-tim-kiem-tat-ca', query: {q: $route.query.q}, params: {city: $route.params.city}}">
 							Tất cả
 						</v-tab>
@@ -17,12 +22,8 @@
 							Danh mục
 						</v-tab>
 					</v-tabs>			
-					<v-toolbar color="white" flat dense>
-						<v-toolbar-title>
-							DANH SÁCH CỬA HÀNG
-						</v-toolbar-title>
-					</v-toolbar>					
-					<v-container>
+
+					<v-container grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp">
 						<nuxt-child></nuxt-child>
 					</v-container>
 				</v-card>

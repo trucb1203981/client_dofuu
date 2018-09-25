@@ -5,16 +5,16 @@
 				<v-card flat >			
 					<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
 						<v-toolbar color="white" flat dense>
-							<v-toolbar-title>
-								TẤT CẢ ĐỊA ĐIỂM
+							<v-toolbar-title >
+								<span class="text-capitalize">{{title}}</span>
 							</v-toolbar-title>
 						</v-toolbar>		
 						<v-flex xs12>
 							<v-container fluid>
 								<!-- STORE LIST -->
-								<vue-store-list v-if="currentCity != null && $vuetify.breakpoint.smAndDown" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>
+								<vue-store-list v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>
 								<!-- STORE GRID -->
-								<vue-store-grid v-if="currentCity != null && $vuetify.breakpoint.mdAndUp" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+								<vue-store-grid v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
 								<!-- INFINITE LOADING -->
 								<v-card v-if="loading" color="transparent" dark flat>
 									<v-card-text class="text-xs-center">
@@ -48,6 +48,7 @@
 		},
 		data() {
 			return {
+				title: 'Tất cả địa điểm',
 				stores: [],
 				districts: [],
 				pagination: {},

@@ -25,7 +25,9 @@ class FavoriteController extends Controller
 			if($store) {
 				$user     = auth()->user();
 				$user->favoriteStores()->toggle($id);
-				$favorite = $user->favoriteStores()->where('store_id', $id)->first();
+
+				$favorite = $user->favoriteStores()->byId($id)->first();
+
 				if($favorite) {
 					$status  = 'success';
 					$message = 'Đã lưu thành công';
@@ -50,38 +52,6 @@ class FavoriteController extends Controller
 			'data'     => []
 		];
 		return response($res, 500);
-	}
-
-	public function checkFavoriteStore(Request $request, $id) {
-		if($request->name === FavoriteController::END_POINT) {
-			$store = Store::find($id);
-			if($store) {
-				$user     = auth()->user();
-				$favorite = $user->favoriteStores()->byStore('store_id', $id)->first();
-
-				if($favorite) {
-
-					$status  = 'success';
-					$message = 'Đã lưu';
-					$update  = true;
-
-				} else {
-
-					$status  = 'error';
-					$message = 'Chưa lưu';
-					$update  = false;
-
-				}
-
-				$res = [
-					'type'     => $status,
-					'message'  => $message,
-					'favorite' => $update
-				];
-
-				return response($res, 200);
-			}
-		}
 	}
 
 	public function removeFavoriteStore(Request $request, $id) {

@@ -84,14 +84,17 @@ Route::group(['namespace' => 'Site'], function() {
 	Route::get('/Search/Products', 'StoreController@searchStoreByProduct');
 	//TOGGLE LIKE STORE
 	Route::post('/LikeStore/{storeId}/Toggle', 'LikeController@toggleLikeStore');	
-	//FAVORITE STORE
-	Route::post('/FavoriteStore/{storeId}/Toggle', 'FavoriteController@toggleFavoriteStore');
 	//TOGGLE LIKE COMMENT
 	Route::post('/LikeComment/{commentId}/Toggle', 'LikeController@toggleLikeComment');
-	//GET FAVORITE STORE
-	Route::post('/Favorite/Stores', 'FavoriteController@fetchFavoriteStore');
-	//REMOVE FAVORITE STORE
-	Route::post('/FavoriteStore/{storeId}/Remove', 'FavoriteController@removeFavoriteStore');
+
+	Route::group(['prefix' => 'FavoriteStore'], function() {
+		//GET FAVORITE STORE
+		Route::post('/FetchStores', 'FavoriteController@fetchFavoriteStore');
+		//TOGGLE FAVORITE STORE
+		Route::post('/{storeId}/ToggleFavorite', 'FavoriteController@toggleFavoriteStore');
+		//REMOVE FAVORITE STORE
+		Route::post('/{storeId}/RemoveFavorite', 'FavoriteController@removeFavoriteStore');
+	});
 
 	Route::group(['prefix' => 'CommentStore'], function() {
 		//FETCH COMMENT
@@ -107,12 +110,16 @@ Route::group(['namespace' => 'Site'], function() {
 		//REMOVE COMMENT
 		Route::post('/{storeId}/RemoveComment', 'CommentController@removeComment');
 	});
-	// ADD RATING
-	Route::post('/Store/{storeId}/NewRating', 'RatingController@addRating');
-	// FETCH RATING
-	Route::post('/Store/{storeId}/FetchRating', 'RatingController@fetchRating');
-	// REMOVE RATING
-	Route::post('/Store/{storeId}/RemoveRating', 'RatingController@removeRating');
+
+	Route::group(['prefix' => 'RatingStore'], function() {
+		// ADD RATING
+		Route::post('/{storeId}/NewRating', 'RatingController@addRating');
+		// FETCH RATING
+		Route::post('/{storeId}/FetchRating', 'RatingController@fetchRating');
+		// REMOVE RATING
+		Route::post('/{storeId}/RemoveRating', 'RatingController@removeRating');	
+	});
+	
 });
 
 Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function() {

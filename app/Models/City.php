@@ -42,6 +42,10 @@ class City extends Model
         return $query->where('city_slug', $slug);
     }
 
+    public function scopeById($query, $city_id) {
+        $cityId = (int) $city_id;
+        return $query->where('id', $cityId);
+    }
 
     public function country() {
         return $this->belongsTo('App\Models\Country', 'country_id');

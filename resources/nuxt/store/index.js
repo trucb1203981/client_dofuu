@@ -22,7 +22,6 @@ const store = () => {
 				state.offsetTop = value
 			},
 			LEFT_NAVIGATION_SHOW(state) {
-				console.log(state)
 				state.leftDrawer = true
 			},
 			LEFT_NAVIGATION_CLOSE(state) {

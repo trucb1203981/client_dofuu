@@ -1,5 +1,5 @@
 <template>
-	<v-container>
+	<v-container grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp" :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 		<v-dialog v-model="loading" hide-overlay persistent width="300">
 			<v-card	color="red darken-3"	dark>
 				<v-card-text>
@@ -13,93 +13,99 @@
 			</v-card>
 		</v-dialog>
 		
-		<v-layout justify-center v-if="!loading">
+		<v-layout row wrap v-if="!loading">
 			<v-flex xs12>
 				<v-card>
-					<v-toolbar color="transparent" dense flat>
-						<v-toolbar-title>
-							Bộ sưu tập
-						</v-toolbar-title>
-					</v-toolbar>
-					<v-divider></v-divider>
-					<v-container fluid grid-list-lg>
-						<v-layout row wrap>
-							<!-- GRID STORE DESKTOP -->
-							<v-flex v-if="$vuetify.breakpoint.mdAndUp" md3 d-flex v-for="(item, i) in stores" :key="i">
-								<v-hover>
-									<v-card slot-scope="{ hover }" nuxt  hover ripple class="card-radius mx-auto" >
-										<v-system-bar status color="grey lighten-5" class="transition-fast-in-fast-out text-xs-right">
-											<div>{{item.type.name}}</div>
-											<v-spacer></v-spacer>
-											<v-tooltip top>													
-												<v-icon slot="activator" @click="removeFavoriteStore(item)">close</v-icon>
-												<span>Bỏ lưu</span>
-											</v-tooltip>
-										</v-system-bar>
-										<v-card :to="{name: 'city-store', params: { city: item.citySlug, store: item.slug }}">
-											<v-img :src="image(item.avatar)" :aspect-ratio="16/9" :lazy-src="`https://picsum.photos/10/6?image=${1 * 5 + 10}`">
-												<v-layout slot="placeholder" fill-height align-center justify-center ma-0 >
-													<v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+					<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
+						<v-toolbar color="white" flat dense>
+							<v-toolbar-title>
+								<span class="text-capitalize">{{title}}</span>
+							</v-toolbar-title>
+						</v-toolbar>
+						<v-divider></v-divider>
+						<v-flex xs12>
+							<v-container fluid>
+								<v-layout row wrap>
+									<!-- GRID STORE DESKTOP -->
+									<v-flex v-if="$vuetify.breakpoint.smAndUp" sm4 md3 d-flex v-for="(item, i) in stores" :key="i">
+										<v-hover>
+											<v-card slot-scope="{ hover }" nuxt  hover ripple class="card-radius mx-auto" >
+												<v-system-bar status color="grey lighten-5" class="transition-fast-in-fast-out text-xs-right">
+													<div>{{item.type.name}}</div>
+													<v-spacer></v-spacer>
+													<v-tooltip top>													
+														<v-icon slot="activator" @click="removeFavoriteStore(item)">close</v-icon>
+														<span>Bỏ lưu</span>
+													</v-tooltip>
+												</v-system-bar>
+												<v-card :to="{name: 'city-store', params: { city: item.citySlug, store: item.slug }}">
+													<v-img :src="image(item.avatar)" :aspect-ratio="16/9" :lazy-src="`https://picsum.photos/10/6?image=${1 * 5 + 10}`">
+														<v-layout slot="placeholder" fill-height align-center justify-center ma-0 >
+															<v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+														</v-layout>
+													</v-img>
+												</v-card>
+
+												<v-divider light></v-divider>
+
+												<v-card-text >
+													<v-tooltip top>												
+														<div slot="activator" class="text-truncate"><strong >{{item.name}}</strong>
+														</div>
+														<span>{{item.name}}</span>
+													</v-tooltip>
+													<v-tooltip top>												
+														<div slot="activator" class="text-truncate">{{item.address}}</div>
+														<span>{{item.address}}</span>
+													</v-tooltip>
+												</v-card-text>
+											</v-card>
+										</v-hover>
+									</v-flex>	
+
+									<!-- LIST STORE MOBILE -->
+
+									<v-flex v-if="$vuetify.breakpoint.xsOnly" xs12 v-for="(item, i) in stores" :key="i">
+										<v-card ripple class="card-radius" >
+
+											<v-system-bar status color="grey lighten-5">
+												<div>{{item.type.name}}</div>
+												<v-spacer></v-spacer>
+												<v-tooltip top>											
+													<v-icon slot="activator" @click="removeFavoriteStore(item)">close</v-icon>
+													<span>Bỏ lưu</span>
+												</v-tooltip>
+											</v-system-bar>
+
+											<v-card :to="{name: 'city-store', params: { city: item.citySlug, store: item.slug }}" nuxt flat>
+												<v-layout row wrap class="pa-1" >
+													<v-flex xs3>
+														<v-layout column align-center justify-center>
+															<v-flex xs9>
+																<v-card style="border-radius: 50%" :max-width="80" :max-height="80" raised>	
+																	<v-avatar size="60" color="grey lighten-3">
+																		<img :src="image(item.avatar)" alt="alt">
+																	</v-avatar>		
+																</v-card>
+															</v-flex>	
+														</v-layout>	
+													</v-flex>
+
+													<v-flex xs9 sm10 class="px-0">			
+														<div class="font-weight-bold text-truncate">{{item.name}}</div>
+														<v-tooltip top>									
+															<div slot="activator" class="grey--text body-1 text-truncate">{{item.address}}</div>
+															<span>{{item.address}}</span>
+														</v-tooltip>									
+													</v-flex>
 												</v-layout>
-											</v-img>
+											</v-card>
 										</v-card>
-
-										<v-divider light></v-divider>
-
-										<v-card-text >
-											<v-tooltip top>												
-												<div slot="activator" class="text-truncate"><strong >{{item.name}}</strong>
-												</div>
-												<span>{{item.name}}</span>
-											</v-tooltip>
-											<v-tooltip top>												
-												<div slot="activator" class="text-truncate">{{item.address}}</div>
-												<span>{{item.address}}</span>
-											</v-tooltip>
-										</v-card-text>
-									</v-card>
-								</v-hover>
-							</v-flex>	
-
-							<!-- LIST STORE MOBILE -->
-
-							<v-flex v-if="$vuetify.breakpoint.smAndDown" xs12 d-flex v-for="(item, i) in stores" :key="i">
-								<v-hover>
-									<v-card slot-scope="{ hover }" nuxt  hover ripple class="card-radius mx-auto" >
-										<v-system-bar status color="grey lighten-5" class="transition-fast-in-fast-out text-xs-right">
-											<div>{{item.type.name}}</div>
-											<v-spacer></v-spacer>
-											<v-tooltip top>													
-												<v-icon slot="activator" @click="removeFavoriteStore(item)">close</v-icon>
-												<span>Bỏ lưu</span>
-											</v-tooltip>
-										</v-system-bar>
-										<v-layout row wrap >
-											<v-flex xs4 sm2>
-												<v-layout column align-center justify-center>
-													<v-flex xs9>
-														<v-card style="border-radius: 50%" :max-width="60" :max-height="60">	
-															<v-avatar size="60" color="grey lighten-3">
-																<img :src="image(item.avatar)" alt="alt">
-															</v-avatar>		
-														</v-card>
-													</v-flex>	
-												</v-layout>	
-											</v-flex>
-
-											<v-flex xs8 sm10 class="px-0">			
-												<div class="font-weight-bold text-truncate">{{item.name}}</div>
-												<v-tooltip top>									
-													<div slot="activator" class="grey--text body-1 text-truncate">{{item.address}}</div>
-													<span>{{item.address}}</span>
-												</v-tooltip>									
-											</v-flex>
-										</v-layout>
-									</v-card>
-								</v-hover>
-							</v-flex>
-						</v-layout>
-					</v-container>
+									</v-flex>
+								</v-layout>								
+							</v-container>
+						</v-flex>
+					</v-layout>
 				</v-card>
 			</v-flex>
 		</v-layout>
@@ -123,6 +129,7 @@
 		},
 		data() {
 			return {
+				title: 'Bộ sưu tập',
 				loading: false,
 				stores: null
 			}
@@ -133,18 +140,21 @@
 			var vm   = this
 			var data = {}
 			const params = {name: 'favoriteEndpoint'}
-			axios.post('/api/Favorite/Stores', data, {params, headers: getHeader(), withCredentials:true}).then(response => {
+			axios.post('/api/FavoriteStore/FetchStores', data, {params, withCredentials:true}).then(response => {
 				if(response.status === 200) {
-					this.stores = response.data.stores
+					vm.stores = response.data.stores
 				}
 			})
 		},
 		removeFavoriteStore(store) {
-			var vm   = this
-			console.log(store)
-			vm.$store.dispatch('removeFavoriteStore', store.id).then(response => {
+			var vm        = this
+			const data    = {}
+			const storeId = store.id
+			const params  = {name: 'favoriteEndpoint'}
+
+			axios.post('/api/FavoriteStore/'+storeId+'/RemoveFavorite', data, {params, withCredentials:true}).then(response => {
 				if(response.status === 200) {
-					this.stores.splice(this.stores.indexOf(store), 1)
+					vm.stores.splice(this.stores.indexOf(store), 1)
 				}
 			})
 		}

@@ -9,7 +9,7 @@ const state = {
 	store: null,
 	loading:false,
 	rightDrawer:false,
-
+	processFavorite: false,
 	headers: [
 	{title: 'Danh mục'},
 	{title: 'Giỏ hàng'}
@@ -21,6 +21,9 @@ const mutations = {
 		if(state.tabIndex != tabIndex ){
 			state.tabIndex = tabIndex
 		}
+	},
+	PROCESS_FAVORITE(state) {
+		state.processFavorite = !state.processFavorite
 	},
 	GET_STORE(state, payload) {
 		state.store = payload
@@ -52,14 +55,23 @@ const actions = {
 
 	}),
 
-	removeFavoriteStore: ({commit}, storeId) => new Promise((resolve, reject) => {
-		const data   = {}
-		const params = {name: 'favoriteEndpoint'}
-		axios.post('/api/FavoriteStore/'+storeId+'/Remove', data, {params, headers: getHeader(), withCredentials:true}).then(response => {
-			if(response.status === 200) {
+	toggleFavoriteStore: ({commit}, storeId) => new Promise((resolve, reject) => {
+		var vm        = this
+		var data      = {}
+		const params  = {name: 'favoriteEndpoint'}
+
+		commit('PROCESS_FAVORITE')
+
+		setTimeout(() => {
+
+			axios.post('/api/FavoriteStore/'+storeId+'/ToggleFavorite', data, { params, withCredentials:true }).then(response => {
 				resolve(response)
-			}
-		})
+			}).finally(() => {
+				commit('PROCESS_FAVORITE')
+			})
+
+		}, 300)
+
 	})
 	
 }

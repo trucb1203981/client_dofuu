@@ -23,7 +23,7 @@ class CityController extends Controller
 
     public function fetchCity(Request $request)
     {
-        $cities = City::where('city_show', 1)->get();
+        $cities = City::show()->get();
 
         $res    = [
             'type'     => 'success',
@@ -37,15 +37,12 @@ class CityController extends Controller
         return response($res, 200);
     }
 
-    public function getCityCurrent(Request $request, $id) {
-        $cityId = $id;
-       
+    public function getCityCurrent(Request $request, $cityId) {
+        $city_id = $cityId;
+
         if($request->filled('cityId')) {
 
-            $city = City::where(function($query) use ($cityId) {
-                $query->where('id', '=', $cityId);
-                $query->where('city_show', '=', 1);
-            })->first();
+            $city = City::show()->byId($city_id)->first();
 
             if(!is_null($city)) {
 
@@ -63,79 +60,27 @@ class CityController extends Controller
 
         return response('Page not found', 404);
     }
-    /**
-     * Get District and Type by city id.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    // public function getInformation(Request $request, $id) {
-    //     $cid  = (int)$id;
-    //     $city = City::where('id', $cid)->first();
-    //     if(!is_null($city)) {
-    //         $districts = District::where('district_show',  $this->show)->where('city_id', '=', $cid)->get();
-    //         $types     = Type::where('type_show', '=',  $this->show)->get();
-    //         $res       = [
-    //             'type'     => 'success',
-    //             'messsage' => 'Get city information successfully !!!',
-    //             'data'     => [
-    //                 'currentID' => $cid,
-    //                 'districts' => DistrictResource::collection($districts),
-    //                 'types'     => TypeResource::collection($types)
-    //             ]
-    //         ];
-    //         return response($res, 200)->withCookie(cookie('flag_c', $cid, 43200, '/', '', '', false));
-    //     }
-    //     return response(['Something went wrong'], 500);
-    // }
-    /**
-     * Get District and Type has Deal by city id.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function getInformationHasDeal(Request $request, $id) {
 
-        $cid    = (int)$id;
-        $flag_c = $request->cookie('flag_c');
-        $city   = City::where('id', $cid)->first();
-        $now    = Carbon::now()->toDateTimeString();
+        $city_id = (int)$id;
+        $flag_c  = $request->cookie('flag_c');
+        $city    = City::findorFail($city_id);
+        $now     = Carbon::now()->toDateTimeString();
         if(!is_null($city)) {
 
-            $districts = District::whereHas('stores', function($query) use ($now){
-                $query->whereHas('coupons', function($q) use ($now){
-                    $q->where('actived', '=', 1);
-                    $q->where('status_id', '=', 1);
-                    $q->where('started_at', '<=', $now);
-                    $q->where('ended_at', '>=', $now);
-                });
-            })->withCount(['stores' => function($query) use ($now){
-                $query->whereHas('coupons', function($q) use ($now){
-                    $q->where('actived', '=', 1);
-                    $q->where('status_id', '=', 1);
-                    $q->where('started_at', '<=', $now);
-                    $q->where('ended_at', '>=', $now);
-                });
-                $query->where('store_show', '=', 1);
-            }])->where('city_id', '=', $cid)->get();
+            $districts = District::whereHas('stores', function($query){
+                $query->hasCoupon();
+            })->withCount(['stores' => function($query){
+                $query->hasCoupon();
+                $query->show();
+            }])->byCityId($city_id)->get();
 
-            $types = Type::whereHas('stores', function($query) use ($cid, $now){
-                $query->whereHas('district', function($q) use ($cid) {
-                    $q->where('city_id', '=', $cid);
-                })->whereHas('coupons', function($q) use ($now){
-                    $q->where('actived', '=', 1);
-                    $q->where('status_id', '=', 1);
-                    $q->where('started_at', '<=', $now);
-                    $q->where('ended_at', '>=', $now);
-                });
-            })->withCount(['stores' => function($query) use ($cid, $now) {
-                $query->whereHas('district', function($q) use ($cid) {
-                    $q->where('city_id', '=', $cid);
-                })->whereHas('coupons', function($q) use ($now){
-                    $q->where('actived', '=', 1);
-                    $q->where('status_id', '=', 1);
-                    $q->where('started_at', '<=', $now);
-                    $q->where('ended_at', '>=', $now);
-                });
-                $query->where('store_show', '=', 1);
+            $types = Type::whereHas('stores', function($query) use ($city_id, $now){
+                $query->ofCity($city_id)->hasCoupon();
+            })->withCount(['stores' => function($query) use ($city_id, $now) {
+                $query->ofCity($city_id)->hasCoupon();
+                $query->show();
             }])->get();
 
             $res = [
@@ -152,27 +97,23 @@ class CityController extends Controller
     }
     
     public function getInformation(Request $request, $id) {
-        $cid    = (int)$id;
-        $flag_c = $request->cookie('flag_c');
-        $city   = City::where('id', $cid)->first();
-        $now    = Carbon::now()->toDateTimeString();
+        $city_id = (int)$id;
+        $flag_c  = $request->cookie('flag_c');
+        $city    = City::findorFail($city_id);
+        $now     = Carbon::now()->toDateTimeString();
 
         if(!is_null($city)) {
 
             $districts = District::whereHas('stores')->withCount(['stores' => function($query){
-                $query->where('store_show', '=', 1);
-            }])->where('city_id', '=', $cid)->get();
+                $query->show();
+            }])->byCityId($city_id)->get();
 
-            $types = Type::whereHas('stores', function($query) use ($cid){
-                $query->whereHas('district', function($q) use ($cid) {
-                    $q->where('city_id', '=', $cid);
-                });
-                $query->where('store_show', '=', 1);
-            })->withCount(['stores' => function($query) use ($cid, $now) {
-                $query->whereHas('district', function($q) use ($cid) {
-                    $q->where('city_id', '=', $cid);
-                });
-                $query->where('store_show', '=', 1);
+            $types = Type::whereHas('stores', function($query) use ($city_id){
+                $query->ofCity($city_id);
+                $query->show();
+            })->withCount(['stores' => function($query) use ($city_id, $now) {
+                $query->ofCity($city_id);
+                $query->show();
             }])->get();
             
             $res = [

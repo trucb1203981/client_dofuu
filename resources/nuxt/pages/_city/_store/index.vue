@@ -634,130 +634,130 @@
 		import {mapState} from 'vuex'
 		import CheckoutDialog from '@/components/CheckoutDialog'
 		import * as easings from 'vuetify/es5/util/easing-patterns'
-// const CheckoutDialog = () => ({
-//   // The component to load (should be a Promise)
-//   component: import('@/components/CheckoutDialog'),
-//   // Delay before showing the loading component. Default: 200ms.
-//   delay: 200,
-//   // The error component will be displayed if a timeout is
-//   // provided and exceeded. Default: Infinity.
-//   timeout: 3000
-// })
-export default {
-	mixins: [index],
-	components: {
-		'vue-dialog' :CheckoutDialog,
-	},
-	asyncData() {
-		return {
-			duration: 50,
-			offset: -50,
-			easing: 'easeInOutQuint',
-			offsetNavbarRight: 184,
-			headers: [
-			{
-				text: 'Món',
-				align: 'left',
-				sortable: false
+		// const CheckoutDialog = () => ({
+		//   // The component to load (should be a Promise)
+		//   component: import('@/components/CheckoutDialog'),
+		//   // Delay before showing the loading component. Default: 200ms.
+		//   delay: 200,
+		//   // The error component will be displayed if a timeout is
+		//   // provided and exceeded. Default: Infinity.
+		//   timeout: 3000
+		// })
+		export default {
+			mixins: [index],
+			components: {
+				'vue-dialog' :CheckoutDialog,
 			},
-			{ text: 'Số lượng'},
-			{ text: 'Giá'}
-			],
-			bag: {
-				intance: 20,
-				items: []
-			},
-			time: {
-				dd:0,
-				hh:0,
-				mm:0,
-				ss:0
-			},
-			showTooltip: false,
-			messageTooltip: '',
-			storeInfo: null,
-			search: null,
-			isLoading: false,
-			drawer: false,
-			dialog: false,
-			message:'',
-			products: [],
-			showInfoDelivery: false,
-			loadingCoupon: false,
-			code: null,
-			focusCouponInput: false,
-			couponChip: true,
-			alert: {
-				show: false,
-				message: '',
-				type: 'error'
-			},
-			optionDialog:false,
-			editedItem: {
-				rowId: null, 
-				size: null,
-				memo: null,
-				qty: 1,
-				subTotal: 0,
-				toppings: []
-			},
-			default: {
-				rowId: null, 
-				size: null,
-				memo: null,
-				qty: 1,
-				subTotal: 0,
-				toppings: []				
-			},
-			sizes: [],
-			processAddCart: false,
-			dayOff:false,
-			focusSearchInput: false
-		}
-	},
-	methods: {
-		checkCoupon: async function() {
-			var vm = this
-			if(vm.code == null) {
-				vm.alert = Object.assign({}, {show: true, message: 'Vui lòng nhập mã giảm giá', type: 'error'})
-			} else {
-
-				if(!vm.loadingCoupon) {
-					vm.loadingCoupon = await !vm.loadingCoupon
-					const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id})
-					setTimeout(function() {						
-						
-						axios.post('/api/Dofuu/CheckCouponCode', data, {withCredentials:true}).then(response => {
-
-							if(response.data.type === 'success') {
-								vm.$store.commit('ADD_COUPON', response.data)
-							}
-							
-							if(response.data.type === 'error') {
-								vm.alert = Object.assign({}, {show: true, message: response.data.message, type: 'error'})	
-							}
-
-						}).finally(() => {
-							vm.loadingCoupon = !vm.loadingCoupon
-						})
-
-					},300)
+			asyncData() {
+				return {
+					duration: 50,
+					offset: -50,
+					easing: 'easeInOutQuint',
+					offsetNavbarRight: 184,
+					headers: [
+					{
+						text: 'Món',
+						align: 'left',
+						sortable: false
+					},
+					{ text: 'Số lượng'},
+					{ text: 'Giá'}
+					],
+					bag: {
+						intance: 20,
+						items: []
+					},
+					time: {
+						dd:0,
+						hh:0,
+						mm:0,
+						ss:0
+					},
+					showTooltip: false,
+					messageTooltip: '',
+					storeInfo: null,
+					search: null,
+					isLoading: false,
+					drawer: false,
+					dialog: false,
+					message:'',
+					products: [],
+					showInfoDelivery: false,
+					loadingCoupon: false,
+					code: null,
+					focusCouponInput: false,
+					couponChip: true,
+					alert: {
+						show: false,
+						message: '',
+						type: 'error'
+					},
+					optionDialog:false,
+					editedItem: {
+						rowId: null, 
+						size: null,
+						memo: null,
+						qty: 1,
+						subTotal: 0,
+						toppings: []
+					},
+					default: {
+						rowId: null, 
+						size: null,
+						memo: null,
+						qty: 1,
+						subTotal: 0,
+						toppings: []				
+					},
+					sizes: [],
+					processAddCart: false,
+					dayOff:false,
+					focusSearchInput: false
 				}
-			}
-			setTimeout(() => {
-				vm.alert = Object.assign({}, {show: false, message: '', type: 'error'})
-			},3000)		
-			
-		},
-		removeCoupon: function() {
-			this.$store.dispatch('removeCoupon')
-		},
-		showDelivery: function() {
-			this.showInfoDelivery = true
-		},
-		closeDelivery: function() {
-			this.showInfoDelivery = false
-		},
+			},
+			methods: {
+				checkCoupon: async function() {
+					var vm = this
+					if(vm.code == null) {
+						vm.alert = Object.assign({}, {show: true, message: 'Vui lòng nhập mã giảm giá', type: 'error'})
+					} else {
+
+						if(!vm.loadingCoupon) {
+							vm.loadingCoupon = await !vm.loadingCoupon
+							const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id})
+							setTimeout(function() {						
+
+								axios.post('/api/Dofuu/CheckCouponCode', data, {withCredentials:true}).then(response => {
+
+									if(response.data.type === 'success') {
+										vm.$store.commit('ADD_COUPON', response.data)
+									}
+
+									if(response.data.type === 'error') {
+										vm.alert = Object.assign({}, {show: true, message: response.data.message, type: 'error'})	
+									}
+
+								}).finally(() => {
+									vm.loadingCoupon = !vm.loadingCoupon
+								})
+
+							},300)
+						}
+					}
+					setTimeout(() => {
+						vm.alert = Object.assign({}, {show: false, message: '', type: 'error'})
+					},3000)		
+
+				},
+				removeCoupon: function() {
+					this.$store.dispatch('removeCoupon')
+				},
+				showDelivery: function() {
+					this.showInfoDelivery = true
+				},
+				closeDelivery: function() {
+					this.showInfoDelivery = false
+				},
 		//CHECK DATE
 		checkDayOff: function() {
 			return new Promise((resolve, reject) => {

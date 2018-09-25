@@ -36,7 +36,7 @@ class StoreController extends Controller
             ->get();
         }])->first();
 
-        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
+        return $this->respondSuccess('Search store', $city->stores->load('coupons', 'activities'), 200, 'many');
     }
     //SEARCH STORE BY PRODUCT 
     public function searchStoreByProduct(Request $request) {
@@ -62,7 +62,7 @@ class StoreController extends Controller
 
         }])->first();
         
-        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
+        return $this->respondSuccess('Search store', $city->stores->load('coupons', 'activities'), 200, 'many');
     }
     //SEARCH STORE BY PLACE 
     public function searchStoreByPlace(Request $request) {
@@ -80,7 +80,7 @@ class StoreController extends Controller
 
         }])->first();
 
-        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
+        return $this->respondSuccess('Search store', $city->stores->load('coupons', 'activities'), 200, 'many');
     }
     //SEARCH STORE ALL
     public function searchStore(Request $request) {
@@ -104,7 +104,7 @@ class StoreController extends Controller
             ->get();
         }])->first();
 
-        return $this->respondSuccess('Search store', $city->stores, 200, 'many');
+        return $this->respondSuccess('Search store', $city->stores->load('coupons', 'activities'), 200, 'many');
     }
     //SEACH STORE QUERY
     public function searchQuery(Request $request) {
@@ -150,7 +150,7 @@ class StoreController extends Controller
             $stores = Store::ofCity($cityId)->show()->byTypeId($typeId)->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
         }
 
-        return $this->respondSuccess('Search store', $stores, 200, 'many');
+        return $this->respondSuccess('Search store', $stores->load('coupons', 'activities'), 200, 'many');
     }
 
     //SHOW STORE
@@ -159,7 +159,6 @@ class StoreController extends Controller
         $citySlug  = $request->citySlug;
         $storeSlug = $request->storeSlug;
         $statusID  = $this->productStatusIDCease;
-        $now       = Carbon::now()->toDateTimeString();
         $city      = City::bySlug($citySlug)->first();
         $array     = [];
 
@@ -170,7 +169,7 @@ class StoreController extends Controller
                 $query->ofCity($city->id);
                 $query->active();
                 $query->show();
-            })->with(['coupons' => function($query) use ($now) {
+            })->with(['coupons' => function($query) {
                 return $query->unexpired();
             },'products' => function($query) use ($statusID) {
                 return $query->where('ec_products.status_id', '!=', $statusID);
@@ -195,158 +194,112 @@ class StoreController extends Controller
 
     //GET ALL STORE WITH DEALS
     public function getAllStoreWithDeal(Request $request) {
-        $type_id     = (int)$request->_TID;
-        $district_id = (int)$request->_DID;
-        $size        = (int)$request->_s; 
+        $type_id     = (int)$request->typeId;
+        $district_id = (int)$request->districtId;
+        $size        = (int)$request->size; 
         $page        = (int)$request->page;
-        $now         = Carbon::now()->toDateTimeString();
-        $flag_c      = $request->cookie('flag_c')!=null ? $request->cookie('flag_c') : $this->currentCityID;
+        $city_id     = $request->cookie('flag_c')!=null ? $request->cookie('flag_c') : $this->currentCityID;
+
         if($type_id == 0 && $district_id == 0) {
 
-            $store = Store::where(function($query) use ($flag_c, $now) {
-                $query->whereHas('district', function($query) use ($flag_c){
-                    $query->where('city_id', $flag_c);
-                });
-                $query->whereHas('coupons', function($query) use ($now) {
-                    $query->where('actived', '=', 1);
-                    $query->where('status_id', '=', 1);
-                    $query->where('started_at', '<=', $now);
-                    $query->where('ended_at', '>=', $now);
-                });
-            })->with(['status', 'coupons' => function($query) use ($now){
+            $stores = Store::where(function($query) use ($city_id) {
+                $query->ofCity($city_id);
+                $query->hasCoupon();
+            })->with(['status', 'coupons' => function($query){
                 return $query->orderBy('created_at', 'desc')->get();
-            }])->where('store_show', '=', 1)->orderBy('priority', 'desc')->paginate($size);
+            }])->show()->orderByPriority('desc')->paginate($size);
 
         } else if($type_id != 0) {
 
-            $store = Store::where(function($query) use ($flag_c, $type_id, $district_id, $now) {
-
-                $query->whereHas('district', function($query) use ($flag_c){
-                    $query->where('city_id', $flag_c);
-                });
-                $query->whereHas('coupons', function($query) use ($now){
-                    $query->where('actived', '=', 1);
-                    $query->where('status_id', '=', 1);
-                    $query->where('started_at', '<=', $now);
-                    $query->where('ended_at', '>=', $now);
-                });
-                $query->where('type_id', $type_id);
+            $stores = Store::where(function($query) use ($city_id, $type_id, $district_id) {
+                $query->ofCity($city_id);
+                $query->hasCoupon();
+                $query->byTypeId($type_id);
             })->with(['status', 'coupons' => function($query) {
                 return $query->orderBy('created_at', 'desc')->get();
-            }])->where('store_show', '=', 1)->orderBy('priority', 'desc')->paginate($size);
+            }])->show()->orderByPriority('desc')->paginate($size);
 
         } else if($district_id != 0) {
 
-            $store = Store::where(function($query) use ($flag_c, $type_id, $district_id, $now) {
-                $query->whereHas('district', function($query) use ($flag_c){
-                    $query->where('city_id', $flag_c);
-                });
-                $query->whereHas('coupons', function($query) use ($now) {
-                    $query->where('actived', '=', 1);
-                    $query->where('status_id', '=', 1);
-                    $query->where('started_at', '<=', $now);
-                    $query->where('ended_at', '>=', $now);
-                });
-                $query->where('district_id', $district_id);
+            $stores = Store::where(function($query) use ($city_id, $type_id, $district_id) {
+                $query->ofCity($city_id);
+                $query->hasCoupon();
+                $query->byDistrictId($district_id);
             })->with(['status', 'coupons' => function($query) {
                 return $query->orderBy('created_at', 'desc')->get();
-            }])->where('store_show', '=', 1)->orderBy('priority', 'desc')->paginate($size);
+            }])->show()->orderByPriority('desc')->paginate($size);
 
         }
 
-        $pagination = [
-            'total'        => $store->total(),
-            'per_page'     => $store->perPage(),
-            'from'         => $store->firstItem(),
-            'current_page' => $store->currentPage(),
-            'to'           => $store->lastItem(),
-            'last_page'    => $store->lastPage()
-        ];
+        $pagination = $this->pagination($stores);
 
-        $res = [
-            'type'       => 'success',
-            'message'    => 'Get stores successfully!!!',
-            'data'       => StoreResource::collection($store->load('coupons', 'activities')),
-            'pagination' => $pagination
-        ];
-
-        return response($res, 200)->withCookie(cookie('flag_c', $flag_c, 43200, '/', '', '', false));
+        return $this->respondSuccess('Get stores with deal', $stores->load('coupons', 'activities'), 200, 'many', $pagination)->withCookie(cookie('flag_c', $city_id, 43200, '/', '', '', false));
     }
 
     //GET ALL STORES
     
     public function getAllStore(Request $request) {
-        $type_id     = (int)$request->_TID;
-        $district_id = (int)$request->_DID;
-        $size        = (int)$request->_s; 
+        $type_id     = (int)$request->typeId;
+        $district_id = (int)$request->districtId;
+        $size        = (int)$request->size; 
         $page        = (int)$request->page;
-        $flag_c      = $request->cookie('flag_c')!=null ? $request->cookie('flag_c') : $this->currentCityID;
+        $city_id     = $request->cookie('flag_c')!=null ? $request->cookie('flag_c') : $this->currentCityID;
         
         if($type_id == 0 && $district_id == 0) {
 
-            $store = Store::where(function($query) use ($flag_c) {
-                $query->whereHas('district', function($query) use ($flag_c){
-                    $query->where('city_id', $flag_c);
-                });
-            })->with(['status'])->where('store_show', '=', 1)->orderBy('priority', 'desc')->paginate($size);
+            $stores = Store::ofCity($city_id)->with(['status'])->active()->show()->orderByPriority('desc')->paginate($size);
 
         } else if($type_id != 0) {
 
-            $store = Store::where(function($query) use ($flag_c, $type_id, $district_id) {
-
-                $query->whereHas('district', function($query) use ($flag_c){
-                    $query->where('city_id', $flag_c);
-                });
-                $query->where('type_id', $type_id);
-            })->with(['status'])->where('store_show', '=', 1)->orderBy('priority', 'desc')->paginate($size);
+            $stores = Store::where(function($query) use ($city_id, $type_id, $district_id) {
+                $query->ofCity($city_id);
+                $query->byTypeId($type_id);
+            })->with(['status'])->show()->orderByPriority('desc')->paginate($size);
 
         } else if($district_id != 0) {
-
-            $store = Store::where(function($query) use ($flag_c, $type_id, $district_id) {
-
-                $query->whereHas('district', function($query) use ($flag_c){
-                    $query->where('city_id', $flag_c);
-                });
-                $query->where('district_id', $district_id);
-            })->with(['status'])->where('store_show', '=', 1)->orderBy('priority', 'desc')->paginate($size);
+            $stores = Store::where(function($query) use ($city_id, $type_id, $district_id) {
+                $query->ofCity($city_id);
+                $query->byDistrictId($district_id);
+            })->with(['status'])->show()->orderByPriority('desc')->paginate($size);
 
         }
 
-        $pagination = [
-            'total'        => $store->total(),
-            'per_page'     => $store->perPage(),
-            'from'         => $store->firstItem(),
-            'current_page' => $store->currentPage(),
-            'to'           => $store->lastItem(),
-            'last_page'    => $store->lastPage()
-        ];
+        $pagination = $this->pagination($stores);
 
-        $res = [
-            'type'       => 'success',
-            'message'    => 'Get stores successfully!!!',
-            'data'       => StoreResource::collection($store->load('coupons', 'activities')),
-            'pagination' => $pagination
-        ];
-
-        return response($res, 200)->withCookie(cookie('flag_c', $flag_c, 43200, '/', '', '', false));
+        return $this->respondSuccess('Get stores', $stores->load('coupons', 'activities'), 200, 'many', $pagination)->withCookie(cookie('flag_c', $city_id, 43200, '/', '', '', false));
     } 
 
-    protected function respondSuccess($message, $data, $status = 200, $type)
-    {   
+    protected function respondSuccess($message, $data, $status = 200, $type, $pagination = []) {   
         $res = [
             'type'    => 'success',
             'message' => $message. ' successfully.',
         ];
 
         switch ($type) {
+
             case 'one':
             $res['data'] = new StoreResource($data->load('coupons', 'activities'));
             break;
+
             case 'many':
-            $res['data'] = StoreResource::collection($data->load('coupons', 'activities'));
+            $res['data'] = StoreResource::collection($data);
+            if(count($pagination) > 0) {
+                $res['pagination'] = $pagination;
+            }
             break;
         }
 
         return response($res, $status);
+    }
+
+    public function pagination($data) {
+        return $pagination = [
+            'total'        => $data->total(),
+            'per_page'     => $data->perPage(),
+            'from'         => $data->firstItem(),
+            'current_page' => $data->currentPage(),
+            'to'           => $data->lastItem(),
+            'last_page'    => $data->lastPage()
+        ];
     }
 }

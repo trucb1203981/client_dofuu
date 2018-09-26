@@ -70,4 +70,24 @@ class UserController extends Controller
 		];
 		return response($res, 200);
 	}
+
+	public function updatePhone(Request $request) {
+		$user = auth('api')->user();
+		$user->update([
+			'phone' => $request->phone
+		]);
+
+		return $this->respondSuccess('Cập nhật số điện thoại', $user);
+	}
+
+
+	protected function respondSuccess($message, $data, $status = 200) {   
+		$res = [
+			'type'    => 'success',
+			'message' => $message. ' thành công.',
+			'data'    => new UserResource($data)
+		];
+
+		return response($res, $status);
+	}
 }

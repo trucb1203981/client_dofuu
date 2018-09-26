@@ -3,7 +3,7 @@
 		<v-layout align-center justify-center>
 			<v-flex xs12 sm8 md4>
 				<v-card class="card-radius">
-					<v-progress-linear indeterminate v-if="loading"></v-progress-linear>
+					
 					<v-toolbar color="transparent" dense class="elevation-0" > 
 						<v-layout row wrap justify-center align-center>							
 							<v-toolbar-title>
@@ -11,6 +11,7 @@
 							</v-toolbar-title>
 						</v-layout>
 					</v-toolbar>
+					<v-progress-linear indeterminate background-color="grey lighten-3"	color="white" class="py-0 my-0" v-if="process"></v-progress-linear>
 					
 					<!-- LOGIN FACEBOOK -->
 					<v-card-actions>

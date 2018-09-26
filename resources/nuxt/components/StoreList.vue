@@ -95,7 +95,10 @@
 		computed: {
 			...mapState({
 				processFavorite: state => state.storeStore.processFavorite
-			})
+			}),
+			isAuth() {
+				return this.$store.getters.isAuth
+			},
 		},
 		methods: {
 			//CLICK FAVORITE
@@ -104,11 +107,15 @@
 				const storeId = store.id
 				var data      = {}
 				const params  = {name: 'favoriteEndpoint'}
-
-				if(!vm.processFavorite) {
-					store.checkedFavorite = !store.checkedFavorite
-					vm.$store.dispatch('toggleFavoriteStore', storeId)			
+				if(vm.isAuth) {
+					if(!vm.processFavorite) {
+						store.checkedFavorite = !store.checkedFavorite
+						vm.$store.dispatch('toggleFavoriteStore', storeId)			
+					}
+				} else {
+					this.$router.push({name: 'login', query: {redirect: this.$route.path}})
 				}
+				
 			},
 		}
 	}

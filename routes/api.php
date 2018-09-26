@@ -119,6 +119,12 @@ Route::group(['namespace' => 'Site'], function() {
 		// REMOVE RATING
 		Route::post('/{storeId}/RemoveRating', 'RatingController@removeRating');	
 	});
+
+	Route::group(['prefix' => 'Auth'], function() {
+		// UPDATE PHONE NUMBER
+		Route::post('/PhoneNumber/Update', 'UserController@updatePhone');
+
+	});
 	
 });
 

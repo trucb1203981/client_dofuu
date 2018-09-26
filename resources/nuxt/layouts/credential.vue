@@ -15,15 +15,16 @@
 		<v-content>
 			<nuxt/>
 		</v-content>
-		<v-footer height="auto" absolute fixed color="white" app>
-			<span>&copy; 2018 Dofuu Company</span>
-		</v-footer>
+		<vue-footer/>
 	</v-app>
 </template>
 
 <script>
+	import Footer from '@/components/Footer'
 	export default {
-
+		components: {
+			'vue-footer': Footer
+		},
 	}
 </script>
 

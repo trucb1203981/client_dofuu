@@ -3,7 +3,6 @@
 		<v-layout align-center justify-center>
 			<v-flex xs12 sm8 md5>
 				<v-card class="card-radius">
-					<v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 					<v-toolbar class="elevation-0" dense color="transparent">
 						<v-layout row wrap justify-center align-center>
 							<v-toolbar-title>
@@ -11,6 +10,7 @@
 							</v-toolbar-title>		
 						</v-layout>						
 					</v-toolbar>
+					<v-progress-linear indeterminate background-color="grey lighten-3"	color="white" class="py-0 my-0" v-if="loading"></v-progress-linear>
 					<v-card-text class="white">
 						
 						<v-alert :color="alert.type" dismissible :value="alert.show" outline v-show="alert.index === 0 && $route.name == alert.name" :icon="alert.type == 'error' ? 'warning' : 'priority_high' ">
@@ -86,7 +86,8 @@
 								</v-flex>
 								<v-flex xs12 md12>
 									<v-text-field color="red accent-3"  prepend-icon="phone" v-model.trim="editedItem.phone" name="confirm" label="Số điện thoại"
-									v-validate="'required|numeric|min:10|max:11'"
+									v-validate="'required|numeric|min:10|max:10'"
+									mask="(####) ### - ###"
 									data-vv-name="phone"
 									:error-messages="errors.collect('phone')"
 									data-vv-delay="300"

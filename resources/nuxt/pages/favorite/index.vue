@@ -1,7 +1,7 @@
 <template>
-	<v-container grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp" :class="{'px-0': $vuetify.breakpoint.xsOnly}">
+	<v-container grid-list-xs="$vuetify.breakpoint.xsOnly" grid-list-md="$vuetify.breakpoint.smAndUp" :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 		<v-dialog v-model="loading" hide-overlay persistent width="300">
-			<v-card	color="red darken-3"	dark>
+			<v-card	color="red darken-3" dark>
 				<v-card-text>
 					Xin Quý khách vui lòng chờ trong giây lát...
 					<v-progress-linear

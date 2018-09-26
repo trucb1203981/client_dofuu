@@ -41,9 +41,9 @@
 								<!-- EDIT COMMENT START-->
 								<v-layout row wrap v-if="comment.activeEdit && flagEdit == comment.id">
 									<v-flex xs10 md11>
-										<v-textarea id="editComment" autofocus full-width auto-grow class="btn-custom" color="black" placeholder="Viết cảm nghĩ của bạn..." rows="1" solo background-color="grey lighten-3" v-model="editedItem.body" hint="Nhấn esc để hủy bỏ" :persistent-hint="$vuetify.breakpoint.mdAndUp"  @keyup.esc.exact="comment.activeEdit = false">
+										<v-textarea id="editComment" autofocus full-width auto-grow class="btn-custom" color="black" placeholder="Viết cảm nghĩ của bạn..." rows="1" solo background-color="grey lighten-3" v-model="editedItem.body" hint="Nhấn esc để hủy bỏ" :persistent-hint="$vuetify.breakpoint.smAndUp"  @keyup.esc.exact="comment.activeEdit = false">
 										</v-textarea>
-										<v-layout row wrap>
+										<v-layout row wrap class="pt-2">
 											<v-spacer></v-spacer>
 											<v-btn outline small  style="top: -12px" @click.prevent="comment.activeEdit = false" class="my-0 py-0">Hủy</v-btn>
 											<v-btn color="blue" :loading="comment.process" small style="top: -12px" class="my-0 py-0 white--text" @click.prevent="updateComment(comment)">Lưu</v-btn>
@@ -136,15 +136,15 @@
 													</v-card>
 
 													<v-flex d-flex xs10 sm11 md11>
-														<!-- EDIT COMMENT -->
+														<!-- EDIT REPLY -->
 														<v-layout row wrap v-if="reply.activeEdit && flagEdit == reply.id">
 															<v-flex xs10 md11>
 																<v-textarea id="editComment" autofocus full-width auto-grow class="btn-custom" color="black" placeholder="Viết cảm nghĩ của bạn..." rows="1" solo background-color="grey lighten-3" v-model="editedItem.body" hint="Nhấn esc để hủy bỏ" :persistent-hint="$vuetify.breakpoint.mdAndUp"  @keyup.esc.exact="reply.activeEdit = false">
 																</v-textarea>
-																<v-layout row wrap>
-																	<v-spacer></v-spacer>
-																	<v-btn outline small  style="top: -12px" @click.prevent="reply.activeEdit = false" class="my-0 py-0">Hủy</v-btn>
-																	<v-btn color="blue" small style="top: -12px" class="my-0 py-0 white--text" :loading="reply.process" @click.prevent="updateComment(reply)">Cập nhật</v-btn>
+																<v-layout row wrap class="pt-2">
+																	<v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
+																	<v-btn outline small  style="top: -12px" @click.prevent="reply.activeEdit = false" class="ma-1 pa-1">Hủy</v-btn>
+																	<v-btn color="blue" small style="top: -12px" class="ma-1 pa-1 white--text" :loading="reply.process" @click.prevent="updateComment(reply)">Cập nhật</v-btn>
 																</v-layout>	
 															</v-flex>
 														</v-layout>
@@ -154,7 +154,7 @@
 															<v-flex xs12>
 																<v-layout row wrap>
 
-																	<v-flex xs10 md11>
+																	<v-flex xs10 sm11 md11>
 																		<v-card color="grey lighten-4" class="card-radius" flat style="min-height: 32px">
 																			<v-card-text class="pa-1 px-2">
 																				<a class="blue--text font-weight-bold"> {{reply.name}} </a> 

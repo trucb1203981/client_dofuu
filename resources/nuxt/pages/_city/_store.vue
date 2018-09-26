@@ -226,10 +226,10 @@
 			</v-toolbar>
 			<v-divider></v-divider>
 			<v-card-actions v-for="(rating, i) in ratings" :key="i">
-				<v-flex xs4 class="caption text-xs-right font-weight-bold">
+				<v-flex xs3 sm4 class="caption text-xs-right font-weight-bold">
 					{{rating.name}}
 				</v-flex>
-				<v-flex xs8>
+				<v-flex xs9 sm8>
 					<v-rating
 					v-model="rating.value"
 					hover

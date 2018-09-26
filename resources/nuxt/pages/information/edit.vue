@@ -120,163 +120,167 @@
 </template>
 
 <script>
-import axios from 'axios'
-import {getLocation, geocoder} from '@/utils/index'
-import index from '@/mixins/index'
-import {mapState} from 'vuex'
-import vietnam from 'vee-validate/dist/locale/vi';
-export default {
-	middleware: 'notAuthenticated',
-	mixins: [index],
-	data() {
-		return {
-			loading: false,
-			editedItem: {
-				name: '',
-				email: '',
-				gender: false,
-				birthday: '',
-				phone: '',
-				address: null,
-				lat: 0,
-				lng: 0
-			},
-			confirm: '',
-			menu:false,
-			loading: false,
-			process: false,
-			locale: 'vi',
-			disabled: true
-		}
-	},
-	methods: {
-		save: function() {
-			var vm   = this
-			var data = Object.assign({}, vm.editedItem)
-			vm.$validator.validateAll().then(async function(result) {
-				if(result) {
-					vm.process = true
-					axios.post('/api/Dofuu/GetUser/EditInformation', data).then(response => {
-						if(response.status === 200) {
-							vm.editedItem = Object.assign({}, response.data.data)
-							vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"success", close:true })
+	import axios from 'axios'
+	import {getLocation, geocoder} from '@/utils/index'
+	import index from '@/mixins/index'
+	import {mapState} from 'vuex'
+	import vietnam from 'vee-validate/dist/locale/vi';
+	export default {
+		middleware: 'notAuthenticated',
+		mixins: [index],
+		data() {
+			return {
+				loading: false,
+				editedItem: {
+					name: '',
+					email: '',
+					gender: false,
+					birthday: '',
+					phone: '',
+					address: null,
+					lat: 0,
+					lng: 0
+				},
+				confirm: '',
+				menu:false,
+				loading: false,
+				process: false,
+				locale: 'vi',
+				disabled: true
+			}
+		},
+		methods: {
+			save: function() {
+				var vm   = this
+				var data = Object.assign({}, vm.editedItem)
+				vm.$validator.validateAll().then(async function(result) {
+					if(result) {
+						if(!vm.process) {
+							vm.process = true
+							setTimeout(() => {
+								axios.post('/api/Dofuu/GetUser/EditInformation', data).then(response => {
+									if(response.status === 200) {
+										vm.editedItem = Object.assign({}, response.data.data)
+										vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"success", close:true })
+									}
+								}).finally(() => {
+									vm.process = false
+									vm.disabled = true
+								})
+							}, 100)
 						}
-					}).finally(() => {
-						vm.process = false
-						vm.disabled = true
-					})
-				}
+					}
+				})
+			},
+			getUser() {
+				this.loading = true
+				axios.get('/api/Dofuu/GetUser', {withCredentials:true}).then(response=> {
+					if(response.status === 200) {
+						this.editedItem = Object.assign({}, response.data.data)
+					}
+				}).finally(() => {
+					this.loading  = false
+				})
+			},
+			autoComplete() {
+				var vm           = this
+				var marker       = null
+				var input        = document.getElementById('auto-complete')
+				var autocomplete = new google.maps.places.Autocomplete(input)
+				autocomplete.addListener('place_changed', function() {
+					var place = autocomplete.getPlace()
+					if(!place.geometry) {
+						geocoder('address', input.value).then(response => {
+							vm.editedItem.address = response[0].formatted_address.slice(0, -10)				
+							vm.editedItem.lat     = response[0].geometry.location.lat()
+							vm.editedItem.lng     = response[0].geometry.location.lng()
+						})
+
+						vm.googleMap(vm.editedItem)
+
+						return
+					}
+					vm.editedItem.address = place.formatted_address	
+					vm.editedItem.lat     = place.geometry.location.lat()
+					vm.editedItem.lng     = place.geometry.location.lng()
+					vm.googleMap(vm.editedItem)
+
+				})
+			},
+			googleMap(location) {
+
+				var latlng 			  = new google.maps.LatLng(location.lat, location.lng);
+
+				var map               = new google.maps.Map(document.getElementById('map'), {
+					zoom: 17,
+					center: latlng
+				})
+
+				var marker 			  = new google.maps.Marker({
+					position: latlng,
+					map: map
+				});
+			},
+			changeDate() {
+				this.$refs.menu.save(this.editedItem.birthday)
+				this.disabled = false
+			},
+			changeAttribute() {
+				this.disabled = false
+			}
+		},
+		computed: {
+			...mapState({
+				currentUser: state => state.authStore.currentUser,
+				alert: state       => state.alertStore.alert
 			})
 		},
-		getUser() {
-			this.loading = true
-			axios.get('/api/Dofuu/GetUser', {withCredentials:true}).then(response=> {
-				if(response.status === 200) {
-					this.editedItem = Object.assign({}, response.data.data)
+		watch: {
+			menu(val) {
+				val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
+			},
+			'editedItem.name': function(val, oldVal) {
+				var vm = this
+				if(oldVal != '') {
+					this.disabled = false
+				} else {
+					this.disabled = true
 				}
-			}).finally(() => {
-				this.loading  = false
-			})
-		},
-		autoComplete() {
-			var vm           = this
-			var marker       = null
-			var input        = document.getElementById('auto-complete')
-			var autocomplete = new google.maps.places.Autocomplete(input)
-			autocomplete.addListener('place_changed', function() {
-				var place = autocomplete.getPlace()
-				if(!place.geometry) {
-					geocoder('address', input.value).then(response => {
-						vm.editedItem.address = response[0].formatted_address.slice(0, -10)				
+			},
+			'editedItem.address': function(val, oldVal) {
+				var vm = this
+				if(val.length > 15) {
+					geocoder('address', val).then(response => {			
 						vm.editedItem.lat     = response[0].geometry.location.lat()
 						vm.editedItem.lng     = response[0].geometry.location.lng()
 					})
+					setTimeout(() => {					
+						vm.googleMap(vm.editedItem)
+					}, 1000)
 
-					vm.googleMap(vm.editedItem)
-
-					return
+				} 
+				if(oldVal != null) {
+					this.disabled = false
+				} else {
+					this.disabled = true
 				}
-				vm.editedItem.address = place.formatted_address	
-				vm.editedItem.lat     = place.geometry.location.lat()
-				vm.editedItem.lng     = place.geometry.location.lng()
-				vm.googleMap(vm.editedItem)
-
+			}
+		},
+		created() {
+			this.$validator.localize(this.locale, {
+				messages:vietnam.messages,
+				attributes: {
+					name: 'Họ tên',
+					birthday: 'Ngày sinh',
+					gender: 'Giới tính',
+					address: 'Địa chỉ'
+				}
 			})
+			this.$validator.localize(this.locale)
+			this.getUser()
 		},
-		googleMap(location) {
 
-			var latlng 			  = new google.maps.LatLng(location.lat, location.lng);
-
-			var map               = new google.maps.Map(document.getElementById('map'), {
-				zoom: 17,
-				center: latlng
-			})
-
-			var marker 			  = new google.maps.Marker({
-				position: latlng,
-				map: map
-			});
-		},
-		changeDate() {
-			this.$refs.menu.save(this.editedItem.birthday)
-			this.disabled = false
-		},
-		changeAttribute() {
-			this.disabled = false
-		}
-	},
-	computed: {
-		...mapState({
-			currentUser: state => state.authStore.currentUser,
-			alert: state       => state.alertStore.alert
-		})
-	},
-	watch: {
-		menu(val) {
-			val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
-		},
-		'editedItem.name': function(val, oldVal) {
-			var vm = this
-			if(oldVal != '') {
-				this.disabled = false
-			} else {
-				this.disabled = true
-			}
-		},
-		'editedItem.address': function(val, oldVal) {
-			var vm = this
-			if(val.length > 15) {
-				geocoder('address', val).then(response => {			
-					vm.editedItem.lat     = response[0].geometry.location.lat()
-					vm.editedItem.lng     = response[0].geometry.location.lng()
-				})
-				setTimeout(() => {					
-					vm.googleMap(vm.editedItem)
-				}, 1000)
-
-			} 
-			if(oldVal != null) {
-				this.disabled = false
-			} else {
-				this.disabled = true
-			}
-		}
-	},
-	created() {
-		this.$validator.localize(this.locale, {
-			messages:vietnam.messages,
-			attributes: {
-				name: 'Họ tên',
-				birthday: 'Ngày sinh',
-				gender: 'Giới tính',
-				address: 'Địa chỉ'
-			}
-		})
-		this.$validator.localize(this.locale)
-		this.getUser()
-	},
-
-}
+	}
 </script>
 
 <style>

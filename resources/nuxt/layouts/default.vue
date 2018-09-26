@@ -2,7 +2,7 @@
 	<v-app id="app" standalone class="grey lighten-2">
 		<vue-toolbar></vue-toolbar>
 		<vue-left-navigation class="hidden-md-and-up"></vue-left-navigation>
-		<v-content>
+		<v-content style="min-height: 400px">
 			<nuxt/>
 		</v-content>
 		<vue-footer />

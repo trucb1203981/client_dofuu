@@ -71,15 +71,19 @@ class CityController extends Controller
 
             $districts = District::whereHas('stores', function($query){
                 $query->hasCoupon();
+                $query->show();
             })->withCount(['stores' => function($query){
                 $query->hasCoupon();
                 $query->show();
             }])->byCityId($city_id)->get();
 
-            $types = Type::whereHas('stores', function($query) use ($city_id, $now){
-                $query->ofCity($city_id)->hasCoupon();
-            })->withCount(['stores' => function($query) use ($city_id, $now) {
-                $query->ofCity($city_id)->hasCoupon();
+            $types = Type::whereHas('stores', function($query) use ($city_id){
+                $query->ofCity($city_id);
+                $query->hasCoupon();
+                $query->show();
+            })->withCount(['stores' => function($query) use ($city_id) {
+                $query->ofCity($city_id);
+                $query->hasCoupon();
                 $query->show();
             }])->get();
 

@@ -52,7 +52,7 @@
 			</v-toolbar>
 
 			<v-layout row wrap v-if="!!store">
-				<v-flex xs12 md3 v-if="$route.name === 'city-store' || $vuetify.breakpoint.mdAndUp">
+				<v-flex xs12 sm12 md4 lg3 v-if="$route.name === 'city-store' || $vuetify.breakpoint.mdAndUp">
 					<v-container :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 						<v-card color="white" tile class="card-radius" >
 							<v-system-bar status color="red darken-3" dark>
@@ -213,7 +213,7 @@
 					</v-card>
 				</v-container>	
 			</v-flex>
-			<v-flex xs12 md9 >
+			<v-flex xs12 sm12 md8 lg9 >
 				<nuxt-child :key="$route.params.store" :store.sync="store"/>
 			</v-flex>		
 		</v-layout>			

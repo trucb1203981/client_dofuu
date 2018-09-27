@@ -1,7 +1,7 @@
 <template>
-	<v-container fluid :grid-list-lg="$vuetify.breakpoint.mdAndUp" :grid-list-xs="$vuetify.breakpoint.smAndDown">
+	<v-container :grid-list-lg="$vuetify.breakpoint.mdAndUp" :grid-list-xs="$vuetify.breakpoint.smAndDown">
 		<v-layout child-flex v-if="!loading" justify-end>
-			<v-flex xs12 md8>
+			<v-flex xs12 md7 lg8>
 				<v-autocomplete prepend-inner-icon="search" :items="products" :loading="isLoading" :search-input.sync="search" cache-items class="mx-3 btn-custom" solo label="Tìm món ăn, thức uống" height="10" item-text="name" clearable :persistent-hint="search != null" hint="Vui lòng xóa từ khóa tìm kiếm để hiện đầy đủ menu"  @focus="focusSearchInput = true" @blur="focusSearchInput = false" :color="focusSearchInput ? 'blue' : 'black'" :background-color="focusSearchInput ? 'white' : 'grey lighten-3'"  :flat="!focusSearchInput" return-object @input="openCartDialog" :menu-props="{maxHeight: '200px'}">
 					<template slot="no-data">
 						<v-list-tile>
@@ -20,127 +20,19 @@
 					</template>
 				</v-autocomplete>
 
-				<!-- CARD DEAL START -->
-				<v-card color="white" v-if="store.coupon" flat>
-					<v-tooltip v-model="showTooltip" top>
-						<div slot="activator"></div>
-						<span>{{messageTooltip}}</span>
-					</v-tooltip>		
-					<v-system-bar status color="transparent">
-						<v-spacer></v-spacer>
-						<div class="caption">Khuyến mãi kết thúc sau <v-icon>alarm</v-icon> 
-							<span class="body-2"><strong>{{time.dd}}</strong> Ngày <strong>{{time.hh}} : {{time.mm}} : {{time.ss}} </strong>
-							{{start(store.coupon.endedAt)}}</span>
-						</div>
-					</v-system-bar>				
-					<v-alert outline color="warning" icon="card_giftcard" :value="true" class="py-0">
-						<v-card color="transparent" flat>		
-
-							<v-card-title class="pb-0 pl-1">
-								<div>
-									<h4>{{store.coupon.title}}</h4>
-									<div class="body-1">Nhập mã: <span class="red--text"><strong><u>{{store.coupon.code}}</u></strong></span> để được khuyến mãi {{store.coupon.discount}}%</div>
-									<input type="hidden" id="coupon-code" :value="store.coupon.code">
-								</div>
-							</v-card-title>							
-							<v-card-actions  class="pa-0 pb-2">
-
-								<v-spacer></v-spacer>
-								<v-btn small flat @click="copyCode()" class="body-1" outline color="green darken-3">
-									<v-icon size="20">content_copy</v-icon>
-									<h5>Sao chép mã</h5>
-								</v-btn> 								
-							</v-card-actions>							
-						</v-card>						
-					</v-alert>
-				</v-card><!-- CARD DEAL END -->
-
+				<!-- COUPON START -->
+				<vue-coupon :coupon="store.coupon"></vue-coupon>
+				<!-- COUPON END -->
+				<!-- PRODUCT LIST START -->
 				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index" class="pb-0">
-
 					<v-subheader :id="'item_'+data.id" v-show="data.products.length>0" class="text-uppercase">{{data.name}}</v-subheader>
-					<!-- MOBILE PRODUCT LIST-->
-					<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in data.products" :key="i">
-						<v-card hover ripple class="elevation-1 mb-2 card-radius" raised v-on:click.native="openCartDialog(item)">
-							<v-layout row wrap class="pa-2"  align-center justify-center>
-								<v-flex xs3 class="text-xs-center">
-									<v-layout  align-center justify-center>
-										<v-flex xs9>
-											<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
-												<v-avatar :size="imageSize" color="grey lighten-3">
-													<img :src="image(item.image)" alt="item.name">
-												</v-avatar>
-											</v-card>
-										</v-flex>
-									</v-layout>									
-								</v-flex>
-
-								<v-flex xs9 class="px-0">
-									<v-card-text class="py-0">
-										<v-system-bar status color="transparent" class="px-0">
-											<h4 class="text-truncate">{{item.name}}</h4>
-											<v-spacer></v-spacer>
-											<v-btn icon small class="ma-0"><v-icon color="success" size="20">add_shopping_cart</v-icon></v-btn>
-										</v-system-bar>	
-
-										<v-layout column>
-											<v-flex v-for="(size, i) in item.sizes" xs4 class="body justify-center py-0" :key="i" v-if="size.price >0">
-												<div class="caption"><span>{{size.name}}: <strong>{{size.price | formatPrice}}</strong> </span></div>
-											</v-flex>	
-										</v-layout>
-									</v-card-text>
-								</v-flex>
-								<v-flex xs12  v-if="item.description != null">
-									<span class="text-xs-center caption">Mô tả: {{ item.description }}</span>
-								</v-flex>
-							</v-layout>
-						</v-card>
-					</v-flex>
-					<!-- DESKTOP PRODUCT LIST-->
-					<v-layout row wrap>
-						<v-flex md6  v-for="(item, i) in data.products" :key="i" v-if="$vuetify.breakpoint.mdAndUp">
-							<v-card hover ripple class="mb-2 card-radius" v-on:click.native="openCartDialog(item)">	
-
-								<v-system-bar status color="red darken-3" dark height="30">
-									<h5 class="white--text text-uppercase">{{item.name}}</h5>
-								</v-system-bar>
-
-								<v-layout row wrap class="px-2" align-center justify-center>
-
-									<v-flex md4>
-										<v-layout align-center justify-center>
-											<v-flex xs9>
-												<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
-													<v-avatar :size="imageSize"  color="grey lighten-3">
-														<img :src="image(item.image)" alt="item.name">
-													</v-avatar>		
-												</v-card>	
-											</v-flex>	
-										</v-layout>					
-									</v-flex>
-
-									<v-flex md8 class="px-0">				
-										<v-layout row wrap class="pr-2">
-											<v-flex v-for="(size, i) in item.sizes" xs4 class="pa-0 text-xs-center" :key="i" v-if="size.price >0">
-												<div class="caption">{{size.name}}:</div>
-												<div><strong>{{size.price | formatPrice}}</strong></div>
-											</v-flex>
-											<div v-if="item.description != null" class="text-truncate">{{ item.description }}</div>	
-										</v-layout>											
-									</v-flex>
-
-									<v-flex xs12 md12>
-										
-									</v-flex>
-								</v-layout>
-							</v-card>
-						</v-flex>
-					</v-layout>										
+					<vue-product :products="data.products" @openCart="openCartDialog" />
 				</v-content>
-
+				<!-- PRODUCT LIST END -->
 			</v-flex>
 
 			<!-- RIGHT NAVBAR DESKTOP -->
-			<v-flex offset-md-8 xs12 md4  ref="target_navbar_right" v-if="$vuetify.breakpoint.mdAndUp" class="hidden-sm-and-down row px-0 text-xs-right">
+			<v-flex xs12 md5 lg4  ref="target_navbar_right" v-if="$vuetify.breakpoint.mdAndUp" class="hidden-sm-and-down row px-0 text-xs-right">
 				<v-card :class="{'card--sticky' : offsetTop>offsetNavbarRight-50 && $vuetify.breakpoint.mdAndUp}" style="z-index:4" :width="$vuetify.breakpoint.mdOnly ? '280' : '310'" class="card-radius elevation-1">
 					<v-tabs icons-and-text centered :value="`item-${tabIndex}`">
 
@@ -216,7 +108,7 @@
 							<v-layout row justify-center align-center>
 
 								<v-flex v-if="coupon == null">
-									<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase" @focus="focusCouponInput = true" @blur="focusCouponInput = false" :color="focusCouponInput ? 'blue' : 'black'" :background-color="focusCouponInput ? 'white' : 'grey lighten-3'"  :flat="!focusCouponInput">
+									<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase" @focus="focusCouponInput = true" @blur="focusCouponInput = false" :color="focusCouponInput ? 'blue' : 'black'" :background-color="focusCouponInput ? 'white' : 'grey lighten-3'"  :flat="!focusCouponInput"  @keyup.enter.exact="checkCoupon">
 										<v-btn slot="append" class="ma-0" style="right: -10px" icon small :color="focusCouponInput ? 'blue' : 'grey lighten-3'" :outline="focusCouponInput" @click.prevent="checkCoupon" :loading="loadingCoupon">
 											<v-icon :color="focusCouponInput ? 'blue' : 'grey'">send</v-icon>
 										</v-btn>	
@@ -256,34 +148,8 @@
 
 									<v-divider></v-divider>
 									<v-list-tile>
-										<v-list-tile-content>											
-											<v-menu	:close-on-content-click="false"	v-model="showInfoDelivery" v-if="currentCity != null" top left offset-y>
-												<span slot="activator">Phí vận chuyển: <v-icon size="20" color="primary" v-on:mouseover="showDelivery" v-on:mouseleave="closeDelivery">help</v-icon></span>
-												<v-card v-show="$vuetify.breakpoint.mdAndUp">
-													<v-toolbar dense flat class="elevation-0">
-														<v-avatar size="24px" tile>
-															<img src="~/static/dofuu24x24.png">
-														</v-avatar>
-														<v-toolbar-title>
-															Thông báo
-														</v-toolbar-title>
-													</v-toolbar>
-													<v-card-text>
-														<v-list> 
-															<v-list-tile>
-																<v-list-tile-content><span>Phí vận chuyển tối thiểu của đơn đặt hàng: <strong class="red--text">{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
-															</v-list-tile>
-															<v-list-tile>
-																<v-list-tile-content><span>Phí vận chuyển sẽ tính theo khoảng cách: <strong class="red--text">{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
-															</v-list-tile>
-															<v-list-tile>
-																<v-list-tile-content><strong>Phí vận chuyển có thể thay đổi tùy theo thời điểm</strong></v-list-tile-content>
-																<v-list-tile-content class="align-end"></v-list-tile-content>
-															</v-list-tile>
-														</v-list>
-													</v-card-text>
-												</v-card>
-											</v-menu>
+										<v-list-tile-content>								
+											<span slot="activator">Phí vận chuyển: <v-icon size="20" color="primary" @click="showInfoDelivery = true">help</v-icon></span>
 										</v-list-tile-content>
 										<v-list-tile-content class="align-end" v-if="currentCity != null">
 											<h3>{{currentCity.deliveries[1].price | formatPrice}}/km</h3>
@@ -305,7 +171,7 @@
 		</v-layout>
 
 		<!-- RIGHT NAVBAR MOBILE START -->
-		<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" right class="hidden-lg-only hidden-md-only">
+		<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" v-model="drawer" right class="hidden-lg-only hidden-md-only" >
 			<v-tabs icons-and-text grow :value="`item-${tabIndex}`" centered>
 
 				<v-tabs-slider color="yellow"></v-tabs-slider>
@@ -426,43 +292,14 @@
 
 							<v-divider></v-divider>
 							<v-list-tile>
-								<v-list-tile-content>											
-									<v-menu	:close-on-content-click="false"	v-model="showInfoDelivery" v-if="currentCity != null" top left offset-y>
-										<span slot="activator">Phí vận chuyển: <v-icon size="20" color="primary" @click="showInfoDelivery = true">help</v-icon></span>
-									</v-menu>
+								<v-list-tile-content>								
+									<span>Phí vận chuyển: <v-icon size="20" color="primary" @click="showInfoDelivery = true">help</v-icon></span>
 								</v-list-tile-content>
 								<v-list-tile-content class="align-end" v-if="currentCity != null">
 									<h3>{{currentCity.deliveries[1].price | formatPrice}}/km</h3>
 								</v-list-tile-content>
 							</v-list-tile>
-						</v-list>
-
-						<v-dialog v-model="showInfoDelivery" max-width="500px" v-if="currentCity != null && $vuetify.breakpoint.smAndDown">
-							<v-card>
-								<v-toolbar dense flat class="elevation-0">
-									<v-avatar size="24px" tile>
-										<img src="~/static/dofuu24x24.png">
-									</v-avatar>
-									<v-toolbar-title>
-										Thông báo
-									</v-toolbar-title>
-								</v-toolbar>
-								<v-card-text>
-									<v-list> 
-										<v-list-tile>
-											<v-list-tile-content><span>Phí vận chuyển tối thiểu của đơn đặt hàng: <strong class="red--text">{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
-										</v-list-tile>
-										<v-list-tile>
-											<v-list-tile-content><span>Phí vận chuyển sẽ được tính theo khoảng cách: <strong class="red--text">{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
-										</v-list-tile>
-										<v-list-tile>
-											<v-list-tile-content><strong>Phí vận chuyển có thể thay đổi tùy theo thời điểm</strong></v-list-tile-content>
-											<v-list-tile-content class="align-end"></v-list-tile-content>
-										</v-list-tile>
-									</v-list>
-								</v-card-text>
-							</v-card>
-						</v-dialog>
+						</v-list>						
 					</v-flex>
 				</v-layout>
 
@@ -478,6 +315,35 @@
 
 		</v-navigation-drawer>
 		<!-- RIGHT NAVBAR MOBILE END -->
+
+		<v-dialog v-model="showInfoDelivery" max-width="500px" v-if="!!currentCity" :fullscreen="$vuetify.breakpoint.xsOnly">
+			<v-card>
+				<v-toolbar dense flat>
+					<v-avatar size="24px" tile>
+						<img src="~/static/dofuu24x24.png">
+					</v-avatar>
+					<v-toolbar-title>
+						Thông báo
+					</v-toolbar-title>
+				</v-toolbar>
+				<v-card-text>
+					<v-list> 
+						<v-list-tile>
+							<v-list-tile-content><span>Phí vận chuyển tối thiểu: <strong>{{currentCity.deliveries[0].price | formatPrice}}</strong> </span></v-list-tile-content>
+						</v-list-tile>
+						<v-list-tile>
+							<v-list-tile-content><span>Phí vận chuyển sẽ được tính theo khoảng cách: <strong>{{currentCity.deliveries[1].price | formatPrice}}/km</strong> </span></v-list-tile-content>
+						</v-list-tile>
+						<v-list-tile>
+							<v-list-tile-content class="font-weight-bold red--text font-italic">Phí vận chuyển có thể thay đổi tùy theo thời điểm</v-list-tile-content>
+						</v-list-tile>
+					</v-list>
+				</v-card-text>
+				<v-card-actions>
+					<v-btn block color="grey lighten-4" round small @click.native="showInfoDelivery = false">Đóng</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
 
 		<v-dialog v-model="optionDialog" persistent scrollable disabled max-width="1000">
 			<v-card v-if="editedItem != null" class="grey lighten-4">
@@ -506,7 +372,7 @@
 												<div class="pa-2">{{ editedItem.description }}</div>				
 											</v-card>
 											<v-radio-group mandatory v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp">
-												<v-radio color="primary" :value="size" v-for="(size, i) in sizes" :key="i">
+												<v-radio color="green darken-3" :value="size" v-for="(size, i) in sizes" :key="i">
 													<span slot="label" class="black--text body-1">{{size.name}} <strong>({{size.price | formatPrice}})</strong></span>
 												</v-radio>
 											</v-radio-group>
@@ -576,64 +442,67 @@
 				</v-card-text>
 				<v-divider></v-divider>
 				<v-card-actions>
-					<v-btn color="red" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
+					<v-btn color="red darken-1" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
 					<v-spacer></v-spacer>									
-					<v-btn color="green darken-3" class="white--text" round @click.prevent="addToCart(editedItem)" :loading="processAddCart" :disabled="editedItem.qty == 0" small>
-						{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
-					</v-card-actions>
-				</v-card>
-			</v-dialog>
-			<!-- DIALOG ALERT START-->
-			<v-dialog v-model="dialog" max-width="400">
-				<v-card>
-					<v-toolbar dense color="transparent" class="elevation-0">
-						<v-avatar size="24px" tile>
-							<img src="~/static/dofuu24x24.png">
-						</v-avatar>
-						<v-toolbar-title>
-							Thông báo
-						</v-toolbar-title>
-					</v-toolbar>
-					<v-divider></v-divider>
-					<v-card-text class="text-xs-center" v-if="checkOutSuccess">
-						<div class="green--text">Quý khách đã đặt hàng thành công</div>
-						<v-btn color="success" :to="{name:'history'}" @click="$store.commit('CLOSE_CHECKOUT_SUCCESS')" >Lịch sử đặt món</v-btn>
-					</v-card-text>
-					<v-card-text v-if="dayOff">
-						<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
-						<div>{{message}}</div>
-						<div>Quán phục vụ vào lúc 
-							<span v-for="(item, i) in store.activities" v-if="i==0"> 
-								<span v-for="(time, index) in item.times" class="green--text text--darken-1">
-									<strong>
-										{{time.from}} - {{time.to}} 
-									</strong>
-								</span>	
-								<span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span>
-							</span>
-						</div>
-						<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
-					</v-card-text>
-					<v-card-actions v-if="dayOff">
-						<v-btn block color="green darken-1" dark @click.native="dialog = false">Đồng ý</v-btn>
-					</v-card-actions>
-				</v-card>
-			</v-dialog>
-			<!-- DIALOG ALERT END-->
-			<vue-dialog :store.sync="store" v-if="store != null"></vue-dialog>
-		</v-container>
-	</template>
+					<v-btn color="green darken-3" class="white--text" round @click.prevent="addToCart(editedItem)" :loading="processAddCart" :disabled="editedItem.qty == 0" small>{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+		<!-- DIALOG ALERT START-->
+		<v-dialog v-model="dialog" max-width="400">
+			<v-card>
+				<v-toolbar dense color="white" class="elevation-0">
+					<v-avatar size="24px" tile>
+						<img src="~/static/dofuu24x24.png">
+					</v-avatar>
+					<v-toolbar-title>
+						Thông báo
+					</v-toolbar-title>
+				</v-toolbar>
+				<v-divider></v-divider>
+				<v-card-text class="text-xs-center" v-if="checkOutSuccess">
+					<div class="green--text">Quý khách đã đặt hàng thành công</div>
+					<v-btn color="success" :to="{name:'history'}" @click="$store.commit('CLOSE_CHECKOUT_SUCCESS')" >Lịch sử đặt món</v-btn>
+				</v-card-text>
+				<v-card-text v-if="dayOff">
+					<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
+					<div>{{message}}</div>
+					<div>Quán phục vụ vào lúc 
+						<span v-for="(item, i) in store.activities" v-if="i==0"> 
+							<span v-for="(time, index) in item.times" class="green--text text--darken-1">
+								<strong>
+									{{time.from}} - {{time.to}} 
+								</strong>
+							</span>	
+							<span :class="{'red--text accent-4--text': status(store.status) == 2, 'green--text accent-4--text': status(store.status) == 1, 'yellow--text accent-4--text': status(store.status) == 3}"><strong><i>({{store.status}})</i></strong></span>
+						</span>
+					</div>
+					<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
+				</v-card-text>
+				<v-card-actions v-if="dayOff">
+					<v-btn block color="green darken-1" round dark @click.native="dialog = false">Đồng ý</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+		<!-- DIALOG ALERT END-->
+		<!-- CHECKOUT DIALOG START-->
+		<vue-checkout :store.sync="store" v-if="store != null"></vue-checkout>
+		<!-- CHECKOUT DIALOG END-->
+	</v-container>
+</template>
 
-	<script>
-		import numeral from 'numeral'
-		import Cookies from 'js-cookie'
-		import moment from 'moment'
-		import axios from 'axios'
-		import {getStoreURL, getHeader} from '@/config'
-		import index from '@/mixins/index'
-		import {mapState} from 'vuex'
-		import CheckoutDialog from '@/components/CheckoutDialog'
-		import * as easings from 'vuetify/es5/util/easing-patterns'
+<script>
+	import numeral from 'numeral'
+	import Cookies from 'js-cookie'
+	import moment from 'moment'
+	import axios from 'axios'
+	import {getStoreURL, getHeader} from '@/config'
+	import index from '@/mixins/index'
+	import {mapState} from 'vuex'
+	import CheckoutDialog from '@/components/CheckoutDialog'
+	import ProductList from '@/components/ProductList'
+	import Coupon from '@/components/Coupon'
+	import * as easings from 'vuetify/es5/util/easing-patterns'
 		// const CheckoutDialog = () => ({
 		//   // The component to load (should be a Promise)
 		//   component: import('@/components/CheckoutDialog'),
@@ -644,9 +513,12 @@
 		//   timeout: 3000
 		// })
 		export default {
+			scrollToTop: true,
 			mixins: [index],
 			components: {
-				'vue-dialog' :CheckoutDialog,
+				'vue-coupon': Coupon,
+				'vue-checkout' : CheckoutDialog,
+				'vue-product' : ProductList
 			},
 			asyncData() {
 				return {
@@ -667,14 +539,6 @@
 						intance: 20,
 						items: []
 					},
-					time: {
-						dd:0,
-						hh:0,
-						mm:0,
-						ss:0
-					},
-					showTooltip: false,
-					messageTooltip: '',
 					storeInfo: null,
 					search: null,
 					isLoading: false,
@@ -794,28 +658,6 @@
 			this.drawer = false
 			this.$vuetify.goTo(target, this.options)
 		},
-		//SET TIMEOUT AT END TIME FOR COUPON
-		start: function (date) {
-			if(this.store.coupon) {
-				setTimeout(() => {
-					let timeNow   = new Date().getTime()
-
-					let endedTime = new Date(date.date).getTime()				
-
-					let distance  = Math.floor(endedTime - timeNow)/1000
-
-					let day       = Math.floor(distance / (60 * 60 * 24));
-
-					let hour      = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
-
-					let minutes   = Math.floor((distance % (60 * 60)) / 60);
-
-					var seconds   = Math.floor(distance % (60));
-
-					this.time     = {dd: day, hh: hour, mm: minutes, ss: seconds}
-				}, 1000)
-			}			
-		},
 		openCartDialog: async function(item) {
 			if(!this.dayOff) {
 				this.editedItem   =  Object.assign({}, this.default)
@@ -889,29 +731,6 @@
 				return false
 			}
 			this.$store.commit('CHANGE_TAB', index)
-		},
-		//COPY DEAL CODE
-		copyCode() {
-			var vm = this
-			let code = document.querySelector('#coupon-code')
-			code.setAttribute('type', 'text')
-
-			code.select()
-
-			try {
-				var successful = document.execCommand('copy');
-				this.messageTooltip = successful ? 'Sao chép mã khuyến mãi thành công' : 'Sao chép mã khuyến mãi thất bại'
-			} catch (error) {
-				this.messageTooltip = 'Không thể sao chép mã khuyến mãi'
-			}
-			code.setAttribute('type', 'hidden')
-			window.getSelection().removeAllRanges()
-			vm.showTooltip = !vm.showTooltip
-
-			setTimeout(() => {
-				vm.showTooltip = !vm.showTooltip
-			}, 1000)
-			
 		},
 		//CHECK OUT CART
 		checkOut: async function() {

@@ -11,8 +11,7 @@ class ProductController extends Controller
 
 	public function getProductByStore(Request $request, $id) {
 		$store_id = (int) $id;
-		$store = Store::byId($id)->first();
-		
+		$store = Store::findorFail($id);
 		$res = [
 			'type'    => 'success',
 			'message' => 'Get product successfully.',

@@ -12,7 +12,7 @@
 			</v-btn>
 			<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 280px': 'width: 200px'">		
 				<nuxt-link :to="{path: '/'}">					
-					<img src="/logo_page.png" alt="dofuu-logo">
+					<img src="/logo_page_1.jpg" alt="dofuu-logo">
 				</nuxt-link>
 			</v-toolbar-title>
 
@@ -35,79 +35,72 @@
 			<v-icon>person</v-icon> <span class="hidden-sm-and-down pl-1">ĐĂNG NHẬP</span>
 		</v-btn>
 
-		<v-toolbar-items>
-			<v-menu id="menu"
-			v-if="isAuth && currentUser != null"
-			lazy
-			left
-			:close-on-content-click="false"
-			min-width="240px"
-			max-width="240px"
-			:nudge-bottom="50"
-			class="hidden-sm-and-down">
-			<v-list slot="activator" dense>
-				<v-list-tile avatar @click="">
-					<v-avatar size="28">
-						<img :src="image(currentUser.image)">
-					</v-avatar>
-					<v-list-tile-content class="pl-2 ellipsis" style="max-width:140px">
-						<v-list-tile-title class="text-truncate">								
-							{{currentUser.name}}
-						</v-list-tile-title>
-					</v-list-tile-content>
-					<v-icon>expand_more</v-icon>
-				</v-list-tile>
-			</v-list>
-			<v-card>
-				<v-list two-line>
-					<v-list-tile avatar :to="{name:'information'}">
-						<v-list-tile-avatar>
-							<img :src="image(currentUser.image)" alt="John">
+		<v-menu id="menu"
+		v-if="isAuth && $vuetify.breakpoint.smAndUp"
+		lazy
+		left
+		:close-on-content-click="false"
+		min-width="240px"
+		max-width="240px"
+		:nudge-bottom="30">
+		<v-card slot="activator" style="border-radius: 20px;" max-height="35" width="180" :ripple="true" :class="{'ml-2': $vuetify.breakpoint.smOnly}">
+			<v-card-actions class="pa-0 text-xs-center">
+				<v-avatar size="30" color="white">
+					<img :src="image(currentUser.image)" alt="alt">
+				</v-avatar>
+				<div class="text-truncate">{{currentUser.name}}</div>
+				<v-icon>keyboard_arrow_down</v-icon>
+			</v-card-actions>
+		</v-card>
+		<v-card>
+			<v-list two-line>
+				<v-list-tile avatar :to="{name:'information'}">
+					<v-list-tile-avatar>
+						<img :src="image(currentUser.image)" alt="John">
+					</v-list-tile-avatar>
+					<v-list-tile-content>
+						<v-list-tile-title class="text-truncate">{{currentUser.name}}</v-list-tile-title>
+						<v-list-tile-sub-title>Thông tin tài khoản</v-list-tile-sub-title>
+						<v-tooltip top>
+							<v-list-tile-sub-title slot="activator">
+								<v-icon color="red accent-3">scatter_plot</v-icon> <span class="font-weight-bold">{{currentUser.points}}</span></v-list-tile-sub-title>
+								<span>Điểm df dùng đổi thưởng</span>
+							</v-tooltip>
+						</v-list-tile-content>
+					</v-list-tile>
+				</v-list>
+				<v-divider></v-divider>
+
+				<v-list dense>
+
+					<v-list-tile avatar :to="{name:'favorite'}">
+						<v-list-tile-avatar size="32"> 
+							<v-icon class="blue white--text">bookmarks</v-icon>
 						</v-list-tile-avatar>
 						<v-list-tile-content>
-							<v-list-tile-title class="text-truncate">{{currentUser.name}}</v-list-tile-title>
-							<v-list-tile-sub-title>Thông tin tài khoản</v-list-tile-sub-title>
-							<v-tooltip top>
-								<v-list-tile-sub-title slot="activator">
-									<v-icon color="red accent-3">scatter_plot</v-icon> <span class="font-weight-bold">{{currentUser.points}}</span></v-list-tile-sub-title>
-									<span>Điểm df dùng đổi thưởng</span>
-								</v-tooltip>
-							</v-list-tile-content>
-						</v-list-tile>
-					</v-list>
-					<v-divider></v-divider>
+							<v-list-tile-title>Bộ sưu tập</v-list-tile-title>
+						</v-list-tile-content>
+					</v-list-tile>
 
-					<v-list dense>
+					<v-list-tile avatar :to="{name:'history'}">
+						<v-list-tile-avatar size="32">
+							<v-icon class="red darken-3 white--text">history</v-icon>
+						</v-list-tile-avatar>
+						<v-list-tile-content>
+							<v-list-tile-title>Lịch sử đặt món</v-list-tile-title>
+						</v-list-tile-content>
+					</v-list-tile>
 
-						<v-list-tile avatar :to="{name:'favorite'}">
-							<v-list-tile-avatar size="32"> 
-								<v-icon class="blue white--text">bookmarks</v-icon>
-							</v-list-tile-avatar>
-							<v-list-tile-content>
-								<v-list-tile-title>Bộ sưu tập</v-list-tile-title>
-							</v-list-tile-content>
-						</v-list-tile>
-
-						<v-list-tile avatar :to="{name:'history'}">
-							<v-list-tile-avatar size="32">
-								<v-icon class="red darken-3 white--text">history</v-icon>
-							</v-list-tile-avatar>
-							<v-list-tile-content>
-								<v-list-tile-title>Lịch sử đặt món</v-list-tile-title>
-							</v-list-tile-content>
-						</v-list-tile>
-
-					</v-list>
-					
-					<v-card-actions>					
-						<v-btn color="error" block  @click="$store.dispatch('logout')" small round>
-							Đăng xuất
-							<v-icon color="white" right>exit_to_app</v-icon>
-						</v-btn>
-					</v-card-actions>
-				</v-card>
-			</v-menu>
-		</v-toolbar-items>	
+				</v-list>
+				<v-divider></v-divider>
+				<v-card-actions>					
+					<v-btn color="error" block  @click="$store.dispatch('logout')" small round>
+						Đăng xuất
+						<v-icon color="white" right>exit_to_app</v-icon>
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-menu>
 
 		<v-tabs slot="extension" v-if="currentCity != null && types.length > 0" slider-color="red darken-3" fixed-tabs>
 			<v-tab nuxt :to="{path: '/'}">

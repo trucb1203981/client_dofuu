@@ -32,21 +32,18 @@
 							<v-tooltip top>									
 								<div slot="activator" class="grey--text body-1 text-truncate">{{item.address}}</div>
 								<span>{{item.address}}</span>
-							</v-tooltip>									
+							</v-tooltip>	
+							<v-system-bar v-if="!!item.coupon" status color="transparent" class="px-0 mx-0">
+								<span>
+									<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>
+								</span>
+							</v-system-bar>										
 						</v-flex>
 					</v-layout>
 				</v-card>
 				
 
-				<!-- <v-system-bar status color="transparent">
-					<span v-if="item.coupon != null">
-						<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>
-					</span>
-					<v-spacer></v-spacer>
-					<span>		
-						<v-icon left>timer</v-icon>{{item.prepareTime}}&apos;
-					</span>
-				</v-system-bar>	 -->	
+
 				<v-system-bar color="grey lighten-5">
 					<v-spacer></v-spacer>
 					<v-tooltip top>

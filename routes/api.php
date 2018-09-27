@@ -123,7 +123,7 @@ Route::group(['namespace' => 'Site'], function() {
 	Route::group(['prefix' => 'Auth'], function() {
 		// UPDATE PHONE NUMBER
 		Route::post('/PhoneNumber/Update', 'UserController@updatePhone');
-
+		Route::post('/Avatar/Update', 'UserController@updateAvatar');
 	});
 	
 });

@@ -8,6 +8,7 @@ export default {
 			} else {
 				if(url.slice(1, 8) === "storage") {
 					return baseURL+url
+					// return url
 				} else {
 					return url
 				}

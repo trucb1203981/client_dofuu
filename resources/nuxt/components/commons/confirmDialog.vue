@@ -10,8 +10,8 @@
 			<v-card-actions>
 				<!-- <slot name="actions"></slot> -->
 				<v-spacer></v-spacer>
-				<v-btn flat @click.native="cancel" outline small class="px-0">Hủy</v-btn>
-				<v-btn color="blue" @click.native="agree" small class="white--text px-0">Chấp nhận</v-btn>
+				<v-btn flat color="red darken-1" @click.native="cancel" small class="white--text px-0" round>Hủy</v-btn>
+				<v-btn round color="blue" @click.native="agree" small class="white--text px-0">Chấp nhận</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>

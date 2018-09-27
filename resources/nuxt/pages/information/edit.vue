@@ -1,5 +1,5 @@
 <template>
-	<v-container>
+	<v-container :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 		<v-dialog v-model="loading" hide-overlay persistent width="300">
 			<v-card	color="red darken-3"	dark>
 				<v-card-text>
@@ -15,11 +15,13 @@
 		
 		<v-layout justify-center v-if="!loading">
 			<v-flex xs12>
-				<v-card color="grey lighten-4 card-radius">
-					<v-toolbar color="transparent" dense class="elevation-0">
-						<v-toolbar-title>
-							Chỉnh sửa thông tin
-						</v-toolbar-title>
+				<v-card color="white card-radius">
+					<v-toolbar color="white" dense flat>
+						<v-layout row wrap justify-center align-center>
+							<v-toolbar-title>
+								{{title}}
+							</v-toolbar-title>		
+						</v-layout>	
 					</v-toolbar>			
 					<v-card flat>
 						<v-container>
@@ -109,9 +111,9 @@
 						</v-container>
 					</v-card>
 					<v-card-actions class="justify-center">
-						<v-btn color="error" small round :to="{name: 'information'}">Quay lại</v-btn>
+						<v-btn color="red darken-1" class="white--text" small round :to="{name: 'information'}">Quay lại</v-btn>
 						<v-spacer></v-spacer>
-						<v-btn color="success" round small :loading="process" :disabled="disabled" @click.stop="save">Hoàn thành</v-btn>
+						<v-btn color="blue" class="white--text" round small :loading="process" :disabled="disabled" @click.stop="save">Hoàn thành</v-btn>
 					</v-card-actions>				
 				</v-card>
 			</v-flex>
@@ -130,13 +132,13 @@
 		mixins: [index],
 		data() {
 			return {
+				title: 'Chỉnh sửa thông tin cá nhân',
 				loading: false,
 				editedItem: {
 					name: '',
 					email: '',
 					gender: false,
 					birthday: '',
-					phone: '',
 					address: null,
 					lat: 0,
 					lng: 0

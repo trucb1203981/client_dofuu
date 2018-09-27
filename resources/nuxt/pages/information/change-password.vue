@@ -1,5 +1,5 @@
 <template>
-	<v-container>
+	<v-container :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 		<v-dialog v-model="loading" hide-overlay persistent width="300">
 			<v-card	color="red darken-3"	dark>
 				<v-card-text>
@@ -15,11 +15,13 @@
 		
 		<v-layout justify-center v-if="!loading">
 			<v-flex xs12>
-				<v-card color="grey lighten-4" class="card-radius">
-					<v-toolbar color="transparent" dense class="elevation-0">
-						<v-toolbar-title>
-							{{title}}
-						</v-toolbar-title>
+				<v-card color="white" class="card-radius">
+					<v-toolbar color="transparent" dense flat>
+						<v-layout row wrap justify-center align-center>
+							<v-toolbar-title>
+								{{title}}
+							</v-toolbar-title>
+						</v-layout>
 					</v-toolbar>			
 					<v-card flat>
 						<v-container>
@@ -73,15 +75,17 @@
 									:type="showPassword ? 'text' : 'password'"
 									:append-icon="showPassword ? 'visibility_off' : 'visibility'"
 									@click:append="showPassword = !showPassword"
+									hint="Mật khẩu xác nhận phải trùng khớp với mật khẩu mới"
+									persistent-hint
 									></v-text-field>
 								</v-flex>
 							</v-layout>
 						</v-container>
 					</v-card>
 					<v-card-actions class="justify-center">
-						<v-btn color="error" small round :to="{name: 'information'}">Quay lại</v-btn>
+						<v-btn color="red darken-1" class="white--text" small round :to="{name: 'information'}" :loading="process">Quay lại</v-btn>
 						<v-spacer></v-spacer>
-						<v-btn color="success" round small :loading="process" :disabled="disabled" @click.stop="save">Hoàn thành</v-btn>
+						<v-btn color="blue" class="white--text" round small :loading="process" :disabled="disabled" @click.stop="save">Hoàn thành</v-btn>
 					</v-card-actions>				
 				</v-card>
 			</v-flex>
@@ -90,93 +94,93 @@
 </template>
 
 <script>
-import axios from 'axios'
-import {mapState} from 'vuex'
-import { Validator } from 'vee-validate';
-import vietnam from 'vee-validate/dist/locale/vi';
-export default {
-	middleware: 'notAuthenticated',
-	data() {
-		return {
-			loading: false,
-			editedItem: {
-				oldPassword: '',
-				newPassword: '',
+	import axios from 'axios'
+	import {mapState} from 'vuex'
+	import { Validator } from 'vee-validate';
+	import vietnam from 'vee-validate/dist/locale/vi';
+	export default {
+		middleware: 'notAuthenticated',
+		data() {
+			return {
+				loading: false,
+				editedItem: {
+					oldPassword: '',
+					newPassword: '',
+				},
+				title: 'Thay đổi mật khẩu',
+				confirm: '',
+				showPassword:false,
+				loading: false,
+				process: false,
+				locale: 'vi',
+				disabled: true
+			}
+		},
+		methods: {
+			save: function() {
+				var vm   = this
+				var data = Object.assign({}, vm.editedItem)
+				vm.$validator.validateAll().then(async function(result) {
+					if(result) {
+						vm.process = true
+						axios.post('/api/Dofuu/GetUser/ChangePassword', data).then(response => {
+							if(response.status === 200) {
+								vm.editedItem = Object.assign({}, {
+									oldPassword: '',
+									newPassword: ''
+								})
+								vm.confirm = ''
+								vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"success", close:true })
+							}
+							if(response.status === 202) {
+								console.log('ok')
+								vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"error", close:true })
+							}
+						}).finally(() => {
+							vm.$validator.reset()
+							vm.process = false
+							vm.disabled = true
+						})
+					}
+				})
 			},
-			title: 'Thay đổi mật khẩu',
-			confirm: '',
-			showPassword:false,
-			loading: false,
-			process: false,
-			locale: 'vi',
-			disabled: true
-		}
-	},
-	methods: {
-		save: function() {
-			var vm   = this
-			var data = Object.assign({}, vm.editedItem)
-			vm.$validator.validateAll().then(async function(result) {
-				if(result) {
-					vm.process = true
-					axios.post('/api/Dofuu/GetUser/ChangePassword', data).then(response => {
-						if(response.status === 200) {
-							vm.editedItem = Object.assign({}, {
-								oldPassword: '',
-								newPassword: ''
-							})
-							vm.confirm = ''
-							vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"success", close:true })
-						}
-						if(response.status === 202) {
-							console.log('ok')
-							vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"error", close:true })
-						}
-					}).finally(() => {
-						vm.$validator.reset()
-						vm.process = false
-						vm.disabled = true
-					})
-				}
+		},
+		computed: {
+			...mapState({
+				alert: state => state.alertStore.alert
 			})
 		},
-	},
-	computed: {
-		...mapState({
-			alert: state => state.alertStore.alert
-		})
-	},
-	watch: {
-		'editedItem.oldPassword': function(val, oldVal) {
-			var vm = this
-			if(val != '') {
-				this.disabled = false
-			} else {
-				this.disabled = true
+		watch: {
+			'editedItem.oldPassword': function(val, oldVal) {
+				var vm = this
+				if(val != '') {
+					this.disabled = false
+				} else {
+					this.disabled = true
+				}
+			},
+			'editedItem.newPassword': function(val, oldVal) {
+				var vm = this
+				if(val != '') {
+					this.disabled = false
+				} else {
+					this.disabled = true
+				}
 			}
 		},
-		'editedItem.newPassword': function(val, oldVal) {
-			var vm = this
-			if(val != '') {
-				this.disabled = false
-			} else {
-				this.disabled = true
-			}
-		}
-	},
-	created() {
-		this.$validator.localize(this.locale, {
-			messages:vietnam.messages,
-			attributes: {
-				'oldPassword': 'Mật khẩu cũ',
-				'newPassword': 'Mật khẩu mới',
-				'confirm': 'Xác nhận mật khẩu mới'
-			}
-		})
-		this.$validator.localize(this.locale)
-	},
+		created() {
+			this.$validator.localize(this.locale, {
+				messages:vietnam.messages,
+				attributes: {
+					'oldPassword': 'Mật khẩu cũ',
+					'newPassword': 'Mật khẩu mới',
+					'confirm': 'Xác nhận mật khẩu mới'
+				}
+			})
+			this.$validator.localize(this.locale)
+		},
 
-}
+	}
 </script>
 
 <style>

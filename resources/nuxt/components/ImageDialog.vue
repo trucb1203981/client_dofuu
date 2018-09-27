@@ -16,17 +16,22 @@
 			<v-divider></v-divider>
 			<v-card-actions class="white">
 				<v-spacer></v-spacer>
-				<v-btn color="red darken-1" class="white--text" round flat @click.native="cancel">Hủy</v-btn>
-				<v-btn color="blue" round flat @click.native="agree" :disabled="disabled" :loading="process">Thay đổi</v-btn>
+				<v-btn color="red darken-1" outline  small class="white--text" round flat @click.native="cancel">Hủy</v-btn>
+				<v-btn color="blue" round flat @click.native="agree" small :disabled="disabled" :loading="process">Thay đổi</v-btn>
 			</v-card-actions>
 		</v-card>
+		<vue-confirm ref="confirm"></vue-confirm>
 	</v-dialog>
 </template>
 <script>
 	import {mapState} from 'vuex'
 	import index from '@/mixins/index'
+	import ConfirmDialog from '@/components/commons/confirmDialog'
 	export default {
 		mixins: [index],
+		components: {
+			'vue-confirm': ConfirmDialog
+		},
 		data() {
 			return {
 				imageUrl: null,
@@ -63,10 +68,19 @@
 			},
 			cancel() {
 				var vm     = this
-				vm.cropped = null
-				vm.refresh()			
-				vm.resolve({status: false})
-				vm.dialog  = false
+				if(!!vm.cropped) {
+					vm.$refs.confirm.open('Thay đổi chưa lưu', 'các thay đổi bạn thực hiện đối với ảnh đại diện của mình sẽ không được lưu nếu bạn đóng hộp thoại').then((confirm) => {
+						if(confirm) {
+							vm.cropped = null
+							vm.refresh()			
+							vm.resolve({status: false})
+							vm.dialog  = false
+						}
+					})
+				} else {
+					vm.resolve({status: false})
+					vm.dialog  = false
+				}
 			},
 			agree() {
 				var vm     = this

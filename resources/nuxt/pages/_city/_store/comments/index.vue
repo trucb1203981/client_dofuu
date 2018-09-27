@@ -45,8 +45,8 @@
 										</v-textarea>
 										<v-layout row wrap class="pt-2">
 											<v-spacer></v-spacer>
-											<v-btn outline small  style="top: -12px" @click.prevent="comment.activeEdit = false" class="my-0 py-0">Hủy</v-btn>
-											<v-btn color="blue" :loading="comment.process" small style="top: -12px" class="my-0 py-0 white--text" @click.prevent="updateComment(comment)">Lưu</v-btn>
+											<v-btn outline small color="red darken-1"  style="top: -12px" @click.prevent="comment.activeEdit = false" class="my-0 py-0" round>Hủy</v-btn>
+											<v-btn color="blue" :loading="comment.process" small style="top: -12px" class="my-0 py-0 white--text" @click.prevent="updateComment(comment)" round>Lưu</v-btn>
 										</v-layout>	
 									</v-flex>
 								</v-layout>
@@ -143,8 +143,8 @@
 																</v-textarea>
 																<v-layout row wrap class="pt-2">
 																	<v-spacer v-if="$vuetify.breakpoint.smAndUp"></v-spacer>
-																	<v-btn outline small  style="top: -12px" @click.prevent="reply.activeEdit = false" class="ma-1 pa-1">Hủy</v-btn>
-																	<v-btn color="blue" small style="top: -12px" class="ma-1 pa-1 white--text" :loading="reply.process" @click.prevent="updateComment(reply)">Cập nhật</v-btn>
+																	<v-btn outline small color="red darken-1" style="top: -12px" @click.prevent="reply.activeEdit = false" class="ma-1 pa-1" round>Hủy</v-btn>
+																	<v-btn color="blue" small style="top: -12px" class="ma-1 pa-1 white--text" :loading="reply.process" @click.prevent="updateComment(reply)" round>Cập nhật</v-btn>
 																</v-layout>	
 															</v-flex>
 														</v-layout>

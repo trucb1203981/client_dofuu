@@ -34,21 +34,23 @@
 			<!-- RIGHT NAVBAR DESKTOP -->
 			<v-flex xs12 md5 lg4  ref="target_navbar_right" v-if="$vuetify.breakpoint.mdAndUp" class="hidden-sm-and-down row px-0 text-xs-right">
 				<v-card :class="{'card--sticky' : offsetTop>offsetNavbarRight-50 && $vuetify.breakpoint.mdAndUp}" style="z-index:4" :width="$vuetify.breakpoint.mdOnly ? '280' : '310'" class="card-radius elevation-1">
-					<v-tabs icons-and-text centered :value="`item-${tabIndex}`">
 
+					<v-tabs grow   :value="`item-${tabIndex}`" dense>
 						<v-tabs-slider color="yellow"></v-tabs-slider>
 						<template v-for="(tab, index) in tabs">
 							<v-tab :key="index" @click="changeTab(index)":href="`#item-${index}`" >
-								<h5>{{tab.title}}</h5>
-								<v-badge color="red" v-if="index == 1" overlap>
-									<span slot="badge" v-if="counts>0">{{counts}}</span>
-									<v-icon left size="20">shopping_cart</v-icon>						 
+								<v-icon left v-if="index === 1" size="20">shopping_cart</v-icon>
+								<v-icon left v-if="index === 0" size="20">assignment</v-icon>
+								<v-badge color="red">
+									<span slot="badge" v-if="counts>0 && index == 1">{{counts}}</span>
+									<h5>{{tab.title}}</h5>
 								</v-badge>
-								<v-icon left v-if="index == 0" size="20">assignment</v-icon>
+								
 							</v-tab>
 						</template>
 					</v-tabs>
 
+					
 					<v-card  v-if="tabIndex==0" flat>
 						<v-card-text>
 							<a v-for="item in store.catalogues" @click="goTo('#item_'+item.id)">
@@ -252,7 +254,7 @@
 					<v-layout row justify-center align-center>
 
 						<v-flex v-if="coupon == null">
-							<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase" @focus="focusCouponInput = true" @blur="focusCouponInput = false" :color="focusCouponInput ? 'blue' : 'black'" :background-color="focusCouponInput ? 'white' : 'grey lighten-3'"  :flat="!focusCouponInput">
+							<v-text-field flat solo color="red accent-3" v-model="code" label="Nhập mã khuyến mãi"  class="btn-custom" background-color="grey lighten-4" @input="forceUppercase" @focus="focusCouponInput = true" @blur="focusCouponInput = false" :color="focusCouponInput ? 'blue' : 'black'" :background-color="focusCouponInput ? 'white' : 'grey lighten-3'"  :flat="!focusCouponInput" @keyup.enter.exact="checkCoupon">
 								<v-btn slot="append" class="ma-0" style="right: -10px" icon small :color="focusCouponInput ? 'blue' : 'grey lighten-3'" :outline="focusCouponInput" @click.prevent="checkCoupon" :loading="loadingCoupon">
 									<v-icon :color="focusCouponInput ? 'blue' : 'grey'">send</v-icon>
 								</v-btn>	
@@ -345,7 +347,7 @@
 			</v-card>
 		</v-dialog>
 
-		<v-dialog v-model="optionDialog" persistent scrollable disabled max-width="1000">
+		<v-dialog v-model="cartDialog" persistent scrollable disabled max-width="1000" :fullscreen="$vuetify.breakpoint.xsOnly">
 			<v-card v-if="editedItem != null" class="grey lighten-4">
 				<v-toolbar color="red accent-4" dense class="elevation-0" dark flat height="30">
 					<v-toolbar-title class="body-1 px-0 text-uppercase"> {{editedItem.name}}</v-toolbar-title>
@@ -353,13 +355,13 @@
 					<div class="font-weight-bold">{{totalProduct(editedItem) | formatPrice}}</div>
 				</v-toolbar>
 
-				<v-card-text class="white">
+				<v-card-text class="white" style="height: 300px">
 					<v-container fluid grid-list-xs>
 						<v-layout row wrap>
 
 							<v-flex  xs12 md4>
 								<v-card>
-									<v-img :src="image(editedItem.image)" :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'">								
+									<v-img :src="image(editedItem.image)" :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'">							
 									</v-img>
 								</v-card>				
 							</v-flex>
@@ -368,7 +370,7 @@
 								<v-container class="py-0 my-0">
 									<v-layout row wrap>
 										<v-flex xs12>
-											<v-card v-if="editedItem.description != null" class="card-radius" color="grey lighten-3 mt-2">
+											<v-card flat v-if="editedItem.description != null" class="card-radius" color="grey lighten-4 mt-2">
 												<div class="pa-2">{{ editedItem.description }}</div>				
 											</v-card>
 											<v-radio-group mandatory v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp">
@@ -380,18 +382,20 @@
 										</v-flex>
 
 										<v-flex xs12>
-
-											<v-combobox v-if="editedItem.haveTopping" v-model="editedItem.toppings" :items="store.toppings" hint="Chọn thêm topping"  label="Phần thêm" multiple persistent-hint small-chips solo>
-
-												<template slot="selection" slot-scope="{ item, parent, selected }">
-													<v-chip	:selected="selected" label small>
+											<v-select v-if="editedItem.haveTopping" v-model="editedItem.toppings" :items="store.toppings" hint="Chọn thêm topping"  label="Phần thêm" multiple persistent-hint small-chips box :menu-props="{ maxHeight: '250' }" dense return-object clearable>	
+												<template slot="selection" slot-scope="{index, item, parent, selected}">
+													<v-chip v-if="index <= 4" :selected="selected" color="white" small>
 														{{ item.name }}
-														<v-icon small @click="parent.selectItem(item)" >close</v-icon>
+														<v-icon small @click="parent.selectItem(item)" >close</v-icon>							
 													</v-chip>
+													<span
+													v-if="index === 5"
+													class="grey--text caption"
+													>(+{{ editedItem.toppings.length - 5 }} Khác)</span>
 												</template>
 
-												<template slot="item" slot-scope="{ index, item, parent }">
-													<v-list-tile-content>							
+												<template slot="item" slot-scope="{item, parent, tile}">
+													<v-list-tile-content>						
 														{{item.name}}
 													</v-list-tile-content>
 
@@ -399,9 +403,7 @@
 														{{item.price |formatPrice}}
 													</v-list-tile-action>
 												</template>
-
-											</v-combobox>				
-
+											</v-select>
 										</v-flex>
 
 										<v-flex xs12>
@@ -427,7 +429,7 @@
 											<v-text-field
 											solo
 											class="btn-custom"
-											background-color="grey lighten-4"
+											background-color="grey lighten-4 elevation-1"
 											v-model="editedItem.memo"
 											label="Ghi chú" 
 											flat
@@ -441,7 +443,7 @@
 					</v-container>			
 				</v-card-text>
 				<v-divider></v-divider>
-				<v-card-actions>
+				<v-card-actions style="max-height: 44px">
 					<v-btn color="red darken-1" @click.native="closeCartDialog" class="mr-5 white--text" round small>Hủy bỏ</v-btn>
 					<v-spacer></v-spacer>									
 					<v-btn color="green darken-3" class="white--text" round @click.prevent="addToCart(editedItem)" :loading="processAddCart" :disabled="editedItem.qty == 0" small>{{totalProduct(editedItem) | formatPrice}} <v-icon right>add_shopping_cart</v-icon></v-btn>
@@ -451,7 +453,7 @@
 		<!-- DIALOG ALERT START-->
 		<v-dialog v-model="dialog" max-width="400">
 			<v-card>
-				<v-toolbar dense color="white" class="elevation-0">
+				<v-toolbar dense color="grey lighten-4" class="elevation-0">
 					<v-avatar size="24px" tile>
 						<img src="~/static/dofuu24x24.png">
 					</v-avatar>
@@ -480,7 +482,7 @@
 					<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
 				</v-card-text>
 				<v-card-actions v-if="dayOff">
-					<v-btn block color="green darken-1" round dark @click.native="dialog = false">Đồng ý</v-btn>
+					<v-btn block color="grey lighten-4" round small @click.native="dialog = false">Đóng</v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-dialog>
@@ -503,156 +505,156 @@
 	import ProductList from '@/components/ProductList'
 	import Coupon from '@/components/Coupon'
 	import * as easings from 'vuetify/es5/util/easing-patterns'
-		// const CheckoutDialog = () => ({
-		//   // The component to load (should be a Promise)
-		//   component: import('@/components/CheckoutDialog'),
-		//   // Delay before showing the loading component. Default: 200ms.
-		//   delay: 200,
-		//   // The error component will be displayed if a timeout is
-		//   // provided and exceeded. Default: Infinity.
-		//   timeout: 3000
-		// })
-		export default {
-			scrollToTop: true,
-			mixins: [index],
-			components: {
-				'vue-coupon': Coupon,
-				'vue-checkout' : CheckoutDialog,
-				'vue-product' : ProductList
-			},
-			asyncData() {
-				return {
-					duration: 50,
-					offset: -50,
-					easing: 'easeInOutQuint',
-					offsetNavbarRight: 184,
-					headers: [
-					{
-						text: 'Món',
-						align: 'left',
-						sortable: false
-					},
-					{ text: 'Số lượng'},
-					{ text: 'Giá'}
-					],
-					bag: {
-						intance: 20,
-						items: []
-					},
-					storeInfo: null,
-					search: null,
-					isLoading: false,
-					drawer: false,
-					dialog: false,
-					message:'',
-					products: [],
-					showInfoDelivery: false,
-					loadingCoupon: false,
-					code: null,
-					focusCouponInput: false,
-					couponChip: true,
-					alert: {
-						show: false,
-						message: '',
-						type: 'error'
-					},
-					optionDialog:false,
-					editedItem: {
-						rowId: null, 
-						size: null,
-						memo: null,
-						qty: 1,
-						subTotal: 0,
-						toppings: []
-					},
-					default: {
-						rowId: null, 
-						size: null,
-						memo: null,
-						qty: 1,
-						subTotal: 0,
-						toppings: []				
-					},
-					sizes: [],
-					processAddCart: false,
-					dayOff:false,
-					focusSearchInput: false
-				}
-			},
-			methods: {
-				checkCoupon: async function() {
-					var vm = this
-					if(vm.code == null) {
-						vm.alert = Object.assign({}, {show: true, message: 'Vui lòng nhập mã giảm giá', type: 'error'})
-					} else {
-
-						if(!vm.loadingCoupon) {
-							vm.loadingCoupon = await !vm.loadingCoupon
-							const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id})
-							setTimeout(function() {						
-
-								axios.post('/api/Dofuu/CheckCouponCode', data, {withCredentials:true}).then(response => {
-
-									if(response.data.type === 'success') {
-										vm.$store.commit('ADD_COUPON', response.data)
-									}
-
-									if(response.data.type === 'error') {
-										vm.alert = Object.assign({}, {show: true, message: response.data.message, type: 'error'})	
-									}
-
-								}).finally(() => {
-									vm.loadingCoupon = !vm.loadingCoupon
-								})
-
-							},300)
-						}
-					}
-					setTimeout(() => {
-						vm.alert = Object.assign({}, {show: false, message: '', type: 'error'})
-					},3000)		
-
-				},
-				removeCoupon: function() {
-					this.$store.dispatch('removeCoupon')
-				},
-				showDelivery: function() {
-					this.showInfoDelivery = true
-				},
-				closeDelivery: function() {
-					this.showInfoDelivery = false
-				},
-		//CHECK DATE
-		checkDayOff: function() {
-			return new Promise((resolve, reject) => {
-				var n = moment().locale('vi').day()
-				var day = this.store.activities.find(day => {
-					if(day.number == n) {
-						return day
-					} else {
-						return false
-					}
-				})
-				if(day) {
-					day.times.forEach(time => {
-						if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.from, 'HH:mm:ss').format('HH:mm') && moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-							this.dayOff = false
-						} else {
-							if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
-								this.dayOff  = true
-								this.message = 'Quán hiện tại chưa mở cửa'
-							} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-								this.dayOff  = true
-								this.message = 'Quán hiện tại đã đóng cửa'
-							}
-						}
-					})
-				} else {
-					this.dayOff  = true
-					this.message = 'Quán hôm nay nghỉ'
-				}			
-			})			
+	// const CheckoutDialog = () => ({
+	//   // The component to load (should be a Promise)
+	//   component: import('@/components/CheckoutDialog'),
+	//   // Delay before showing the loading component. Default: 200ms.
+	//   delay: 200,
+	//   // The error component will be displayed if a timeout is
+	//   // provided and exceeded. Default: Infinity.
+	//   timeout: 3000
+	// })
+	export default {
+		scrollToTop: true,
+		mixins: [index],
+		components: {
+			'vue-coupon': Coupon,
+			'vue-checkout' : CheckoutDialog,
+			'vue-product' : ProductList
 		},
+		asyncData() {
+			return {
+				duration: 50,
+				offset: -50,
+				easing: 'easeInOutQuint',
+				offsetNavbarRight: 184,
+				headers: [
+				{
+					text: 'Món',
+					align: 'left',
+					sortable: false
+				},
+				{ text: 'Số lượng'},
+				{ text: 'Giá'}
+				],
+				bag: {
+					intance: 20,
+					items: []
+				},
+				storeInfo: null,
+				search: null,
+				isLoading: false,
+				drawer: false,
+				dialog: false,
+				message:'',
+				products: [],
+				showInfoDelivery: false,
+				loadingCoupon: false,
+				code: null,
+				focusCouponInput: false,
+				couponChip: true,
+				alert: {
+					show: false,
+					message: '',
+					type: 'error'
+				},
+				cartDialog:false,
+				editedItem: {
+					rowId: null, 
+					size: null,
+					memo: null,
+					qty: 1,
+					subTotal: 0,
+					toppings: []
+				},
+				default: {
+					rowId: null, 
+					size: null,
+					memo: null,
+					qty: 1,
+					subTotal: 0,
+					toppings: []				
+				},
+				sizes: [],
+				processAddCart: false,
+				dayOff:false,
+				focusSearchInput: false
+			}
+		},
+		methods: {
+			checkCoupon: async function() {
+				var vm = this
+				if(vm.code == null) {
+					vm.alert = Object.assign({}, {show: true, message: 'Vui lòng nhập mã giảm giá', type: 'error'})
+				} else {
+
+					if(!vm.loadingCoupon) {
+						vm.loadingCoupon = await !vm.loadingCoupon
+						const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id})
+						setTimeout(function() {						
+
+							axios.post('/api/Dofuu/CheckCouponCode', data, {withCredentials:true}).then(response => {
+
+								if(response.data.type === 'success') {
+									vm.$store.commit('ADD_COUPON', response.data)
+								}
+
+								if(response.data.type === 'error') {
+									vm.alert = Object.assign({}, {show: true, message: response.data.message, type: 'error'})	
+								}
+
+							}).finally(() => {
+								vm.loadingCoupon = !vm.loadingCoupon
+							})
+
+						},300)
+					}
+				}
+				setTimeout(() => {
+					vm.alert = Object.assign({}, {show: false, message: '', type: 'error'})
+				},3000)		
+
+			},
+			removeCoupon: function() {
+				this.$store.dispatch('removeCoupon')
+			},
+			showDelivery: function() {
+				this.showInfoDelivery = true
+			},
+			closeDelivery: function() {
+				this.showInfoDelivery = false
+			},
+				//CHECK DATE
+				checkDayOff: function() {
+					return new Promise((resolve, reject) => {
+						var n = moment().locale('vi').day()
+						var day = this.store.activities.find(day => {
+							if(day.number == n) {
+								return day
+							} else {
+								return false
+							}
+						})
+						if(day) {
+							day.times.forEach(time => {
+								if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.from, 'HH:mm:ss').format('HH:mm') && moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.to, 'HH:mm:ss').format('HH:mm')) {
+									this.dayOff = false
+								} else {
+									if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
+										this.dayOff  = true
+										this.message = 'Quán hiện tại chưa mở cửa'
+									} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
+										this.dayOff  = true
+										this.message = 'Quán hiện tại đã đóng cửa'
+									}
+								}
+							})
+						} else {
+							this.dayOff  = true
+							this.message = 'Quán hôm nay nghỉ'
+						}			
+					})			
+				},
 		// SCROLLING TO CATALOGUE
 		goTo: function (target) {
 			this.drawer = false
@@ -676,15 +678,15 @@
 				}
 				this.editedItem       = Object.assign(this.editedItem, item)
 				this.editedItem.rowId = rowId
-				this.optionDialog     = true
+				this.cartDialog       = true
 			} else {				
 				this.dialog  = true
 			}
 		},
 		closeCartDialog: async function() {
-			this.optionDialog = false
-			this.editedItem   = Object.assign({}, this.default)
-			this.sizes        =  []				
+			this.cartDialog = false
+			this.editedItem = Object.assign({}, this.default)
+			this.sizes      =  []				
 		},
 		// ADD ITEM TO CART
 		addToCart: async function (product) {
@@ -813,7 +815,7 @@
 		},
 		forceUppercase(e) {
 			this.code = e.toUpperCase()
-		},
+		}
 	},
 	computed: {
 		...mapState({
@@ -880,11 +882,6 @@
 		}
 	},
 	watch: {
-		'loading': function(val) {
-			if(!val) {
-				this.checkDayOff()
-			}
-		},
 		'cartDrawer': function(val) {
 			if(val) {
 				this.drawer = true
@@ -913,6 +910,9 @@
 			})
 		}
 	},	
+	mounted() {
+		this.checkDayOff()
+	},
 	beforeDestroy() {
 		this.$store.dispatch('removeCoupon')
 		this.$store.commit('CLOSE_CHECKOUT')

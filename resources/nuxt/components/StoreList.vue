@@ -4,11 +4,7 @@
 			<v-card hover :ripple="false" class="card-radius">	
 				<v-system-bar status color="red darken-4" dark>
 					<v-icon left>access_time</v-icon>
-					<span v-for="(item, i) in item.activities" v-if="i==0">		
-						<span v-for="(time, i) in item.times">
-							{{time.from}} - {{time.to}} 
-						</span>	
-					</span>
+					<span>{{activityTime(item.activities)}}</span>
 					<v-spacer></v-spacer>
 					<span>{{item.type.name}}</span>
 				</v-system-bar>

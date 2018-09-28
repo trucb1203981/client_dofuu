@@ -2,41 +2,48 @@
 	<v-layout row wrap>
 		<!-- DESKTOP PRODUCT -->
 		<v-flex md12 lg6  v-for="(item, i) in products" :key="i" v-if="$vuetify.breakpoint.mdAndUp">
-			<v-card hover ripple class="mb-2 card-radius" v-on:click.native="open(item)">	
+			<v-hover>
+				<v-card slot-scope="{hover}" hover ripple class="mb-2 card-radius" v-on:click.native="open(item)">	
 
-				<v-system-bar status color="red darken-3" dark height="30">
-					<h5 class="white--text text-uppercase">{{item.name}}</h5>
-				</v-system-bar>
+					<v-system-bar status color="red darken-3" dark height="30">
+						<h5 class="white--text text-uppercase text-truncate">{{item.name}}</h5>
+						<v-spacer></v-spacer>
+						<v-expand-transition>
+							<div v-if="hover" class="transition-fast-in-fast-out white--text" >
+								<v-icon color="success" size="20">add_shopping_cart</v-icon>
+							</div>
+						</v-expand-transition>	
+					</v-system-bar>
 
-				<v-layout row wrap class="px-2" align-center justify-center>
+					<v-layout row wrap class="px-2" align-center justify-center>
+						<v-flex md3 lg4>
+							<v-layout align-center justify-center>
+								<v-flex xs9>
+									<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
+										<v-avatar :size="imageSize"  color="grey lighten-3">
+											<img :src="image(item.image)" alt="item.name">
+										</v-avatar>											
+									</v-card>	
+								</v-flex>	
+							</v-layout>					
+						</v-flex>
 
-					<v-flex md3 lg4>
-						<v-layout align-center justify-center>
-							<v-flex xs9>
-								<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
-									<v-avatar :size="imageSize"  color="grey lighten-3">
-										<img :src="image(item.image)" alt="item.name">
-									</v-avatar>		
-								</v-card>	
-							</v-flex>	
-						</v-layout>					
-					</v-flex>
+						<v-flex md9 lg8 class="px-0">				
+							<v-layout row wrap class="pr-2">
+								<v-flex v-for="(size, i) in item.sizes" xs4 class="pa-0 text-xs-center" :key="i" v-if="size.price >0">
+									<div class="caption">{{size.name}}:</div>
+									<div><strong>{{size.price | formatPrice}}</strong></div>
+								</v-flex>
+								<v-flex xs12 v-if="item.description != null" class="text-truncate pa-0">{{ item.description }}</v-flex>	
+							</v-layout>											
+						</v-flex>
 
-					<v-flex md9 lg8 class="px-0">				
-						<v-layout row wrap class="pr-2">
-							<v-flex v-for="(size, i) in item.sizes" xs4 class="pa-0 text-xs-center" :key="i" v-if="size.price >0">
-								<div class="caption">{{size.name}}:</div>
-								<div><strong>{{size.price | formatPrice}}</strong></div>
-							</v-flex>
-							<v-flex xs12 v-if="item.description != null" class="text-truncate py-0">{{ item.description }}</v-flex>	
-						</v-layout>											
-					</v-flex>
+						<v-flex xs12 md12>
 
-					<v-flex xs12 md12>
-
-					</v-flex>
-				</v-layout>
-			</v-card>
+						</v-flex>
+					</v-layout>
+				</v-card>
+			</v-hover>
 		</v-flex>
 		<!-- MOBILE PRODUCT -->
 		<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in products" :key="i">
@@ -69,8 +76,8 @@
 							</v-layout>
 						</v-card-text>
 					</v-flex>
-					<v-flex xs12  v-if="item.description != null">
-						<span class="text-xs-center caption">Mô tả: {{ item.description }}</span>
+					<v-flex xs12  v-if="item.description != null" class="text-truncate">
+						<span class="text-xs-center caption ">Mô tả: {{ item.description }}</span>
 					</v-flex>
 				</v-layout>
 			</v-card>
@@ -102,3 +109,14 @@
 		}
 	}
 </script>
+
+<style>
+.v-card--reveal {
+	align-items: center;
+	bottom: 0;
+	justify-content: center;
+	opacity: .5;
+	position: absolute;
+	width: 100%;
+}
+</style>

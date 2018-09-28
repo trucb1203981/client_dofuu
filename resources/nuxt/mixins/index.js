@@ -1,4 +1,5 @@
 import { baseURL } from '@/config.js'
+import moment from 'moment'
 import Cookies from 'js-cookie'
 export default {
 	methods: {
@@ -36,6 +37,28 @@ export default {
 				return str.substring(8, 10)+'/'+str.substring(5, 7)+'/'+str.substring(0, 4)
 			}
 			return null
+		},
+		activityTime(times) {
+			var n   = moment().locale('vi').day()
+			var day = times.find(day => {
+				if(day.number === n) {
+					return day
+				} else {
+					return false
+				}
+			})
+
+			if(day) {
+				var time =  day.times.map(time => {
+					return time.from + ' - ' + time.to 
+				})
+				if(time.length == 1) {
+					time = time[0]
+				}
+				return time
+			} else {
+				return 'Hôm nay nghỉ'
+			}
 		}
 		// storeURL: function(slug) {
 		// 	var flag_c = parseInt(Cookies.get("flag_c"))

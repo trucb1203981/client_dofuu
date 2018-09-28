@@ -57,11 +57,7 @@
 						<v-card color="white" tile class="card-radius" >
 							<v-system-bar status color="red darken-3" dark>
 								<v-icon>alarm</v-icon>
-								<span v-for="(item, i) in store.activities" v-if="i==0"> 
-									<span v-for="(time, index) in item.times">
-										{{time.from}} - {{time.to}} 
-									</span>	
-								</span>
+								<span>{{activityTime(store.activities)}}</span>
 								<v-spacer></v-spacer>
 								<span>{{store.type.name}}</span>
 							</v-system-bar>
@@ -240,9 +236,9 @@
 			</v-card-actions>
 			<v-divider></v-divider>
 			<v-card-actions>
-				<v-btn color="black" outline small @click.native="showRating = false">Hủy</v-btn>
+				<v-btn color="red darken-1" outline flat round small @click.native="showRating = false">Hủy</v-btn>
 				<v-spacer></v-spacer>
-				<v-btn color="blue" class="white--text" small :loading="processRating" @click.native="addRating">Gửi</v-btn>
+				<v-btn color="blue" class="white--text" small :loading="processRating" @click.native="addRating" round>Gửi</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>

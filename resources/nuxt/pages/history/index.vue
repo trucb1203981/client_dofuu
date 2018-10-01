@@ -540,7 +540,9 @@
 </v-dialog>
 <v-dialog v-model="cancelDialog" :value="cancelDialog" max-width="500">
 	<v-card>
-		<v-card-title class="headline">Hủy đơn đặt hàng?</v-card-title>
+		<v-toolbar color="transparent" dense flat>
+			<v-toolbar-title>Hủy đơn đặt hàng?</v-toolbar-title>
+		</v-toolbar>
 		<v-divider></v-divider>
 		<v-card-text>
 			<v-checkbox v-for="(item, index) in reasons" :label="item.note" v-model="notes" :value="item.note" :key="index"></v-checkbox>
@@ -661,8 +663,8 @@
 		},
 		//SHOW CANCEL DIALOG
 		showCancelDialog: async function(item) {
-			this.cancelDialog = true
-			this.cancelData   = item
+			this.cancelDialog= true
+			this.cancelData  =  item
 		},
 		//ACCEPT CANCEL
 		cancelOrder: async function() {
@@ -683,22 +685,22 @@
 			const _s = new String(status).toLowerCase();
 
 			switch(_s) {
-				case 'chờ xử lý': 
+				case 'chờ xử lý' : 
 				return true
 				break;
 				case 'đang xử lý':
 				return true
 				break;
-				case 'xác nhận':
+				case 'xác nhận'  :
 				return false
 				break;
-				case 'đang giao':
+				case 'đang giao' :
 				return false
 				break;
 				case 'thành công':
 				return false
 				break;
-				case 'hủy': 
+				case 'hủy'       : 
 				return false
 				break;
 			}
@@ -710,9 +712,9 @@
 		//DIRECTION GOOGLE MAP
 		calculateRoute() {
 			var str = ''
-			var vm = this
+			var vm  = this
 			var map = new google.maps.Map(document.getElementById('map'), {
-				zoom: 17,
+				zoom  : 17,
 				center: {lat:vm.order.store.lat, lng:vm.order.store.lng}
 			});
 			var directionsService = new google.maps.DirectionsService;
@@ -720,52 +722,52 @@
 
 			directionsDisplay.setMap(map)
 
-			var start = {lat: vm.order.store.lat, lng: vm.order.store.lng}
-			var end   = {lat: vm.order.lat, lng: vm.order.lng}
+			var start      = {lat: vm.order.store.lat, lng: vm.order.store.lng}
+			var end        = {lat: vm.order.lat, lng: vm.order.lng}
 
-			var request = {
-				origin: start,
+			var request    = {
+				origin     : start,
 				destination: end,
-				travelMode: 'DRIVING'
+				travelMode : 'DRIVING'
 			}
 			directionsService.route(request, function(response, status) {
 				if(status === 'OK') {
 					var response = response
 					directionsDisplay.setDirections(response);
 					var service  = new google.maps.DistanceMatrixService()
-					service.getDistanceMatrix(
-					{
-						origins: [response.request.origin.location],
-						destinations: [response.request.destination.location],
-						travelMode: 'DRIVING'
-					}, function(res, status) {
-						if (status === 'OK') {
-							var originList      = res.originAddresses
-							var destinationList = res.destinationAddresses
-							var distance        = '0 Km'
-							var duration        = '0 phút'
-							var leg            = response.routes[ 0 ].legs[ 0 ];
-							directionsDisplay.setDirections(response);
-							for (var i = 0; i < originList.length; i++) {
-								var results = res.rows[i].elements
-								for (var j = 0; j < results.length; j++) {
-									var element = results[j]
-									distance    = element.distance.text
-									duration    = element.duration.text
-								}
+			service.getDistanceMatrix(
+			{
+				origins: [response.request.origin.location],
+				destinations: [response.request.destination.location],
+				travelMode: 'DRIVING'
+			}, function(res, status) {
+				if (status === 'OK') {
+					var originList     = res.originAddresses
+					var destinationList= res.destinationAddresses
+					var distance       = '0 Km'
+					var duration       = '0 phút'
+					var leg            = response.routes[ 0 ].legs[ 0 ];
+					directionsDisplay.setDirections(response);
+					for (var i = 0; i < originList.length; i++) {
+						var results = res.rows[i].elements
+						for (var j = 0; j < results.length; j++) {
+							var element = results[j]
+							distance    = element.distance.text
+							duration    = element.duration.text
+						}
 
-								vm.matrix.distance = distance
-								vm.matrix.duration = duration
-								vm.matrix.start    = leg.start_address
-								vm.matrix.end      = leg.end_address
-								vm.matrix.show     = true
-								directionsDisplay.setDirections(response);
-							}
-						}					
-					})
-				}				
+						vm.matrix.distance = distance
+						vm.matrix.duration = duration
+						vm.matrix.start    = leg.start_address
+						vm.matrix.end      = leg.end_address
+						vm.matrix.show     = true
+						directionsDisplay.setDirections(response);
+					}
+				}					
 			})
-		},
+		}				
+	})
+},
 		//CHOOSE STATUS ORDER
 		orderStatus: function(status) {
 			const _s = new String(status).toLowerCase();

@@ -347,21 +347,21 @@
 			</v-card>
 		</v-dialog>
 
-		<v-dialog v-model="cartDialog" persistent scrollable disabled max-width="1000" :fullscreen="$vuetify.breakpoint.xsOnly">
-			<v-card v-if="editedItem != null" class="grey lighten-4">
+		<v-dialog v-model="cartDialog" persistent scrollable disabled max-width="1000" >
+			<v-card v-if="editedItem != null" class="grey lighten-4" >
 				<v-toolbar color="red accent-4" dense class="elevation-0" dark flat height="30">
 					<v-toolbar-title class="body-1 px-0 text-uppercase"> {{editedItem.name}}</v-toolbar-title>
 					<v-spacer></v-spacer>
 					<div class="font-weight-bold">{{totalProduct(editedItem) | formatPrice}}</div>
 				</v-toolbar>
 
-				<v-card-text class="white" style="height: 300px">
+				<v-card-text class="white" style="height: 350px" :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 					<v-container fluid grid-list-xs>
 						<v-layout row wrap>
 
 							<v-flex  xs12 md4>
 								<v-card>
-									<v-img :src="image(editedItem.image)" :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'">							
+									<v-img :src="image(editedItem.image)" :height="$vuetify.breakpoint.mdAndUp ? '250' : '200'">			
 									</v-img>
 								</v-card>				
 							</v-flex>
@@ -373,7 +373,7 @@
 											<v-card flat v-if="editedItem.description != null" class="card-radius" color="grey lighten-4 mt-2">
 												<div class="pa-2">{{ editedItem.description }}</div>				
 											</v-card>
-											<v-radio-group mandatory v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp">
+											<v-radio-group mandatory v-model="editedItem.size" :row="$vuetify.breakpoint.mdAndUp" hide-details class="py-0">
 												<v-radio color="green darken-3" :value="size" v-for="(size, i) in sizes" :key="i">
 													<span slot="label" class="black--text body-1">{{size.name}} <strong>({{size.price | formatPrice}})</strong></span>
 												</v-radio>

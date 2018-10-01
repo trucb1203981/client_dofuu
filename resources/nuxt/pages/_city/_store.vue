@@ -77,7 +77,7 @@
 								</v-card-title>
 							</v-layout>			
 						</v-img>
-						<v-toolbar dense flat color="red darken-3" dark height="30px" class="elevation-0">
+						<v-toolbar dense flat color="red darken-3" dark height="35px" class="elevation-0">
 							<div class="text-xs-center grey--text text--lighten-5">{{store.name}}</div>
 						</v-toolbar>
 						<v-list avatar dense three-line subheader>

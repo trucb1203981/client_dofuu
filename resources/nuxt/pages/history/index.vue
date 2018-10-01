@@ -181,7 +181,7 @@
 		</v-layout>
 	</v-container>	
 
-	<v-dialog scrollable max-width="800px" v-model="dialog" :value="dialog" v-if="dialog">
+	<v-dialog scrollable max-width="800px" v-model="dialog" :value="dialog" v-if="dialog" :fullscreen="$vuetify.breakpoint.xsOnly">
 		<v-card v-if="order != null">
 			<v-card-title> 
 				<v-tabs
@@ -548,8 +548,8 @@
 		<v-divider></v-divider>
 		<v-card-actions>
 			<v-spacer></v-spacer>
-			<v-btn @click.native="cancelDialog = false">Hủy</v-btn>
-			<v-btn color="red accent-3" dark @click.native="cancelOrder" small round>Chấp nhận</v-btn>
+			<v-btn @click.native="cancelDialog = false" flat color="red darken-1" outline small round>Hủy</v-btn>
+			<v-btn color="blue" dark @click.native="cancelOrder" small round>Chấp nhận</v-btn>
 		</v-card-actions>
 	</v-card>
 </v-dialog>

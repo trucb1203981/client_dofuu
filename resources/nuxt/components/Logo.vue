@@ -4,7 +4,7 @@
 			<v-avatar size="36" color="white" tile>
 				<img src="/dofuu40x40.png" alt="dofuu-logo" style="border-radius: 8px">
 			</v-avatar>
-			<div class="pl-1 headline font-weight-bold red--text text--darken-1" v-if="$vuetify.breakpoint.smAndUp">Dofuu</div>
+			<div class="pl-1 headline font-weight-bold red--text text--darken-1" v-if="$vuetify.breakpoint.smAndUp">Dofuu.com</div>
 		</v-card-actions>
 	</v-card>
 </template>

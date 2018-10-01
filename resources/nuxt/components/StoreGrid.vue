@@ -29,7 +29,7 @@
 						<v-divider light></v-divider>
 						<v-card-text  class="pt-4" style="position: relative;">
 							<v-btn v-if="!!item.coupon" absolute color="white" class="red--text" fab small right top style="height: 30px; width: 30px">
-								-{{item.coupon.discount}}%
+								<span class="font-weight-bold">-{{item.coupon.discount}}%</span>
 							</v-btn>
 							<v-tooltip top>												
 								<div slot="activator" class="text-truncate"><strong >{{item.name}}</strong>

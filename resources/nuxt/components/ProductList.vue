@@ -19,7 +19,7 @@
 						<v-flex md3 lg4>
 							<v-layout align-center justify-center>
 								<v-flex xs9>
-									<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
+									<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize" raised>	
 										<v-avatar :size="imageSize"  color="grey lighten-3">
 											<img :src="image(item.image)" alt="item.name">
 										</v-avatar>											
@@ -52,7 +52,7 @@
 					<v-flex xs3 class="text-xs-center">
 						<v-layout  align-center justify-center>
 							<v-flex xs9>
-								<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize">	
+								<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize" raised>	
 									<v-avatar :size="imageSize" color="grey lighten-3">
 										<img :src="image(item.image)" alt="item.name">
 									</v-avatar>

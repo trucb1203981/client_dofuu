@@ -23,30 +23,13 @@
 		},
 		data() {
 			return {
-				tracking: false
+				
 			}
 		},
-		methods: {
-			trackingLocation: function() {
-				var vm = this
-				if(navigator.geolocation) {					
-					navigator.geolocation.watchPosition(function(position) {
-						vm.tracking = true
-					},
-					function (error) { 
-						if (error.code == error.PERMISSION_DENIED) vm.tracking = false
-					});
-				} else {
-					console.log("Geolocation is not supported by this browser.")
-				}
-			}
-		},
-		watch: {
-			'tracking': function(val) {
-				if(val) {
-					this.$store.dispatch('currentLocation')
-				}
-			}
+		computed: {
+			...mapState({
+				tracking: state => state.locationStore.tracking
+			})
 		},
 		created: function() {			
 
@@ -73,7 +56,8 @@
 				}
 			});
 			this.$store.dispatch("fetchType");
-			this.trackingLocation()
+			this.$store.dispatch('trackingLocation')
+			this.$store.dispatch('currentLocation')
 		}
 	};
 </script>

@@ -55,9 +55,16 @@
 									<v-flex xs10 md11>				
 
 										<v-card color="grey lighten-4" class="card-radius" flat style="min-height: 32px">
-											<v-card-text class="pa-1 px-2">
+											<v-card-text class="pa-1 px-2" style="position: relative;">
 												<a class="blue--text font-weight-bold"> {{comment.name}} </a>
 												<div>{{ comment.body }}</div>
+
+												<v-btn v-if="comment.likes>0" color="white" absolute small round class="v-btn--height v-btn--like">
+													<v-avatar size="18" color="blue" class="mr-2">											
+														<v-icon size="14" color="white">thumb_up</v-icon>
+													</v-avatar> 
+													{{comment.likes}}
+												</v-btn>
 											</v-card-text>
 										</v-card>
 
@@ -103,11 +110,9 @@
 													</v-btn> 
 													<span>{{comment.checkedLike ? 'Bỏ thích' : 'Thích'}}</span>
 												</v-tooltip>						
-												{{comment.likes}}		
 											</span>
 											<span>
 												<v-btn small flat @click="clickAction(comment, 'reply')" class="pa-0 ma-0">
-													<v-icon >reply</v-icon> 
 													<span>Trả lời</span>
 												</v-btn>
 											</span>
@@ -156,9 +161,16 @@
 
 																	<v-flex xs10 sm11 md11>
 																		<v-card color="grey lighten-4" class="card-radius" flat style="min-height: 32px">
-																			<v-card-text class="pa-1 px-2">
+																			<v-card-text class="pa-1 px-2" style="position: relative;">
 																				<a class="blue--text font-weight-bold"> {{reply.name}} </a> 
 																				<div>{{reply.body}}</div>
+
+																				<v-btn v-if="reply.likes>0" color="white" absolute small round class="v-btn--height v-btn--like">
+																					<v-avatar size="18" color="blue" class="mr-2">											
+																						<v-icon size="14" color="white">thumb_up</v-icon>
+																					</v-avatar> 
+																					{{reply.likes}}
+																				</v-btn>
 																			</v-card-text>
 																		</v-card>
 																	</v-flex>
@@ -203,13 +215,12 @@
 																					</v-btn> 
 																					<span>{{reply.checkedLike ? 'Bỏ thích' : 'Thích'}}</span>
 																				</v-tooltip>						
-																				{{reply.likes}}		
 																			</span>
-																			<span>
+																			<!-- <span>
 																				<v-btn small flat @click="clickAction(comment, 'reply')" class="ma-0 pa-0">
 																					Trả lời
 																				</v-btn>
-																			</span>
+																			</span> -->
 																			<span class="grey--text caption">
 																				{{ reply.createdAt.date | formatDateTimeHumanize }}						
 																			</span>
@@ -238,7 +249,7 @@
 													<v-textarea	id="reply" full-width class="btn-custom"	auto-grow	color="black" placeholder="Viết cảm nghĩ của bạn..." rows="1" solo	hide-details :background-color="comment.focusCommentInput ? 'grey lighten-4' : 'grey lighten-4'"	:flat="!comment.focusCommentInput"	v-model="comment.reply" @keyup.enter.exact="addReply(comment)"	@click="clickAction( null, 'comment')" @focus="comment.focusCommentInput = true"	@blur="comment.focusCommentInput = false">
 
 														<v-avatar color="grey lighten-4" size="30" slot="prepend" style="top: -10px"> 
-															<img src="https://scontent.fsgn5-6.fna.fbcdn.net/v/t1.0-1/p160x160/38758290_1707632599335485_5612655054730297344_n.jpg?_nc_cat=0&oh=a3ab5ff0d44c53510426072013848812&oe=5C2D3109" alt="avatar">
+															<img  :src="image(!!currentUser ? currentUser.avatar : null)" alt="avatar">
 														</v-avatar>
 
 														<v-tooltip top slot="append">
@@ -585,5 +596,12 @@
 	min-height: 30px;
 	min-width: 30px;
 	margin: 10px;
+}
+.v-btn--height {
+	height: 20px
+}
+.v-btn--like {
+	bottom: -12px;
+	right: 0px;
 }
 </style>

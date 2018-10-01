@@ -1,16 +1,7 @@
 <template>
 	<v-app id="inspire" class="grey lighten-2">
 		<v-toolbar color="white" dense fat class="elevation-0">
-			<v-btn icon :to="{path: '/'}">
-				<v-icon color="red darken-3">home</v-icon>
-			</v-btn>
-			<v-layout row wrap justify-center>
-				<v-toolbar-title class="red--text text-accent-2 pt-2" :style="$vuetify.breakpoint.lgAndUp ? 'width: 200px': 'width: 200px'">		
-					<a href="/">					
-						<img src="/logo_page.png" alt="" >
-					</a>
-				</v-toolbar-title>
-			</v-layout>			
+			<vue-logo />	
 		</v-toolbar>
 		<v-content>
 			<nuxt/>
@@ -20,10 +11,12 @@
 </template>
 
 <script>
+	import Logo from '@/components/Logo'
 	import Footer from '@/components/Footer'
 	export default {
 		components: {
-			'vue-footer': Footer
+			'vue-footer': Footer,
+			'vue-logo': Logo
 		},
 	}
 </script>

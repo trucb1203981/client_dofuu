@@ -5,6 +5,7 @@ import authStore from './auth'
 import cityStore from './city'
 import storeStore from './store'
 import cartStore from './cart'
+import locationStore from './location'
 
 const store = () => {
 	return new Vuex.Store({
@@ -36,12 +37,12 @@ const store = () => {
 		actions: {
 			currentLocation: ({commit}) => new Promise((resolve, reject) => {
 				var vm      = this			
-				var results = null	
 				navigator.geolocation.getCurrentPosition(function(position){
 					var geocoder = new google.maps.Geocoder()
-					geocoder.geocode({'location': {lat: position.coords.latitude, lng: position.coords.longitude}}, function(results, status) {
+					geocoder.geocode({'location': {lat: position.coords.latitude, lng: position.coords.longitude}}, function(result, status) {
 						if(status === 'OK') {
-							commit('UPDATE_LOCATION', results)
+							resolve(result)
+							commit('UPDATE_LOCATION', result)
 						}
 					})
 				})
@@ -54,7 +55,8 @@ const store = () => {
 			cityStore,
 			typeStore,
 			storeStore,
-			cartStore
+			cartStore,
+			locationStore
 		}
 	})
 }

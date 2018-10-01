@@ -37,8 +37,6 @@
 						</v-flex>
 					</v-layout>
 				</v-card>
-				
-
 
 				<v-system-bar color="grey lighten-5">
 					<v-spacer></v-spacer>
@@ -107,8 +105,7 @@
 					}
 				} else {
 					this.$router.push({name: 'login', query: {redirect: this.$route.path}})
-				}
-				
+				}	
 			},
 		}
 	}

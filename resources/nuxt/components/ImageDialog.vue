@@ -6,7 +6,7 @@
 			</v-toolbar>
 			<v-divider></v-divider>
 			<v-layout row wrap class="justify-center pt-3">			
-				<vue-croppie ref=croppieRef  @result="result" :enableResize="false" :enableExif="true" :mouseWheelZoom="false"	@update="update" :viewport="{ width: 250, height: 250, type: 'circle'}" :boundary="{width: 300, height: 300}">
+				<vue-croppie ref="croppieRef"  @result="result" :enableResize="false" :enableExif="true" :mouseWheelZoom="false"	@update="update" :viewport="{ width: 250, height: 250, type: 'circle'}" :boundary="{width: 300, height: 300}">
 				</vue-croppie>
 				<v-btn color="white" @click.stop.prevent="onPickImage" :loading="loading" round small class="black--text"><v-icon left >camera_alt</v-icon> Tải ảnh</v-btn>
 				<v-btn color="white" small class="black--text elevation-1" icon @click="rotate(90)"><v-icon>rotate_left</v-icon></v-btn>

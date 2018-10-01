@@ -624,37 +624,37 @@
 			closeDelivery: function() {
 				this.showInfoDelivery = false
 			},
-				//CHECK DATE
-				checkDayOff: function() {
-					return new Promise((resolve, reject) => {
-						var n = moment().locale('vi').day()
-						var day = this.store.activities.find(day => {
-							if(day.number == n) {
-								return day
+			//CHECK DATE
+			checkDayOff: function() {
+				return new Promise((resolve, reject) => {
+					var n = moment().locale('vi').day()
+					var day = this.store.activities.find(day => {
+						if(day.number == n) {
+							return day
+						} else {
+							return false
+						}
+					})
+					if(day) {
+						day.times.forEach(time => {
+							if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.from, 'HH:mm:ss').format('HH:mm') && moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.to, 'HH:mm:ss').format('HH:mm')) {
+								this.dayOff = false
 							} else {
-								return false
+								if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
+									this.dayOff  = true
+									this.message = 'Quán hiện tại chưa mở cửa'
+								} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
+									this.dayOff  = true
+									this.message = 'Quán hiện tại đã đóng cửa'
+								}
 							}
 						})
-						if(day) {
-							day.times.forEach(time => {
-								if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.from, 'HH:mm:ss').format('HH:mm') && moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-									this.dayOff = false
-								} else {
-									if(moment(moment(), 'HH:mm:ss').format('HH:mm') < moment(time.from, 'HH:mm:ss').format('HH:mm')) {
-										this.dayOff  = true
-										this.message = 'Quán hiện tại chưa mở cửa'
-									} else if(moment(moment(), 'HH:mm:ss').format('HH:mm') >= moment(time.to, 'HH:mm:ss').format('HH:mm')) {
-										this.dayOff  = true
-										this.message = 'Quán hiện tại đã đóng cửa'
-									}
-								}
-							})
-						} else {
-							this.dayOff  = true
-							this.message = 'Quán hôm nay nghỉ'
-						}			
-					})			
-				},
+					} else {
+						this.dayOff  = true
+						this.message = 'Quán hôm nay nghỉ'
+					}			
+				})			
+			},
 		// SCROLLING TO CATALOGUE
 		goTo: function (target) {
 			this.drawer = false
@@ -870,15 +870,6 @@
 				}
 			}
 			return true
-		},
-		imageSize () {
-			switch (this.$vuetify.breakpoint.name) {
-				case 'xs': return '50'
-				case 'sm': return '50'
-				case 'md': return '50'
-				case 'lg': return '60'
-				case 'xl': return '80'
-			}
 		}
 	},
 	watch: {

@@ -59,7 +59,30 @@ export default {
 			} else {
 				return 'Hôm nay nghỉ'
 			}
-		}
+		},
+		typeIcon: function(value, color) {
+			var status = new String(value).toLowerCase()
+			switch(status) {
+				case 'quán ăn':
+				return { url: `/map_icons/${color}/quan-an.png`, scaledSize: new google.maps.Size(30, 38)}
+				break
+				case 'trà sữa':
+				return { url: `/map_icons/${color}/tra-sua.png`, scaledSize: new google.maps.Size(30, 38) }
+				break
+				case 'cà phê':
+				return { url: `/map_icons/${color}/ca-phe.png`, scaledSize: new google.maps.Size(30, 38) }
+				break
+				case 'ăn vặt':
+				return { url: `/map_icons/${color}/an-vat.png`, scaledSize: new google.maps.Size(30, 38) }
+				break
+				case 'thức ăn nhanh':
+				return { url: `/map_icons/${color}/fast-food.png`, scaledSize: new google.maps.Size(30, 38) }
+				break
+				case 'vỉa hè':
+				return { url: `/map_icons/${color}/via-he.png`, scaledSize: new google.maps.Size(30, 38) }
+				break
+			}
+		},
 		// storeURL: function(slug) {
 		// 	var flag_c = parseInt(Cookies.get("flag_c"))
 		// 	if (typeof flag_c != "undefined" ||	flag_c != null) {

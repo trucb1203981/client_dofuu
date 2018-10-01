@@ -38,9 +38,10 @@
 							<span>Bình luận</span>			 
 						</v-badge>						
 					</v-tab>
-					<!-- <v-tab nuxt exact :to="{name: 'city-store-about', params: {city: $route.params.city, store: $route.params.store}}">
-						Giới thiệu
-					</v-tab> -->
+					<v-divider vertical inset></v-divider>
+					<v-tab nuxt exact :to="{name: 'city-store-map', params: {city: $route.params.city, store: $route.params.store}}">
+						Bản đồ
+					</v-tab>
 				</v-tabs>
 				<v-spacer></v-spacer>
 				<v-btn icon @click.native="$store.commit('SHOW_CART')" v-if="$vuetify.breakpoint.smAndDown && $route.name === 'city-store' ">

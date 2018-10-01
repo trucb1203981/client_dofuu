@@ -10,12 +10,11 @@
 			<v-btn v-if="$vuetify.breakpoint.smAndDown && isAuth" @click.stop="$store.commit('LEFT_NAVIGATION_SHOW')" icon small>
 				<v-icon>menu</v-icon>
 			</v-btn>
-			<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 280px': 'width: 200px'">		
-				<nuxt-link :to="{path: '/'}">					
-					<img src="/logo_page_1.jpg" alt="dofuu-logo">
-				</nuxt-link>
+			<vue-logo/>
+			<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
+	<!-- 		<v-toolbar-title class="red--text text-accent-2 pt-2 hidden-sm-and-down" :style="$vuetify.breakpoint.lgAndUp ? 'width: 280px': 'width: 200px'">	
 			</v-toolbar-title>
-
+		-->
 			<!-- <v-autocomplete color="red accent-3" :loading="loading"
 			:search-input.sync="keywords" class="mx-3" hide-no-data hide-details label="Tìm kiếm (quán, món, ...)" solo @keyup.enter="search" :append-icon="null">
 			<template slot="append-outer">
@@ -24,14 +23,14 @@
 				</v-btn>
 			</template>
 		</v-autocomplete>	 -->	
-		<v-text-field class="btn-custom" solo :flat="!focusSearchInput" :background-color="focusSearchInput ? 'white' : 'grey lighten-3'" label="Tìm kiếm (quán, món, ...)"  @keyup.enter="search" v-model="keywords" @focus="focusSearchInput = true " @blur="focusSearchInput = false" style="border-radius: 1px solid blue">
+		<v-text-field class="btn-custom mx-2" solo :flat="!focusSearchInput" :background-color="focusSearchInput ? 'white' : 'grey lighten-3'" label="Tìm kiếm (quán, món, ...)"  @keyup.enter="search" v-model="keywords" @focus="focusSearchInput = true " @blur="focusSearchInput = false" style="border-radius: 1px solid blue">
 			<v-btn :color="focusSearchInput ? 'blue' : 'grey lighten-3'" :outline="focusSearchInput" icon  class="ma-0"  style="right: -10px" @click.prevent="search" small slot="append">
 				<v-icon :color="focusSearchInput ? 'blue' : 'grey'" >search</v-icon>
 			</v-btn>
 		</v-text-field>
 		<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
 
-		<v-btn v-if="!isAuth" nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="blue" small dark :round="$vuetify.breakpoint.mdAndUp" :icon="$vuetify.breakpoint.smAndDown">
+		<v-btn v-if="!isAuth" nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="blue" small dark :round="$vuetify.breakpoint.mdAndUp" :icon="$vuetify.breakpoint.smAndDown" class="mx-0">
 			<v-icon>person</v-icon> <span class="hidden-sm-and-down pl-1">ĐĂNG NHẬP</span>
 		</v-btn>
 
@@ -45,11 +44,11 @@
 		:nudge-bottom="30">
 		<v-card slot="activator" style="border-radius: 20px;" max-height="35" width="180" :ripple="true" :class="{'ml-2': $vuetify.breakpoint.smOnly}">
 			<v-card-actions class="pa-0 text-xs-center">
-				<v-avatar size="30" color="white">
+				<v-avatar size="30" color="white" class="mr-1">
 					<img :src="image(currentUser.image)" alt="alt">
 				</v-avatar>
 				<div class="text-truncate">{{currentUser.name}}</div>
-				<v-icon>keyboard_arrow_down</v-icon>
+				<v-icon right>keyboard_arrow_down</v-icon>
 			</v-card-actions>
 		</v-card>
 		<v-card>
@@ -113,7 +112,15 @@
 			<v-divider vertical inset></v-divider>
 			<template v-for="(item, index) in types" >
 				<v-tab :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
-					<v-icon left size="20">{{item.icon}}</v-icon> <h5>{{ item.name }}</h5>
+					<v-avatar
+					  size="18"
+					  color="transparent"
+					  tile
+					>
+					  <img :src="typeIcon(item.name, 'type')" alt="alt" style="width:18px; height:18px">
+					</v-avatar>
+					<!-- <v-icon left size="20">{{item.icon}}</v-icon> -->
+					<h5 class="pl-1">{{ item.name }}</h5>
 				</v-tab>
 				<v-divider vertical v-if="index != types.length-1" inset></v-divider>
 			</template>
@@ -123,11 +130,15 @@
 </template>
 
 <script>
-	import {mapState} from 'vuex'
+	import { mapState } from 'vuex'
 	import axios from 'axios'
+	import Logo from '@/components/Logo'
 	import index from '@/mixins/index'
 	export default {
 		mixins: [index],
+		components: {
+			'vue-logo': Logo
+		},
 		data() {
 			return {
 				keywords: typeof this.$route.query.q != 'undefined' ? this.$route.query.q : null,
@@ -190,6 +201,29 @@
 				return 'Thương gia'
 			} 
 			return 'Khách hàng'
+		},
+		typeIcon: function(value, color) {
+			var status = new String(value).toLowerCase()
+			switch(status) {
+				case 'quán ăn':
+				return `/map_icons/${color}/quan-an.png`
+				break
+				case 'trà sữa':
+				return `/map_icons/${color}/tra-sua.png`
+				break
+				case 'cà phê':
+				return `/map_icons/${color}/ca-phe.png`
+				break
+				case 'ăn vặt':
+				return `/map_icons/${color}/an-vat.png`
+				break
+				case 'thức ăn nhanh':
+				return `/map_icons/${color}/thuc-an-nhanh.png`
+				break
+				case 'vỉa hè':
+				return `/map_icons/${color}/via-he.png`
+				break
+			}
 		},
 		search () {
 			const keyword = this.keywords

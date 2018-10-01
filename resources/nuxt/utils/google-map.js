@@ -1,3 +1,24 @@
+export function initMap(position) {
+	var map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 17,
+		center: { lat: position.lat, lng: position.lng },
+		mapTypeControl: false,
+		streetViewControl: false
+	});
+
+	return map
+}
+
+export function makeMarker(position, image, map) {
+	var marker = new google.maps.Marker({
+		position: position,
+		icon: image,
+		map: map,
+		animation: google.maps.Animation.DROP,
+	});
+	return marker
+}
+
 export function getLocation(value) {
 	var vm = this
 	return new Promise((resolve, reject) => {
@@ -11,6 +32,7 @@ export function getLocation(value) {
 		})
 	})
 }
+
 
 export function geocoder(type, location) {
 	return new Promise((resolve, reject) => {
@@ -28,6 +50,37 @@ export function geocoder(type, location) {
 				}
 			})
 		}
+	})
+}
+
+export function calculateDirection(map, start, destination) {
+	var start             = new google.maps.LatLng(start.lat, start.lng);
+	var end               = new google.maps.LatLng(destination.lat, destination.lng);
+	var directionsService = new google.maps.DirectionsService;
+	var directionsDisplay = new google.maps.DirectionsRenderer;
+
+	var request = {
+		origin: start,
+		destination: end,
+		travelMode: google.maps.DirectionsTravelMode.DRIVING
+	}
+
+	return new Promise((resolve, reject) => {	
+		directionsService.route(request, function(response, status) {
+			if (status === 'OK') 
+			{				
+				var service = new google.maps.DistanceMatrixService()
+				var options = {
+					map: map,
+					directions: response,
+					suppressMarkers: true
+				}
+				new google.maps.DirectionsRenderer(options)
+				resolve(response)
+			} else {
+				window.alert('Directions request failed due to ' + status);
+			}
+		})
 	})
 }
 

@@ -119,14 +119,14 @@
 			},
 			//Transfer and resize Image
 			onImagePicked: function(event) {
-				let vm = this				
+				let vm     = this				
 				const file = event.target.files || event.dataTransfer.files
 				if(!file.length) {
 					return 
 				} 
-				let filename = file[0].name
-				vm.loading = !vm.loading
-				const fileReader = new FileReader()
+				let filename      = file[0].name
+				vm.loading        = !vm.loading
+				const fileReader  = new FileReader()
 				fileReader.onload = (e) => {
 					var image = new Image()
 					image.src = fileReader.result
@@ -141,6 +141,7 @@
 				fileReader.readAsDataURL(file[0])
 			},
 			refresh() {
+				this.$refs.fileInput.value = ""
 				this.$refs.croppieRef.refresh()
 			}
 		},

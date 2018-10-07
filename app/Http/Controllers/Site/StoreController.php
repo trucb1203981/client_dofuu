@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class StoreController extends Controller {
 	public function __construct() {
-		$this->currentCityID = City::where('city_name', 'Cần Thơ')->select('id')->first();
+		$this->currentCityID        = City::where('city_name', 'Cần Thơ')->select('id')->first();
 		$this->productStatusIDCease = ProductStatus::where('product_status_name', 'Ngưng bán')->select('id')->first();
 	}
 
@@ -21,16 +21,16 @@ class StoreController extends Controller {
 		$keywords = $request->keywords;
 		$citySlug = $request->citySlug;
 		$pageSize = 8;
-		$offset = $request->offset;
-
-		$city = City::bySlug($citySlug)->with(['stores' => function ($query) use ($keywords, $pageSize, $offset) {
+		$offset   = $request->offset;
+		
+		$city     = City::bySlug($citySlug)->with(['stores' => function ($query) use ($keywords, $pageSize, $offset) {
 			return $query->show()
-				->whereHas('type', function ($queryChild) use ($keywords) {
-					$queryChild->likeName($keywords);
-				})
-				->limit($pageSize)
-				->offset($offset)
-				->get();
+			->whereHas('type', function ($queryChild) use ($keywords) {
+				$queryChild->likeName($keywords);
+			})
+			->limit($pageSize)
+			->offset($offset)
+			->get();
 		}])->first();
 
 		return $this->respondSuccess('Search store', $city->stores->load('coupons', 'activities'), 200, 'many');
@@ -40,22 +40,22 @@ class StoreController extends Controller {
 		$keywords = $request->keywords;
 		$citySlug = $request->citySlug;
 		$pageSize = 8;
-		$offset = $request->offset;
-
-		$city = City::bySlug($citySlug)->with(['stores' => function ($query) use ($keywords, $pageSize, $offset) {
+		$offset   = $request->offset;
+		
+		$city     = City::bySlug($citySlug)->with(['stores' => function ($query) use ($keywords, $pageSize, $offset) {
 
 			return $query->show()
-				->where(function ($query) use ($keywords) {
-					$query->whereHas('products', function ($queryChild) use ($keywords) {
-						$queryChild->likeName($keywords);
-					});
-					$query->orWhereHas('catalogues', function ($queryChild) use ($keywords) {
-						$queryChild->likeName($keywords);
-					});
-				})
-				->limit($pageSize)
-				->offset($offset)
-				->get();
+			->where(function ($query) use ($keywords) {
+				$query->whereHas('products', function ($queryChild) use ($keywords) {
+					$queryChild->likeName($keywords);
+				});
+				$query->orWhereHas('catalogues', function ($queryChild) use ($keywords) {
+					$queryChild->likeName($keywords);
+				});
+			})
+			->limit($pageSize)
+			->offset($offset)
+			->get();
 
 		}])->first();
 
@@ -70,11 +70,10 @@ class StoreController extends Controller {
 
 		$city = City::bySlug($citySlug)->with(['stores' => function ($query) use ($keywords, $pageSize, $offset) {
 			return $query
-				->show()->likePlace($keywords)
-				->limit($pageSize)
-				->offset($offset)
-				->get();
-
+			->show()->likePlace($keywords)
+			->limit($pageSize)
+			->offset($offset)
+			->get();
 		}])->first();
 
 		return $this->respondSuccess('Search store', $city->stores->load('coupons', 'activities'), 200, 'many');
@@ -84,9 +83,9 @@ class StoreController extends Controller {
 		$keywords = $request->keywords;
 		$citySlug = $request->citySlug;
 		$pageSize = 8;
-		$offset = $request->offset;
-
-		$city = City::bySlug($citySlug)->with(['stores' => function ($query) use ($keywords, $pageSize, $offset) {
+		$offset   = $request->offset;
+		
+		$city     = City::bySlug($citySlug)->with(['stores' => function ($query) use ($keywords, $pageSize, $offset) {
 			return $query->show()->where(function ($query) use ($keywords) {
 				$query->likePlace($keywords);
 				$query->orWhereHas('products', function ($queryChild) use ($keywords) {
@@ -96,9 +95,9 @@ class StoreController extends Controller {
 					$queryChild->likeName($keywords);
 				});
 			})
-				->limit($pageSize)
-				->offset($offset)
-				->get();
+			->limit($pageSize)
+			->offset($offset)
+			->get();
 		}])->first();
 
 		return $this->respondSuccess('Search store', $city->stores->load('coupons', 'activities'), 200, 'many');
@@ -106,28 +105,28 @@ class StoreController extends Controller {
 	//SEACH STORE QUERY
 	public function searchQuery(Request $request) {
 		$keywords = $request->keywords;
-		$cityId = $request->cityId;
+		$cityId   = $request->cityId;
 		$pageSize = $request->maxSize;
-		$context = $request->context;
+		$context  = $request->context;
 		if ($request->context == 'search') {
 
 			$city = City::where('id', '=', $cityId)->with(['stores' => function ($query) use ($keywords, $pageSize) {
 				return $query
-					->where(function ($queryChild) use ($keywords) {
-						$queryChild->where('store_name', 'like', '%' . $keywords . '%');
-						$queryChild->where('store_show', '=', 1);
-					})
-					->orWhereHas('products', function ($queryChild) use ($keywords) {
-						$queryChild->where('name', 'like', '%' . $keywords . '%');
-						$queryChild->orWhere('_name', 'like', '%' . $keywords . '%');
-					})
-					->orWhereHas('catalogues', function ($queryChild) use ($keywords) {
-						$queryChild->where('catalogue', 'like', '%' . $keywords . '%');
-						$queryChild->orWhere('_catalogue', 'like', '%' . $keywords . '%');
-					})
-					->orWhere('store_address', 'like', '%' . $keywords . '%')
-					->limit($pageSize)
-					->get();
+				->where(function ($queryChild) use ($keywords) {
+					$queryChild->where('store_name', 'like', '%' . $keywords . '%');
+					$queryChild->where('store_show', '=', 1);
+				})
+				->orWhereHas('products', function ($queryChild) use ($keywords) {
+					$queryChild->where('name', 'like', '%' . $keywords . '%');
+					$queryChild->orWhere('_name', 'like', '%' . $keywords . '%');
+				})
+				->orWhereHas('catalogues', function ($queryChild) use ($keywords) {
+					$queryChild->where('catalogue', 'like', '%' . $keywords . '%');
+					$queryChild->orWhere('_catalogue', 'like', '%' . $keywords . '%');
+				})
+				->orWhere('store_address', 'like', '%' . $keywords . '%')
+				->limit($pageSize)
+				->get();
 			}])->first();
 		}
 
@@ -135,11 +134,11 @@ class StoreController extends Controller {
 	}
 	//GET ALL STORE BY TYPE
 	public function storeByType(Request $request, $id) {
-		$typeId = $request->typeId;
-		$cityId = $id;
+		$typeId   = $request->typeId;
+		$cityId   = $id;
 		$statusID = $this->productStatusIDCease;
 		$pageSize = 8;
-		$offset = $request->offset;
+		$offset   = $request->offset;
 
 		if ($typeId == 0) {
 			$stores = Store::ofCity($cityId)->show()->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
@@ -152,11 +151,11 @@ class StoreController extends Controller {
 
 	//SHOW STORE
 	public function getStore(Request $request) {
-		$citySlug = $request->citySlug;
+		$citySlug  = $request->citySlug;
 		$storeSlug = $request->storeSlug;
-		$statusID = $this->productStatusIDCease;
-		$city = City::bySlug($citySlug)->first();
-		$array = [];
+		$statusID  = $this->productStatusIDCease;
+		$city      = City::bySlug($citySlug)->first();
+		$array     = [];
 
 		if ($request->filled('citySlug') && $request->filled('storeSlug')) {
 
@@ -176,11 +175,11 @@ class StoreController extends Controller {
 			if (!is_null($store)) {
 				$store->views = ++$store->views;
 				$store->save();
-				$res = [
-					'type' => 'success',
+				$res          = [
+					'type'    => 'success',
 					'message' => 'Get store information successfully!!!',
-					'store' => new StoreResource($store->load('activities', 'catalogues', 'toppings')),
-					'city' => new CityResource($city->load('districts', 'service', 'deliveries')),
+					'store'   => new StoreResource($store->load('activities', 'catalogues', 'toppings')),
+					'city'    => new CityResource($city->load('districts', 'service', 'deliveries')),
 				];
 				return response($res, 200)->withCookie(cookie('flag_c', $city->id, 43200, '/', '', '', false));
 			}
@@ -190,11 +189,11 @@ class StoreController extends Controller {
 
 	//GET ALL STORE WITH DEALS
 	public function getAllStoreWithDeal(Request $request) {
-		$type_id = (int) $request->typeId;
+		$type_id     = (int) $request->typeId;
 		$district_id = (int) $request->districtId;
-		$size = (int) $request->size;
-		$page = (int) $request->page;
-		$city_id = $request->cookie('flag_c') != null ? $request->cookie('flag_c') : $this->currentCityID;
+		$size        = (int) $request->size;
+		$page        = (int) $request->page;
+		$city_id     = $request->cookie('flag_c') != null ? $request->cookie('flag_c') : $this->currentCityID;
 
 		if ($type_id == 0 && $district_id == 0) {
 
@@ -235,11 +234,11 @@ class StoreController extends Controller {
 	//GET ALL STORES
 
 	public function getAllStore(Request $request) {
-		$type_id = (int) $request->typeId;
+		$type_id     = (int) $request->typeId;
 		$district_id = (int) $request->districtId;
-		$size = (int) $request->size;
-		$page = (int) $request->page;
-		$city_id = $request->cookie('flag_c') != null ? $request->cookie('flag_c') : $this->currentCityID;
+		$size        = (int) $request->size;
+		$page        = (int) $request->page;
+		$city_id     = $request->cookie('flag_c') != null ? $request->cookie('flag_c') : $this->currentCityID;
 
 		if ($type_id == 0 && $district_id == 0) {
 
@@ -266,31 +265,31 @@ class StoreController extends Controller {
 	}
 	//BẢN ĐỒ
 	public function getStoreByDistance() {
-		$myLat = 10.0306252;
-		$myLng = 105.7833865;
-		$radius = 0.3;
+		$myLat   = 10.0306252;
+		$myLng   = 105.7833865;
+		$radius  = 0.3;
 		$lng_min = $myLng - $radius / abs(cos(deg2rad($myLat)) * 69);
 		$lng_max = $myLng + $radius / abs(cos(deg2rad($myLat)) * 69);
 		$lat_min = $myLat - ($radius / 69);
 		$lat_max = $myLat + ($radius / 69);
-		$stores = Store::show()->whereBetween('lat', [$lat_min, $lat_max])->whereBetween('lng', [$lng_min, $lng_max])->get();
+		$stores  = Store::show()->whereBetween('lat', [$lat_min, $lat_max])->whereBetween('lng', [$lng_min, $lng_max])->get();
 
 		return $this->respondSuccess('Get stores', $stores->load('coupons', 'activities'), 200, 'many');
 	}
 
 	protected function respondSuccess($message, $data, $status = 200, $type, $pagination = []) {
 		$res = [
-			'type' => 'success',
+			'type'    => 'success',
 			'message' => $message . ' successfully.',
 		];
 
 		switch ($type) {
 
-		case 'one':
+			case 'one':
 			$res['data'] = new StoreResource($data->load('coupons', 'activities'));
 			break;
 
-		case 'many':
+			case 'many':
 			$res['data'] = StoreResource::collection($data);
 			if (count($pagination) > 0) {
 				$res['pagination'] = $pagination;
@@ -303,12 +302,12 @@ class StoreController extends Controller {
 
 	public function pagination($data) {
 		return $pagination = [
-			'total' => $data->total(),
-			'per_page' => $data->perPage(),
-			'from' => $data->firstItem(),
+			'total'        => $data->total(),
+			'per_page'     => $data->perPage(),
+			'from'         => $data->firstItem(),
 			'current_page' => $data->currentPage(),
-			'to' => $data->lastItem(),
-			'last_page' => $data->lastPage(),
+			'to'           => $data->lastItem(),
+			'last_page'    => $data->lastPage(),
 		];
 	}
 }

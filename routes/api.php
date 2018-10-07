@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,7 +13,7 @@ use Illuminate\Http\Request;
 App::setLocale('vi');
 Route::group(['middleware' => 'api', 'namespace' => 'Site'], function ($router) {
 	Route::group(['prefix' => 'auth'], function () {
-        //CREDENTIAL
+		//CREDENTIAL
 		Route::post('login', 'AuthController@login');
 		Route::get('/login/facebook', 'AuthController@socialLogin');
 		Route::get('/login/facebook/callback', 'AuthController@handleProviderCallBack');
@@ -24,11 +23,11 @@ Route::group(['middleware' => 'api', 'namespace' => 'Site'], function ($router) 
 		Route::group(['middleware' => ['roles'], 'roles' => ['customer', 'employee', 'partner']], function () {
 		});
 	});
-	Route::group(['prefix' => 'Dofuu'], function() {
+	Route::group(['prefix' => 'Dofuu'], function () {
 		//Check Out and Order By Customer
 		Route::post('CheckCouponCode', 'CartController@checkCoupon');
-		Route::post('CheckOut', 'CartController@checkOut');		
-		//History Booking 
+		Route::post('CheckOut', 'CartController@checkOut');
+		//History Booking
 		Route::post('OrderByFilter', 'CartController@orderByFilter');
 		//ORDER DETAILS
 		Route::post('Order/GetOrderDetail', 'CartController@getOrderDetail');
@@ -43,30 +42,30 @@ Route::group(['middleware' => 'api', 'namespace' => 'Site'], function ($router) 
 	});
 });
 
-Route::group(['namespace' => 'Site'], function() {
+Route::group(['namespace' => 'Site'], function () {
 	//REGISTER ACCOUNT
 	Route::post('/register', 'AuthController@register');
 	//ACTIVE ACCOUNT
 	Route::post('/user/active', 'AuthController@active');
 	//LOGIN FACEBOOK
 	Route::post('/facebook/auth', 'AuthController@loginFB');
-	//REGISTER FACEBOOK 
+	//REGISTER FACEBOOK
 	Route::post('/facebook/register', 'AuthController@registerFB');
-    //FETCH CITY
+	//FETCH CITY
 	Route::get('/FetchCities', 'CityController@fetchCity');
 	//GET CITY CURRENT
 	Route::post('/GetCityCurrent/{city}', 'CityController@getCityCurrent');
 	//GET INFORMATION CITY
 	Route::get('/GetCityInformation/{city}', 'CityController@getInformation');
-    //GET INFORMATION CITY HAS DEAL
+	//GET INFORMATION CITY HAS DEAL
 	Route::get('/GetCityInformationHasDeal/{city}', 'CityController@getInformationHasDeal');
-    // FETCH TYPE
+	// FETCH TYPE
 	Route::get('/FetchTypes', 'TypeController@index');
 	// FETCH STORE BY TYPE
 	Route::post('/GetStoreByType/{city}', 'StoreController@storeByType');
-    //FETCH STORE WITH DEAL BY CITY ID
+	//FETCH STORE WITH DEAL BY CITY ID
 	Route::get('/LoadStoreHasDeal', 'StoreController@getAllStoreWithDeal');
-	//FETCH STORE 
+	//FETCH STORE
 	Route::get('/LoadStore', 'StoreController@getAllStore');
 	//SHOW STORE
 	Route::get('/GetStore', 'StoreController@getStore');
@@ -83,11 +82,11 @@ Route::group(['namespace' => 'Site'], function() {
 	//SEARCH STORE BY PRODUCT
 	Route::get('/Search/Products', 'StoreController@searchStoreByProduct');
 	//TOGGLE LIKE STORE
-	Route::post('/LikeStore/{storeId}/Toggle', 'LikeController@toggleLikeStore');	
+	Route::post('/LikeStore/{storeId}/Toggle', 'LikeController@toggleLikeStore');
 	//TOGGLE LIKE COMMENT
 	Route::post('/LikeComment/{commentId}/Toggle', 'LikeController@toggleLikeComment');
 
-	Route::group(['prefix' => 'FavoriteStore'], function() {
+	Route::group(['prefix' => 'FavoriteStore'], function () {
 		//GET FAVORITE STORE
 		Route::post('/FetchStores', 'FavoriteController@fetchFavoriteStore');
 		//TOGGLE FAVORITE STORE
@@ -96,7 +95,7 @@ Route::group(['namespace' => 'Site'], function() {
 		Route::post('/{storeId}/RemoveFavorite', 'FavoriteController@removeFavoriteStore');
 	});
 
-	Route::group(['prefix' => 'CommentStore'], function() {
+	Route::group(['prefix' => 'CommentStore'], function () {
 		//FETCH COMMENT
 		Route::post('/{storeId}/FetchComments', 'CommentController@fetchComments');
 		//FETCH REPLIES
@@ -111,28 +110,35 @@ Route::group(['namespace' => 'Site'], function() {
 		Route::post('/{storeId}/RemoveComment', 'CommentController@removeComment');
 	});
 
-	Route::group(['prefix' => 'RatingStore'], function() {
+	Route::group(['prefix' => 'RatingStore'], function () {
 		// ADD RATING
 		Route::post('/{storeId}/NewRating', 'RatingController@addRating');
 		// FETCH RATING
 		Route::post('/{storeId}/FetchRating', 'RatingController@fetchRating');
 		// REMOVE RATING
-		Route::post('/{storeId}/RemoveRating', 'RatingController@removeRating');	
+		Route::post('/{storeId}/RemoveRating', 'RatingController@removeRating');
 	});
 
-	Route::group(['prefix' => 'Auth'], function() {
+	Route::group(['prefix' => 'Auth'], function () {
 		// UPDATE PHONE NUMBER
 		Route::post('/PhoneNumber/Update', 'UserController@updatePhone');
 		Route::post('/Avatar/Update', 'UserController@updateAvatar');
 	});
-	
+
+	Route::get('/Maps/MyLocation', 'StoreController@getStoreByDistance');
+
 });
 
-Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function() {
+Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
+	//FETCH CITY
 	Route::get('/FetchCities', 'CityController@fetchCity');
+	//GET CITY CURRENT
 	Route::get('/FetchCity/{city}', 'CityController@getCityCurrent');
+	//GEt CITY INFORMATION HAS DEAL
 	Route::get('/FetchCity/{city}/GetInformationHasDeal', 'CityController@getInformationHasDeal');
+	//GET CITY INFORMATION
 	Route::get('/FetchCity/{city}/GetInformation', 'CityController@getInformation');
+	//FETCH STORES
 	Route::get('/FetchStores', 'StoreController@fetchAllStore');
 	Route::get('/GetStore/{id}', 'StoreController@showStore');
 	Route::get('/FetchStoresHasDeal', 'StoreController@fetchStoreHasDeal');

@@ -1,8 +1,8 @@
 export function initMap(position) {
 	var map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 17,
-		center: { lat: position.lat, lng: position.lng },
-		mapTypeControl: false,
+		zoom             : 17,
+		center           : { lat: position.lat, lng: position.lng },
+		mapTypeControl   : false,
 		streetViewControl: false
 	});
 
@@ -11,9 +11,9 @@ export function initMap(position) {
 
 export function makeMarker(position, image, map) {
 	var marker = new google.maps.Marker({
-		position: position,
-		icon: image,
-		map: map,
+		position : position,
+		icon     : image,
+		map      : map,
 		animation: google.maps.Animation.DROP,
 	});
 	return marker
@@ -71,8 +71,8 @@ export function calculateDirection(map, start, destination) {
 			{				
 				var service = new google.maps.DistanceMatrixService()
 				var options = {
-					map: map,
-					directions: response,
+					map            : map,
+					directions     : response,
 					suppressMarkers: true
 				}
 				new google.maps.DirectionsRenderer(options)

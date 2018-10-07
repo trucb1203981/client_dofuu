@@ -381,6 +381,7 @@
 				}
 			},
 			calculateDeliveryPrice(distance) {
+
 				var vm           = this
 				const service    = vm.currentCity.service
 				const deliveries = vm.currentCity.deliveries

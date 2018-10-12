@@ -81,8 +81,4 @@
 	position: absolute;
 	width: 100%;
 }
-#map {
-	width: 100%;
-	height: 400px;
-}
 </style>

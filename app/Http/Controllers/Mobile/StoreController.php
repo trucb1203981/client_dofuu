@@ -117,9 +117,9 @@ class StoreController extends Controller {
 		return response($res, 200);
 	}
 
-	public function fetchStoreHasDeal(Request $request, $cityId) {
+	public function fetchStoreHasDeal(Request $request) {
 
-		$city_id     = $cityId != null ? (int) $cityId : $this->currentCityID;
+		$city_id     = $request->cityId != null ? (int) $request->cityId : $this->currentCityID;
 
 		$stores = Store::where(function ($query) use ($city_id) {
 			$query->ofCity($city_id);

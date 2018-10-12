@@ -139,12 +139,15 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 	//GET CITY INFORMATION
 	Route::get('/FetchCity/{city}/GetInformation', 'CityController@getInformation');
 	//FETCH STORES
-	Route::get('/FetchStores', 'StoreController@fetchAllStore');
 	Route::get('/GetStore/{id}', 'StoreController@showStore');
 
-	//GET STORE HAS DEAL
+
 	Route::group(['prefix' => 'Store'], function() {
+		//GET ALL STORE HAS DEAL
 		Route::post('/FetchDealStores', 'StoreController@fetchStoreHasDeal');
+		//GET ALL STORE
+		Route::post('/FetchAllStores', 'StoreController@fetchAllStore');
+
 	});
 	
 	Route::get('/FetchType/Stores', 'StoreController@fetchAllStoreByType');

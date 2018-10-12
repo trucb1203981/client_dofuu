@@ -151,11 +151,11 @@ class StoreController extends Controller {
 		switch ($type) {
 
 			case 'one':
-			$res['data'] = new StoreResource($data->load('coupons', 'activities'));
+			$res['stores'] = new StoreResource($data->load('coupons', 'activities'));
 			break;
 
 			case 'many':
-			$res['data'] = StoreResource::collection($data);
+			$res['store'] = StoreResource::collection($data);
 			if (count($pagination) > 0) {
 				$res['pagination'] = $pagination;
 			}

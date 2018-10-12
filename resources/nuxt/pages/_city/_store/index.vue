@@ -662,10 +662,10 @@
 		},
 		openCartDialog: async function(item) {
 			if(!this.dayOff) {
-				this.editedItem   =  Object.assign({}, this.default)
-				this.sizes        =  []		
-				var uuid = require("uuid");
-				var rowId = uuid.v4();
+				this.editedItem =  Object.assign({}, this.default)
+				this.sizes      =  []		
+				var uuid        = require("uuid");
+				var rowId       = uuid.v4();
 				if(item.sizes.length >0) {
 					await item.sizes.forEach(size => {
 						if(size.price > 0) {					

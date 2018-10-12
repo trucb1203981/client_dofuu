@@ -352,7 +352,7 @@
 				vm.deal.loading = !vm.deal.loading
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
-						axios.get('/api/LoadStoreHasDeal', {params, withCredentials:true}).then(response => {
+						axios.get('/m/FetchStoreHasDeal', {params, withCredentials:true}).then(response => {
 							if(response.status == 200) {
 								vm.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
 								vm.deal.stores     = response.data.data

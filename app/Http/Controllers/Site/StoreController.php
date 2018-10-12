@@ -300,7 +300,7 @@ class StoreController extends Controller {
 		return response($res, $status);
 	}
 
-	public function pagination($data) {
+	protected function pagination($data) {
 		return $pagination = [
 			'total'        => $data->total(),
 			'per_page'     => $data->perPage(),

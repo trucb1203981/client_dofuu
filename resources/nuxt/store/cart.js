@@ -17,7 +17,6 @@ const mutations = {
 		state.cart = payload
 	},
 	ADD_TO_CART(state, product) {
-		console.log(product)
 		const productIndex  = state.cart.items.findIndex((item) => {
 			return item.id === product.id
 		})

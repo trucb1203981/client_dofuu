@@ -141,6 +141,6 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 	//FETCH STORES
 	Route::get('/FetchStores', 'StoreController@fetchAllStore');
 	Route::get('/GetStore/{id}', 'StoreController@showStore');
-	Route::get('/FetchStoresHasDeal', 'StoreController@fetchStoreHasDeal');
+	Route::get('/FetchStoreHasDeal', 'StoreController@fetchStoreHasDeal');
 	Route::get('/FetchType/Stores', 'StoreController@fetchAllStoreByType');
 });

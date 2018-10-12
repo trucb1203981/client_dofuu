@@ -21,7 +21,7 @@ class StoreController extends Controller {
 
 	public function fetchAllStore(Request $request) {
 		$typeId   = $request->typeId;
-		$cityId   = $id;
+		$cityId   = $request->cityId;
 		$statusID = $this->productStatusIDCease;
 		$pageSize = 8;
 		$offset   = $request->offset;

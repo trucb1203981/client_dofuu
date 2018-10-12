@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mobile;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Site\StoreResource;
 use App\Http\Resources\Site\TypeResource;
+use App\Models\ProductStatus;
 use App\Models\City;
 use App\Models\Store;
 use App\Models\Type;
@@ -14,38 +15,24 @@ class StoreController extends Controller {
 	protected $stores;
 	public function __construct(Store $store) {
 		$this->currentCityID        = City::where('city_name', 'Cần Thơ')->select('id')->first();
-		$this->stores = $store;
+		$this->productStatusIDCease = ProductStatus::where('product_status_name', 'Ngưng bán')->select('id')->first();
+		$this->stores               = $store;
 	}
 
 	public function fetchAllStore(Request $request) {
-		$type_id     = (int) $request->typeId;
-		$district_id = (int) $request->districtId;
-		$size        = (int) $request->size;
-		$page        = (int) $request->page;
-		$city_id     = $request->cityId != null ? (int)$request->cityId : $this->currentCityID;
+		$typeId   = $request->typeId;
+		$cityId   = $id;
+		$statusID = $this->productStatusIDCease;
+		$pageSize = 8;
+		$offset   = $request->offset;
 
-		if ($type_id == 0 && $district_id == 0) {
-
-			$stores = Store::ofCity($city_id)->with(['status'])->active()->show()->orderByPriority('desc')->paginate($size);
-
-		} else if ($type_id != 0) {
-
-			$stores = Store::where(function ($query) use ($city_id, $type_id, $district_id) {
-				$query->ofCity($city_id);
-				$query->byTypeId($type_id);
-			})->with(['status'])->show()->orderByPriority('desc')->paginate($size);
-
-		} else if ($district_id != 0) {
-			$stores = Store::where(function ($query) use ($city_id, $type_id, $district_id) {
-				$query->ofCity($city_id);
-				$query->byDistrictId($district_id);
-			})->with(['status'])->show()->orderByPriority('desc')->paginate($size);
-
+		if ($typeId == 0) {
+			$stores = Store::ofCity($cityId)->show()->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
+		} else {
+			$stores = Store::ofCity($cityId)->show()->byTypeId($typeId)->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
 		}
 
-		$pagination = $this->pagination($stores);
-
-		return $this->respondSuccess('Get stores', $stores->load('coupons', 'activities'), 200, 'many', $pagination)->withCookie(cookie('flag_c', $city_id, 43200, '/', '', '', false));
+		return $this->respondSuccess('Search store', $stores->load('coupons', 'activities'), 200, 'many');
 	}
 
 	public function showStore($id) {

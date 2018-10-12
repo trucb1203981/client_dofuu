@@ -22,7 +22,7 @@ class StoreController extends Controller {
 		$district_id = (int) $request->districtId;
 		$size        = (int) $request->size;
 		$page        = (int) $request->page;
-		$city_id     = $request->cityId != null ? $request->cityId : $this->currentCityID;
+		$city_id     = $request->cityId != null ? (int)$request->cityId : $this->currentCityID;
 
 		if ($type_id == 0 && $district_id == 0) {
 

@@ -23,7 +23,7 @@ class StoreController extends Controller {
 		$typeId   = $request->typeId;
 		$cityId   = $request->cityId;
 		$statusID = $this->productStatusIDCease;
-		$pageSize = 8;
+		$pageSize = 6;
 		$offset   = $request->offset;
 
 		if ($typeId == 0) {

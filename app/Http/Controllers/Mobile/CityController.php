@@ -26,26 +26,14 @@ class CityController extends Controller
     {
         $cities = $this->city->show()->get();
 
-        $res    = [
-            'type'     => 'success',
-            'messsage' => 'Get all cities successfully!!!',
-            'cities'     => CityResource::collection($cities)
-        ];
-        
-        return response($res, 200);
+        return $this->respondSuccess('Get all cities', $cities, 200, 'many');
     }
 
     public function getCityCurrent(Request $request ,$id) {
 
         $city = $this->city->show()->findOrFail($id);
 
-        $res = [
-                'type'    => 'success',
-                'message' => 'Get city information successfully.',
-                'city'    => new CityResource($city->load('districts', 'service', 'deliveries'))
-        ];
-        
-        return response($res, 200);
+        return $this->respondSuccess('Get city', $city->load('districts', 'service', 'deliveries'), 200, 'many');
     }
     /**
      * Get District and Type by city id.
@@ -243,5 +231,25 @@ class CityController extends Controller
 
             return response($res, 200)->withCookie(cookie('flag_c', $cid, 45000));
         }
+    }
+
+    protected function respondSuccess($message, $data, $status = 200, $type) {
+        $res = [
+            'type'    => 'success',
+            'message' => $message . ' successfully.',
+        ];
+
+        switch ($type) {
+
+            case 'one':
+            $res['city'] = new CityResource($data);
+            break;
+
+            case 'many':
+            $res['cities'] = CityResource::collection($data);
+            break;
+        }
+
+        return response($res, $status);
     }
 }

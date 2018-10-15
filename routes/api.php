@@ -130,24 +130,19 @@ Route::group(['namespace' => 'Site'], function () {
 });
 
 Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
-	//FETCH CITY
-	Route::get('/FetchCities', 'CityController@fetchCity');
-	//GET CITY CURRENT
-	Route::get('/FetchCity/{city}', 'CityController@getCityCurrent');
-	//GEt CITY INFORMATION HAS DEAL
-	Route::get('/FetchCity/{city}/GetInformationHasDeal', 'CityController@getInformationHasDeal');
-	//GET CITY INFORMATION
-	Route::get('/FetchCity/{city}/GetInformation', 'CityController@getInformation');
 	//FETCH STORES
 	Route::get('/GetStore/{id}', 'StoreController@showStore');
 
 	Route::group(['prefix' => 'Type'], function() {
+		//FETCH TYPE
 		Route::post('/FetchAllTypes', 'TypeController@fetchType');
 	});
 
 	Route::group(['prefix' => 'City'], function() {
+		//FETCH CITY
 		Route::post('/FetchAllCities', 'CityController@fetchCity');
-		Route::post('/{city}/GetCurrentCity', 'CityController@getCurrentCity');
+		//GET CITY CURRENT
+		Route::post('/{cityId}/ShowCity', 'CityController@getCurrentCity');
 	});
 
 	Route::group(['prefix' => 'Store'], function() {
@@ -155,7 +150,8 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 		Route::post('/FetchDealStores', 'StoreController@fetchStoreHasDeal');
 		//GET ALL STORE
 		Route::post('/FetchAllStores', 'StoreController@fetchAllStore');
-
+		//SHOW STORE
+		Route::post('/{storeId}/ShowStore', 'StoreController@getCurrentStore');
 	});
 	
 	Route::get('/FetchType/Stores', 'StoreController@fetchAllStoreByType');

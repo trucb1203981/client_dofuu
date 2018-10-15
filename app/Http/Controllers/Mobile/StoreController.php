@@ -35,19 +35,12 @@ class StoreController extends Controller {
 		return $this->respondSuccess('Search store', $stores->load('coupons', 'activities'), 200, 'many');
 	}
 
-	public function showStore($id) {
+	public function getCurrentStore($id) {
 		$store = Store::show()->findorFail($id);
 		if (!is_null($store)) {
 			// $store->views = ++$store->views;
 			// $store->save();
-
-			$res = [
-				'type' => 'success',
-				'message' => 'Get store information successfully!!!',
-				'store' => new StoreResource($store->load('activities', 'catalogues', 'toppings')),
-			];
-
-			return response($res, 200);
+			return $this->respondSuccess('Get store', $store->load('activities', 'catalogues', 'toppings'), 200, 'one');
 		}
 		// $cid      = $request->_CID;
 		//    $sid      = $request->_SID;

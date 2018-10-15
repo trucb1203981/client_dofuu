@@ -124,14 +124,14 @@ class StoreController extends Controller {
 
 	protected function respondSuccess($message, $data, $status = 200, $type, $pagination = []) {
 		$res = [
-			'type'    => 'success',
+			'status'  => 'success',
 			'message' => $message . ' successfully.',
 		];
 
 		switch ($type) {
 
 			case 'one':
-			$res['store'] = new StoreResource($data->load('coupons', 'activities'));
+			$res['store']  = new StoreResource($data->load('coupons', 'activities'));
 			break;
 
 			case 'many':

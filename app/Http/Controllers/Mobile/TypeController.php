@@ -17,7 +17,7 @@ class TypeController extends Controller
 
     protected function respondSuccess($message, $data, $status = 200, $type) {
         $res = [
-            'type'    => 'success',
+            'status'    => 'success',
             'message' => $message . ' successfully.',
         ];
 

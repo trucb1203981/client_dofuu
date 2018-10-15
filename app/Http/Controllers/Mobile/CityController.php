@@ -235,14 +235,14 @@ class CityController extends Controller
 
     protected function respondSuccess($message, $data, $status = 200, $type) {
         $res = [
-            'type'    => 'success',
+            'status'  => 'success',
             'message' => $message . ' successfully.',
         ];
 
         switch ($type) {
 
             case 'one':
-            $res['city'] = new CityResource($data);
+            $res['city']   = new CityResource($data);
             break;
 
             case 'many':

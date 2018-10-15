@@ -29,11 +29,11 @@ class CityController extends Controller
         return $this->respondSuccess('Get all cities', $cities, 200, 'many');
     }
 
-    public function getCityCurrent(Request $request ,$id) {
+    public function getCurrentCity(Request $request ,$id) {
 
         $city = $this->city->show()->findOrFail($id);
 
-        return $this->respondSuccess('Get city', $city->load('districts', 'service', 'deliveries'), 200, 'many');
+        return $this->respondSuccess('Get city', $city->load('districts', 'service', 'deliveries'), 200, 'one');
     }
     /**
      * Get District and Type by city id.

@@ -141,9 +141,13 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 	//FETCH STORES
 	Route::get('/GetStore/{id}', 'StoreController@showStore');
 
+	Route::group(['prefix' => 'Type'], function() {
+		Route::post('/FetchAllTypes', 'TypeController@fetchType');
+	});
+
 	Route::group(['prefix' => 'City'], function() {
 		Route::post('/FetchAllCities', 'CityController@fetchCity');
-		Route::post('/{city}/GetCity', 'CityController@getCurrentCity');
+		Route::post('/{city}/GetCurrentCity', 'CityController@getCurrentCity');
 	});
 
 	Route::group(['prefix' => 'Store'], function() {

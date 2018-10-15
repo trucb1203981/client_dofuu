@@ -26,11 +26,19 @@ class StoreController extends Controller {
 		$pageSize = 6;
 		$offset   = $request->offset;
 
-		if ($typeId == 0) {
-			$stores = Store::ofCity($cityId)->show()->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
-		} else {
-			$stores = Store::ofCity($cityId)->show()->byTypeId($typeId)->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
-		}
+		$stores = Store::ofCity($cityId)->show()->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
+
+		return $this->respondSuccess('Search store', $stores->load('coupons', 'activities'), 200, 'many');
+	}
+
+	//GET ALL STORE BY TYPE
+	public function storeByType(Request $request) {
+		$typeId   = $request->typeId;
+		$cityId   = $request->cityId;
+		$pageSize = 8;
+		$offset   = $request->offset;
+		
+		$stores   = Store::ofCity($cityId)->show()->byTypeId($typeId)->orderByPriority('desc')->limit($pageSize)->offset($offset)->get();
 
 		return $this->respondSuccess('Search store', $stores->load('coupons', 'activities'), 200, 'many');
 	}

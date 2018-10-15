@@ -150,6 +150,8 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 		Route::post('/FetchDealStores', 'StoreController@fetchStoreHasDeal');
 		//GET ALL STORE
 		Route::post('/FetchAllStores', 'StoreController@fetchAllStore');
+		//GET ALL STORE BY TYPE
+		Route::post('/FetchStoresByType', 'StoreController@storeByType');
 		//SHOW STORE
 		Route::post('/{storeId}/ShowStore', 'StoreController@getCurrentStore');
 	});

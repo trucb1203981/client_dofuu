@@ -50,43 +50,6 @@ class StoreController extends Controller {
 			// $store->save();
 			return $this->respondSuccess('Get store', $store->load('activities', 'catalogues', 'toppings'), 200, 'one');
 		}
-		// $cid      = $request->_CID;
-		//    $sid      = $request->_SID;
-		//    $statusID = $this->productStatusIDCease;
-		//    $now      = Carbon::now()->toDateTimeString();
-		//    $city     = City::where('city_slug', '=', $cid)->first();
-		//    if($request->filled('_CID') && $request->filled('_SID')) {
-
-		//        $store = Store::where(function($query) use ($city, $sid, $statusID) {
-		//            $query->where('store_slug', '=', $sid);
-		//            $query->whereHas('district', function($query) use ($city) {
-		//                $query->where('city_id', '=', $city->id);
-		//            });
-		//            $query->where('status_id', '!=', $statusID);
-		//        })->where('store_show', 1)->with(['coupons' => function($query) use ($now) {
-		//            return $query->where(function($q) use($now) {
-		//                $q->where('started_at', '<=', $now);
-		//                $q->where('ended_at', '>', $now);
-		//            });
-		//        },'products' => function($query) use ($statusID) {
-		//            return $query->where('ec_products.status_id', '!=', $statusID);
-		//        }, 'catalogues' => function($query) {
-		//            return $query->where('ec_catalogues.catalogue_show', '=', 1);
-		//        }])->first();
-
-		//        if(!is_null($store)) {
-		//            $store->views = ++$store->views;
-		//            $store->save();
-		//            $res = [
-		//                'type'    => 'success',
-		//                'message' => 'Get store information successfully!!!',
-		//                'store'   => new StoreResource($store->load('activities', 'catalogues', 'toppings')),
-		//                'city'    => new CityResource($city->load('districts', 'service', 'deliveries'))
-		//            ];
-		//            return response($res, 200)->withCookie(cookie('flag_c', $city->id, 43200, '/', '', '', false));
-		//        }
-		//    }
-		//    return response(['Lỗi không tìm thấy dữ liệu'], 404);
 	}
 
 	public function fetchAllStoreByType(Request $request) {

@@ -16,8 +16,27 @@ class Coupon extends Model
 	protected $dates   = ['started_at', 'ended_at'];
 
 	public function scopeActived($query) {
-		return $query->where('actived', 1)->where('status_id', 1);;
+		return $query->where('actived', 1)->where('status_id', 1);
 	}
+
+	public function scopeByName($query, $name) {
+		return $query->where('coupon', $name);
+	}
+
+	public function scopeIsPublic($query) {
+		return $query->where('public', 1);
+	}
+
+	public function scopeHasStore($query, $store_id) {
+		$storeId = (int)$store_id;
+		return $query->whereHas('stores', function($query) use ($storeId) {
+			$query->where('ec_stores.id', $storeId);
+		});
+	}
+	
+	public function scopeCheckToken($query, $token) {
+    	return $query->where('token', $token);
+    }
 
 	public function scopeExpired() {
 		return $this->where('status_id', 2);
@@ -30,6 +49,22 @@ class Coupon extends Model
 
 	public function scopeGetUnexpired() {
 		return $this->unexpired();
+	}
+
+	public function getActivedAttribute($value)
+	{
+		if ($value) {
+			return true;
+		}
+		return false;
+	}
+
+	public function getPublicAttribute($value)
+	{
+		if ($value) {
+			return true;
+		}
+		return false;
 	}
 
 	public function stores() {

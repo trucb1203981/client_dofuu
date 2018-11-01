@@ -84,7 +84,7 @@ class Store extends Model
     // CHECK DEAL STORE
     public function scopeHasCoupon($query) {
         return $query->whereHas('coupons', function($query) {
-            $query->unexpired();
+            $query->isPublic()->unexpired();
         });
     }
 

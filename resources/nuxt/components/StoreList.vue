@@ -9,7 +9,7 @@
 					<span>{{item.type.name}}</span>
 				</v-system-bar>
 
-				<v-card :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" flat>
+				<v-card tile :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" flat>
 					<v-layout row wrap class="pa-1" >
 						<v-flex xs3 sm2>
 							<v-layout column align-center justify-center>
@@ -31,7 +31,7 @@
 							</v-tooltip>	
 							<v-system-bar v-if="!!item.coupon" status color="transparent" class="px-0 mx-0">
 								<span>
-									<h4 class="red--text"><i>{{item.coupon.title}}</i></h4>
+									<h4 class="red--text"><i>{{item.coupon[0].title}}</i></h4>
 								</span>
 							</v-system-bar>										
 						</v-flex>
@@ -112,7 +112,4 @@
 </script>
 
 <style scoped>
-.card-radius {
-	border-radius: 15px;
-}
 </style>

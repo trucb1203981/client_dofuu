@@ -2,13 +2,13 @@
 	<v-container :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 		<v-layout row wrap >
 			<v-flex xs12>
-				<v-toolbar color="white" flat dense>
-					<v-toolbar-title>
-						<span>Kết quả tìm kiếm</span>
-					</v-toolbar-title>
-				</v-toolbar>			
-				<v-card color="grey lighten-4" flat>	
-					<v-tabs color="transparent" slider-color="red darken-3">
+				<v-card color="grey lighten-4" flat class="card-radius">
+					<v-toolbar color="white" flat dense>
+						<v-toolbar-title>
+							<span>Kết quả tìm kiếm</span>
+						</v-toolbar-title>
+					</v-toolbar>		
+					<v-tabs color="transparent" slider-color="red darken-3" active-class="red--text text--accent-4 font-weight-bold">
 						<v-tab nuxt :to="{name: 'city-tim-kiem-tat-ca', query: {q: $route.query.q}, params: {city: $route.params.city}}">
 							Tất cả
 						</v-tab>

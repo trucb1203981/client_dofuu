@@ -2,7 +2,6 @@
 	<div v-scroll="onScroll">				
 		<!-- STORE LIST -->								
 		<vue-store-list v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>				
-
 		<!-- STORE GRID -->										
 		<vue-store-grid v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
 

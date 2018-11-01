@@ -26,7 +26,7 @@
 
 					<v-flex xs12 v-if="deal.stores.length>0" class="mb-3">
 						<!-- START DEAL STORES -->
-						<v-card flat color="grey lighten-4">	
+						<v-card flat color="grey lighten-4" class="card-radius">	
 							<v-toolbar color="white" flat dense  extension-height="30px">
 								<v-icon color="red">whatshot</v-icon>
 								<v-toolbar-title class="red--text text--accent-3" id="deal-store">
@@ -103,7 +103,7 @@
 									</v-menu><!-- END TYPE IN ALL STORE -->
 								</v-toolbar-items>
 							</v-toolbar>
-
+							<v-divider></v-divider>
 							<v-progress-linear v-if="deal.loading" background-color="grey lighten-3"	color="white" :indeterminate="true" class="py-0 my-0"></v-progress-linear>
 
 							<v-card-text v-else>
@@ -123,7 +123,7 @@
 
 					<v-flex  xs12 md12 >
 
-						<v-card flat color="grey lighten-4" ><!-- START ALL STORE -->	
+						<v-card flat color="grey lighten-4" class="card-radius" ><!-- START ALL STORE -->	
 							<v-toolbar color="white" flat dense  extension-height="30px">
 								<v-toolbar-title class="red--text text--accent-3" >
 									<h5 id="all-store" class="text-uppercase">{{all.title}}</h5>
@@ -184,7 +184,7 @@
 									</v-menu><!-- END TYPE IN ALL STORE -->
 								</v-toolbar-items>							
 							</v-toolbar>	
-
+							<v-divider></v-divider>
 							<v-progress-linear v-if="all.loading" background-color="grey lighten-3"	color="white" :indeterminate="true" class="py-0 my-0"></v-progress-linear>
 
 							<v-card-text v-else>
@@ -352,7 +352,7 @@
 				vm.deal.loading = !vm.deal.loading
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
-						axios.get('/m/FetchStoreHasDeal', {params, withCredentials:true}).then(response => {
+						axios.get('/api/FetchStoreHasDeal', {params, withCredentials:true}).then(response => {
 							if(response.status == 200) {
 								vm.$store.commit('CHANGE_CITY', parseInt(Cookies.get('flag_c')))
 								vm.deal.stores     = response.data.data

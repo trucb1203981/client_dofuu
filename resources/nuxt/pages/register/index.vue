@@ -114,8 +114,8 @@
 
 <script>
 	import axios from 'axios'
-	import {registerURL} from '@/config'
-	import {mapState} from 'vuex'
+	import { registerURL } from '@/config'
+	import { mapState } from 'vuex'
 	import vietnam from 'vee-validate/dist/locale/vi';
 	export default {
 		layout: 'credential',

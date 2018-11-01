@@ -42,16 +42,8 @@ class StoreResource extends JsonResource
             'ratedStore'      => ($user && count($user->ratings()->ofStore($this->id)->get())>0) ? true : false,
             //OPTIONS END
             'coupon'          => $this->whenLoaded('coupons', function() {
-                if(count($this->coupons()->unexpired()->get())>0) {
-                    return $this->coupons->map(function($query) {
-                        $res = [
-                            'title'    => $query->title,
-                            'code'     => $query->coupon,
-                            'discount' => $query->discount_percent,
-                            'endedAt'  => $query->ended_at 
-                        ];
-                        return $res;
-                    })->sortByDesc('created_at')->take(1)->first(); 
+                if(count($this->coupons()->isPublic()->unexpired()->get())>0) {
+                    return CouponResource::collection($this->coupons()->isPublic()->unexpired()->orderBy('id', 'desc')->get());
                 } else {
                     return null;
                 }

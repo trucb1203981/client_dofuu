@@ -25,7 +25,7 @@ Route::group(['middleware' => 'api', 'namespace' => 'Site'], function ($router) 
 	});
 	Route::group(['prefix' => 'Dofuu'], function () {
 		//Check Out and Order By Customer
-		Route::post('CheckCouponCode', 'CartController@checkCoupon');
+		Route::post('CheckCouponCode', 'CouponController@checkCoupon');
 		Route::post('CheckOut', 'CartController@checkOut');
 		//History Booking
 		Route::post('OrderByFilter', 'CartController@orderByFilter');
@@ -64,7 +64,7 @@ Route::group(['namespace' => 'Site'], function () {
 	// FETCH STORE BY TYPE
 	Route::post('/GetStoreByType/{city}', 'StoreController@storeByType');
 	//FETCH STORE WITH DEAL BY CITY ID
-	Route::get('/LoadStoreHasDeal', 'StoreController@getAllStoreWithDeal');
+	Route::get('/FetchStoreHasDeal', 'StoreController@getAllStoreWithDeal');
 	//FETCH STORE
 	Route::get('/LoadStore', 'StoreController@getAllStore');
 	//SHOW STORE

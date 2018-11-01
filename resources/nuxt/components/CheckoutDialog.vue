@@ -163,96 +163,105 @@
 												</v-list-tile-content>
 												<v-list-tile-content>
 													<v-list-tile-title class="text-xs-right"><h4 :style="coupon !=null ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h4></v-list-tile-title>
-													<v-list-tile-title class="text-xs-right" v-if="coupon != null"><h4 class="red--text">{{dealPrice | formatPrice}}</h4></v-list-tile-title>
+													<v-list-tile-title class="text-xs-right" v-if="coupon != null"><h4 class="red--text">{{subTotal + dealPrice | formatPrice}}</h4></v-list-tile-title>
 												</v-list-tile-content>
 											</v-list-tile>
 
-											<v-list-tile>
+											<v-list-tile v-if="coupon != null">
 												<v-list-tile-action>
 													<span>Khuyến mãi:</span>
 												</v-list-tile-action>
 												<v-list-tile-content>
 													<v-chip color="yellow" small text-color="red" v-if="coupon != null">
-														<h4>{{coupon.coupon}}</h4>
+														<h4>{{coupon.code}}</h4>
 													</v-chip>
 												</v-list-tile-content>
 												<v-list-tile-action>										
-													<h4 class="red--text">-{{discount}}%</h4>
-												</v-list-tile-action>
-											</v-list-tile>
+													<h4 class="red--text font-italic">Đã giảm 
+														<span v-if="coupon.discountPercent>0">{{coupon.discountPercent}}%</span>
+														<span v-if="coupon.discountPrice>0">{{coupon.discountPrice | formatPrice}}</span></h4>
+													</v-list-tile-action>
+												</v-list-tile>
 
-											<v-list-tile>
-												<v-list-tile-content>
-													<span>Phí vận chuyển: <strong class="red--text">{{matrix.distance}}</strong> <v-icon>help</v-icon></span>
-												</v-list-tile-content>
-												<v-list-tile-content>
-													<v-list-tile-title></v-list-tile-title>
-												</v-list-tile-content>
-												<v-list-tile-action>
-													<strong>{{deliveryPrice | formatPrice}}</strong>
-												</v-list-tile-action>
-											</v-list-tile>									
-										</v-list>
-									</v-card-text>
+												<v-list-tile>
+													<v-list-tile-content>
+														<span>Phí vận chuyển: <strong class="red--text">{{matrix.distance}}</strong> <v-icon>help</v-icon></span>
+													</v-list-tile-content>
+													<v-list-tile-content class="align-end font-weight-bold">
+														{{deliveryPrice | formatPrice}}
+													</v-list-tile-content>
+												</v-list-tile>
 
-									<v-divider></v-divider>
+												<v-list-tile v-if="reduceShippingCost > 0">
+													<v-list-tile-content>
+														<span>Hỗ trợ phí: </span>
+													</v-list-tile-content>
+													<v-list-tile-content class="align-end font-weight-bold font-italic red--text">
+														-{{reduceShippingCost | formatPrice}}
+													</v-list-tile-content>
 
-									<v-card-text>
-										<v-list dense>
-											<v-list-tile>
-												<v-list-tile-content>
-													Thành tiền:
-												</v-list-tile-content>
-												<v-list-tile-content></v-list-tile-content>
-												<v-list-tile-action><strong>{{total |formatPrice}}</strong></v-list-tile-action>
-											</v-list-tile>
-											<v-list-tile>
-												<v-list-tile-content>
-													Phương thức thanh toán:
-												</v-list-tile-content>
-												<v-list-tile-content></v-list-tile-content>
-												<v-list-tile-action><h4>Tiền mặt</h4></v-list-tile-action>
-											</v-list-tile>
-										</v-list>
-									</v-card-text>
-								</v-card>
-							</v-flex>
-						</v-layout>								
-					</v-flex>
-				</v-layout>
-			</v-container>
-		</v-card>
-		<v-dialog v-model="dialog" max-width="400">
-			<v-card>
-				<v-toolbar dense flat class="elevation-0">
-					<v-avatar size="24px">
-						<img src="~/static/dofuu24x24.png">
-					</v-avatar>
-					<v-toolbar-title>
-						Thông báo
-					</v-toolbar-title>
-				</v-toolbar>
-				<v-divider></v-divider>
-				<v-card-text >
-					<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
-					<div>
-						Phạm vi giao hàng của dofuu tối đa <strong class="red--text">{{maxRange}}  km</strong>
-					</div>
-					<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
-				</v-card-text>
-				<v-card-actions>
-					<v-btn color="green darken-1"  dark @click.native="dialog = false" block>Đồng ý</v-btn>
-				</v-card-actions>
+												</v-list-tile>							
+											</v-list>
+										</v-card-text>
+
+										<v-divider></v-divider>
+
+										<v-card-text>
+											<v-list dense>
+												<v-list-tile>
+													<v-list-tile-content>
+														Thành tiền:
+													</v-list-tile-content>
+													<v-list-tile-content></v-list-tile-content>
+													<v-list-tile-action><strong>{{total | formatPrice}}</strong></v-list-tile-action>
+												</v-list-tile>
+												<v-list-tile>
+													<v-list-tile-content>
+														Phương thức thanh toán:
+													</v-list-tile-content>
+													<v-list-tile-content></v-list-tile-content>
+													<v-list-tile-action><h4>Tiền mặt</h4></v-list-tile-action>
+												</v-list-tile>
+											</v-list>
+										</v-card-text>
+									</v-card>
+								</v-flex>
+							</v-layout>								
+						</v-flex>
+					</v-layout>
+				</v-container>
 			</v-card>
+			<v-dialog v-model="dialog" max-width="400">
+				<v-card>
+					<v-toolbar dense flat class="elevation-0">
+						<v-avatar size="24px">
+							<img src="~/static/dofuu24x24.png">
+						</v-avatar>
+						<v-toolbar-title>
+							Thông báo
+						</v-toolbar-title>
+					</v-toolbar>
+					<v-divider></v-divider>
+					<v-card-text >
+						<div><strong>Dofuu xin lỗi quý khách hàng !</strong></div>
+						<div>
+							Phạm vi giao hàng của dofuu tối đa <strong class="red--text">{{maxRange}} km</strong>
+						</div>
+						<div><strong>Mong quý khách thông cảm. Cám ơn !</strong></div>
+					</v-card-text>
+					<v-card-actions>
+						<v-btn color="green darken-1"  dark @click.native="dialog = false" block>Đồng ý</v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
 		</v-dialog>
-	</v-dialog>
-	<vue-alert ref="alert"/> 
-</div>
+		<vue-alert ref="alert"/> 
+	</div>
 </template>
 <script>
 	import { mapState } from 'vuex'
 	import numeral from 'numeral'
-	import moment from 'moment'
+	import moment from 'moment-timezone'
 	import AutoComplete from '@/components/AutoComplete'
 	import AlertDialog from '@/components/commons/alertDialog'
 	import axios from 'axios'
@@ -336,7 +345,6 @@
 			},
 			calculateRoute:async function(destination) {
 				var vm        = this
-				var map       = vm.map
 				var start     = vm.store
 				var end       = destination
 				var distance  = '0 Km'
@@ -346,9 +354,9 @@
 				var startIcon = vm.typeIcon(vm.store.type.name, 'red')
 				vm.calculate  = true
 				calculateDirection(map, start, end).then(response => {
-					var leg  = response.routes[0].legs[0];
-					distance = leg.distance.text
-					duration = leg.duration.text
+					var leg            = response.routes[0].legs[0];
+					distance           = leg.distance.text
+					duration           = leg.duration.text
 					makeMarker(leg.start_location, startIcon, map);
 					makeMarker(leg.end_location, endIcon, map);
 					vm.matrix.distance =  distance
@@ -381,7 +389,6 @@
 				}
 			},
 			calculateDeliveryPrice(distance) {
-
 				var vm           = this
 				const service    = vm.currentCity.service
 				const deliveries = vm.currentCity.deliveries
@@ -396,19 +403,7 @@
 					vm.calculate  = true
 					vm.dialog     = true
 				} else {
-					if(service.deliveryActived) {
-						deliveries.forEach(item => {
-							if(item.from <= distance && item.to >= distance && service.minRange >= distance) {
-								if(vm.user.freeShip) {
-									shipPrice = 0	
-								} else {								
-									shipPrice = parseFloat(item.price)
-								}
-							} else if(item.from <= distance && item.to >= distance && service.maxRange >= distance && service.minRange < distance) {
-								shipPrice = Math.round(parseFloat(item.price)*distance/unit)*unit
-							}
-						})
-					} 
+					shipPrice = this.calculateShipPrice(service, deliveries, distance)
 				}
 				vm.deliveryPrice = shipPrice
 			},
@@ -419,52 +414,78 @@
 				return v == 0 || v == 15 || v == 30 || v == 45
 			},
 			save: async function() {
-
-				var cart = {
-					instance: this.store.id,
-					items: []
-				}
-
+				var vm   = this				
 				var data = {
-					'userId':this.user.id,
-					'confirmed': true,
-					'name': this.editedItem.name, 
-					'phone': this.editedItem.phone, 
-					'address': this.editedItem.address,
-					'lat': this.editedItem.lat,
-					'lng': this.editedItem.lng,
-					'date': this.editedItem.date, 
-					'time': this.editedItem.time, 
-					'memo': this.editedItem.memo, 
-					'items' : this.cart.items,
-					'subTotal': this.subTotal,
-					'total': this.total,
-					'store': this.store,
-					'city': this.currentCity,
-					'estimateTime': this.intendTime,
-					'distance': numeral(this.matrix.distance.split(' ')[0]).value(),
-					'deliveryPrice': this.deliveryPrice,
-					'paymentMethod': 1,
-					'coupon': this.coupon
+					'userId'            : this.user.id,
+					'confirmed'         : true,
+					'name'              : this.editedItem.name, 
+					'phone'             : this.editedItem.phone, 
+					'address'           : this.editedItem.address,
+					'lat'               : this.editedItem.lat,
+					'lng'               : this.editedItem.lng,
+					'date'              : this.editedItem.date, 
+					'time'              : this.editedItem.time, 
+					'memo'              : this.editedItem.memo, 
+					'items'             : this.cart.items,
+					'subTotal'          : this.subTotal,
+					'total'             : this.total,
+					'store'             : this.store,
+					'city'              : this.currentCity,
+					'estimateTime'      : this.intendTime,
+					'distance'          : numeral(this.matrix.distance.split(' ')[0]).value(),
+					'deliveryPrice'     : this.deliveryPrice,
+					'reduceShippingCost': this.reduceShippingCost,
+					'paymentMethod'     : 1,
+					'coupon'            : this.coupon
 				}
-				this.processCheckout = await true
+				if(!vm.processCheckout) {
+					vm.processCheckout = true 
+					setTimeout(() => {
+						axios.post('/api/Dofuu/CheckOut', data, {headers: getHeader(), withCredentials:true}).then( (response) => {
+							if(response.status == 201) {
 
-				axios.post('/api/Dofuu/CheckOut', data, {headers: getHeader(), withCredentials:true}).then(async (response) => {
-					if(response.status == 201) {
-
+							}
+						}).finally(() => {
+							vm.processCheckout = false 
+						})
+					}, 200)
+				}
+				
+				// this.$store.dispatch('getUser')
+				// this.matrix = {
+				// 	distance: null,
+				// 	duration: null
+				// } 
+				// var cart = { instance: this.store.id, items: []}
+				// await window.localStorage.setItem('cart', JSON.stringify(cart))
+				// await this.$store.commit('FETCH_CART', cart)
+				// await this.$store.commit('REMOVE_COUPON')
+				// await this.$store.commit('CLOSE_CHECKOUT')
+				// this.$store.commit('CHECKOUT_SUCCESS')
+			},
+			calculateDeal: function(price, coupon) {
+				const maxPrice = coupon.maxPrice			
+				if(price > maxPrice && maxPrice != 0) {
+					return - numeral(maxPrice).value()
+				} else {
+					return - price
+				}
+			},
+			calculateShipPrice: function(service, deliveries, distance) {
+				var shipPrice = 0
+				const unit    = 1000
+				var user      = this.user
+				deliveries.forEach(item => {
+					if(item.from <= distance && item.to >= distance && service.minRange >= distance) {			
+						shipPrice = parseFloat(item.price)
+					} else if(item.from <= distance && item.to >= distance && service.maxRange >= distance && service.minRange < distance) {
+						shipPrice = Math.round(parseFloat(item.price)*distance/unit)*unit
 					}
 				})
-				this.$store.dispatch('getUser')
-				this.matrix = {
-					distance: null,
-					duration: null
-				},
-				await window.localStorage.setItem('cart', JSON.stringify(cart))
-				await this.$store.commit('FETCH_CART', cart)
-				await this.$store.commit('REMOVE_COUPON')
-				await this.$store.commit('CLOSE_CHECKOUT')
-				this.$store.commit('CHECKOUT_SUCCESS')
-				this.processCheckout = false
+				return shipPrice
+			},
+			decreaseShippingCost: function() {
+				
 			}
 		},
 		computed: {
@@ -494,18 +515,38 @@
 				return this.$store.getters.subTotal
 			},
 			total: function() {
-				return Math.floor(numeral(this.subTotal).value() - numeral(this.subTotal).value()*this.discount/100 + numeral(this.deliveryPrice).value())
+				const unit = 1000
+				return Math.round((numeral(this.subTotal).value() + this.dealPrice + numeral(this.deliveryPrice).value() - numeral(this.reduceShippingCost).value())/unit)*unit
 			},
 			dealPrice: function() {
-				if(this.coupon != null) {
-					return this.subTotal - Math.floor(numeral(this.subTotal).value()*numeral(this.coupon.discountPercent).value()/100)
+				if(!!this.coupon) {
+					const price = Math.floor(numeral(this.subTotal).value()*numeral(this.coupon.discountPercent).value()/100 + numeral(this.coupon.discountPrice).value())
+					return this.calculateDeal(price, this.coupon)
 				}
 				return 0
+			},
+			reduceShippingCost: function() {
+				var coupon      = this.coupon
+				var shipCost    = 0 
+				var regex       = new RegExp(':', 'g') // Regular 
+				var now         = moment().tz('Asia/Ho_Chi_Minh')
+				var timeNow     = now.format('HH:mm')
+				var currentDay  = now.weekday() 
+				const startTime = '08:00'
+				const endTime   = '16:00'
+				if(!coupon && this.store.verified) {
+					if(currentDay>0 && currentDay < 6) {
+						if(parseInt(timeNow.replace(regex, ''), 10) >= parseInt(startTime.replace(regex, ''), 10) && parseInt(timeNow.replace(regex, ''), 10) <= parseInt(endTime.replace(regex, ''), 10)) {
+							return shipCost = 12000
+						} 	
+					}	
+				}
+				return shipCost
 			},
 			minTime: function() {
 				var activities = this.store.activities // Active time of store
 				var day        = null // Day current of store
-				var now        = moment().locale('vi') // Date time now 
+				var now        = moment().tz('Asia/Ho_Chi_Minh') // Date time now 
 				var n          = now.day()		// Day of week 
 				var hs         = null // Hour start of store 
 				var regex      = new RegExp(':', 'g') // Regular 
@@ -526,7 +567,7 @@
 			maxTime: function() {
 				var activities = this.store.activities // Active time of store
 				var day        = null // Day current of store
-				var now        = moment().locale('vi') // Date time now 
+				var now        = moment().tz('Asia/Ho_Chi_Minh') // Date time now 
 				var n          = now.day()		// Day of week 
 				var he         = null // End time of store 
 				var regex      = new RegExp(':', 'g') // Regular 
@@ -545,7 +586,7 @@
 			intendTime: function() {
 				if(this.matrix.duration != null) {
 					const totalTime = numeral(this.matrix.duration.slice(0,-5)).value() + numeral(this.store.prepareTime).value() // Total time of prepare time and duration time
-					var now         = moment().locale('vi') // Date time current
+					var now         = moment().tz('Asia/Ho_Chi_Minh') // Date time current
 					var intendTime  = now.add(totalTime, 'minutes') //Intent time when after direction
 					var mm          = Math.floor(parseInt(intendTime.format('mm'))/5) // Calculate minutes of intentime divide 5
 					// Less than 15 minutes
@@ -568,7 +609,7 @@
 
 					return totalTime
 				}
-			}
+			},
 		}, 
 		filters: {
 			formatPrice(price) {
@@ -607,9 +648,6 @@
 						this.calculateDeliveryPrice(distance)
 					}
 				}			
-			},
-			'editedItem.address': function(val) {
-
 			},
 			'user': function(val) {
 				if(val) {

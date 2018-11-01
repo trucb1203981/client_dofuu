@@ -4,7 +4,6 @@
 		<v-flex md12 lg6  v-for="(item, i) in products" :key="i" v-if="$vuetify.breakpoint.mdAndUp">
 			<v-hover>
 				<v-card slot-scope="{hover}" hover ripple class="mb-2 card-radius" v-on:click.native="open(item)">	
-
 					<v-system-bar status color="red darken-3" dark height="30">
 						<h5 class="white--text text-uppercase text-truncate">{{item.name}}</h5>
 						<v-spacer></v-spacer>
@@ -48,20 +47,16 @@
 		<!-- MOBILE PRODUCT -->
 		<v-flex xs12 v-if="$vuetify.breakpoint.smAndDown" v-for="(item, i) in products" :key="i">
 			<v-card hover ripple class="elevation-1 mb-2 card-radius" raised v-on:click.native="open(item)">
-				<v-layout row wrap class="pa-2"  align-center justify-center>
-					<v-flex xs3 class="text-xs-center">
-						<v-layout  align-center justify-center>
-							<v-flex xs9>
-								<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize" raised>	
-									<v-avatar :size="imageSize" color="grey lighten-3">
-										<img :src="image(item.image)" alt="item.name">
-									</v-avatar>
-								</v-card>
-							</v-flex>
-						</v-layout>									
+				<v-layout row wrap class="pa-2" >
+					<v-flex xs2 class="text-xs-center ">						
+						<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize" raised>
+							<v-avatar :size="imageSize" color="grey lighten-3">
+								<img :src="image(item.image)" alt="item.name">
+							</v-avatar>
+						</v-card>
 					</v-flex>
-
-					<v-flex xs9 class="px-0">
+					
+					<v-flex xs10 class="px-0">
 						<v-card-text class="py-0">
 							<v-system-bar status color="transparent" class="px-0">
 								<h4 class="text-truncate">{{item.name}}</h4>

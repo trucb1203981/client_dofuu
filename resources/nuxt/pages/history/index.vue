@@ -87,24 +87,19 @@
 					>
 					<v-flex	slot="item"	slot-scope="props" xs12 sm6 md6	lg6>
 						<v-card class="card-radius">
-							<v-card-title class="grey lighten-5">
-								<v-flex xs6 class="font-weight-bold">
-									Mã đặt hàng
-								</v-flex>
-								<v-flex xs6 class="text-xs-right font-weight-bold"> 
-									{{ props.item.id }}
-								</v-flex>
-							</v-card-title>
+							<v-toolbar color="grey lighten-5" dense flat>
+								<v-avatar color="primary" size="36">
+									<img :src="image(props.item.store.avatar)" alt="alt">
+								</v-avatar>
+								<v-toolbar-title>
+									{{props.item.store.name}}
+								</v-toolbar-title>
+								<v-spacer></v-spacer>
+								<div class="font-weight-bold">{{ props.item.id }}</div>
+							</v-toolbar>
 							<v-divider></v-divider>
 							<v-card-text>
 								<v-layout row wrap class="caption">
-									<v-flex xs4>
-										Người đặt:
-									</v-flex>
-									<v-flex xs8 class="text-xs-right">
-										{{ props.item.name }}
-									</v-flex>
-
 									<v-flex xs4>
 										Nơi đặt:
 									</v-flex>
@@ -340,7 +335,7 @@
 									</v-flex>
 									<v-flex xs8>
 										<div>Đơn đặt hàng của quý khách đang chờ nhân viên tiếp nhận.</div>
-										<div><strong>Xin vui lòng chờ trong giây lát.</strong></div>
+										<div><strong>Xin quý khách vui lòng chờ trong giây lát.</strong></div>
 										<div><strong>Cám ơn.</strong></div>
 									</v-flex>
 								</v-layout>
@@ -358,10 +353,10 @@
 									</v-flex>
 									<v-flex xs8>
 										<div>
-											Đơn hàng của quý khách đã được nhân viên<span v-if="order.employee != null"><strong> {{order.employee.name}} </strong></span>tiếp nhận và xử lý.
+											Đơn hàng của quý khách đã được nhân viên<span v-if="!!order.employee"><strong> {{order.employee.name}} </strong></span>tiếp nhận và xử lý.
 										</div>
 										<div>
-											<strong>Xin vui lòng chờ trong giây lát.
+											<strong>Xin quý khách vui lòng chờ trong giây lát.
 											</strong>
 										</div>
 										<div><strong>Cám ơn.</strong></div>
@@ -383,16 +378,8 @@
 										<div>
 											Đơn hàng của quý khách đã được xác nhận thành công.
 										</div>
-										<div>
-											<strong>
-												Xin vui lòng chờ ít phút để cửa hàng chuẩn bị.
-											</strong>
-										</div>
-										<div>		
-											<strong>								
-												Cám ơn!
-											</strong>
-										</div>
+										<div class="font-weight-bold">Xin quý khách vui lòng chờ ít phút để cửa hàng chuẩn bị.</div>
+										<div class="font-weight-bold">Cám ơn.</div>
 									</v-flex>
 								</v-layout>
 							</v-stepper-content>
@@ -409,11 +396,11 @@
 									</v-flex>
 									<v-flex xs8>
 										<div>
-											Đơn hàng của quý khách đã được nhân viên <span  v-if="order.shipper != null"><strong> {{order.shipper.name}} </strong></span> giao đến.
+											Đơn hàng của quý khách đã được nhân viên <span class="font-weight-bold"  v-if="!!order.shipper">{{order.shipper.name}}</span> giao đến.
 										</div>
 										<div>
 											<strong>
-												Xin vui lòng chờ đợi ít phút.
+												Xin quý khách vui lòng chờ đợi ít phút.
 											</strong>
 										</div>
 										<div>
@@ -436,10 +423,9 @@
 										Thông điệp:
 									</v-flex>
 									<v-flex xs8>
-										<div>Đơn hàng của quý khách đã được giao thành công.</div>
-										<div><strong>Cám ơn quý khách đã đặt hàng từ hệ thống.</strong>
-										</div>
-										<div><strong>Chúc bạn dùng ngon miệng.</strong></div>
+										<div>Đơn hàng của quý khách đã được giao thành công.</div>			
+										<div class="font-weight-bold">Chúc qúy khách dùng ngon miệng.</div>
+										<div class="font-weight-bold">Cám ơn quý khách đã đặt hàng từ hệ thống.</div>
 									</v-flex>
 								</v-layout>
 							</v-stepper-content>
@@ -562,8 +548,8 @@
 <script>
 	import axios from 'axios'
 	import moment from 'moment'
-	import {getHeader} from '@/config'
-
+	import { getHeader } from '@/config'
+	import index from '@/mixins'
 	function formatDate(str) {
 		if(str != null) {
 			return str.substring(8, 10)+'/'+str.substring(5, 7)+'/'+str.substring(0, 4)
@@ -573,6 +559,7 @@
 
 	export default {
 		middleware: 'notAuthenticated',
+		mixins: [index],
 		data() {
 			return {
 				title: 'Lịch sử đặt món',
@@ -735,39 +722,39 @@
 					var response = response
 					directionsDisplay.setDirections(response);
 					var service  = new google.maps.DistanceMatrixService()
-			service.getDistanceMatrix(
-			{
-				origins: [response.request.origin.location],
-				destinations: [response.request.destination.location],
-				travelMode: 'DRIVING'
-			}, function(res, status) {
-				if (status === 'OK') {
-					var originList     = res.originAddresses
-					var destinationList= res.destinationAddresses
-					var distance       = '0 Km'
-					var duration       = '0 phút'
-					var leg            = response.routes[ 0 ].legs[ 0 ];
-					directionsDisplay.setDirections(response);
-					for (var i = 0; i < originList.length; i++) {
-						var results = res.rows[i].elements
-						for (var j = 0; j < results.length; j++) {
-							var element = results[j]
-							distance    = element.distance.text
-							duration    = element.duration.text
-						}
+					service.getDistanceMatrix(
+					{
+						origins: [response.request.origin.location],
+						destinations: [response.request.destination.location],
+						travelMode: 'DRIVING'
+					}, function(res, status) {
+						if (status === 'OK') {
+							var originList     = res.originAddresses
+							var destinationList= res.destinationAddresses
+							var distance       = '0 Km'
+							var duration       = '0 phút'
+							var leg            = response.routes[ 0 ].legs[ 0 ];
+							directionsDisplay.setDirections(response);
+							for (var i = 0; i < originList.length; i++) {
+								var results = res.rows[i].elements
+								for (var j = 0; j < results.length; j++) {
+									var element = results[j]
+									distance    = element.distance.text
+									duration    = element.duration.text
+								}
 
-						vm.matrix.distance = distance
-						vm.matrix.duration = duration
-						vm.matrix.start    = leg.start_address
-						vm.matrix.end      = leg.end_address
-						vm.matrix.show     = true
-						directionsDisplay.setDirections(response);
-					}
-				}					
+								vm.matrix.distance = distance
+								vm.matrix.duration = duration
+								vm.matrix.start    = leg.start_address
+								vm.matrix.end      = leg.end_address
+								vm.matrix.show     = true
+								directionsDisplay.setDirections(response);
+							}
+						}					
+					})
+				}				
 			})
-		}				
-	})
-},
+		},
 		//CHOOSE STATUS ORDER
 		orderStatus: function(status) {
 			const _s = new String(status).toLowerCase();

@@ -2,31 +2,32 @@
 	<v-container grid-list-xs="$vuetify.breakpoint.smAndDown" grid-list-md="$vuetify.breakpoint.mdAndUp" v-scroll="onScroll" v-if="stores.length > 0" :class="{'px-0': $vuetify.breakpoint.xsOnly}">
 		<v-layout row wrap>
 			<v-flex xs12>
-				<v-card flat >			
-					<v-layout grey lighten-4 fill-height row wrap class="elevation-1">
-						<v-toolbar color="white" flat dense>
-							<v-toolbar-title >
-								<span class="text-capitalize">{{title}}</span>
-							</v-toolbar-title>
-						</v-toolbar>		
-						<v-flex xs12>
-							<v-container fluid>
-								<!-- STORE LIST -->
-								<vue-store-list v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>
-								<!-- STORE GRID -->
-								<vue-store-grid v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
-								<!-- INFINITE LOADING -->
-								<v-card v-if="loading" color="transparent" dark flat>
-									<v-card-text class="text-xs-center">
-										<v-progress-circular
-										indeterminate
-										color="grey"
-										></v-progress-circular>
-									</v-card-text>
-								</v-card>			
-							</v-container>
-						</v-flex>		
-					</v-layout>						
+				<v-card flat class="card-radius">			
+
+					<v-toolbar color="white" flat dense>
+						<v-toolbar-title >
+							<span class="text-capitalize">{{title}}</span>
+						</v-toolbar-title>
+					</v-toolbar>
+
+					<v-divider></v-divider>
+
+					<v-container fluid class="grey lighten-4">
+						<!-- STORE LIST -->
+						<vue-store-list v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-list>
+						<!-- STORE GRID -->
+						<vue-store-grid v-if="!!currentCity" :stores.sync="stores" :currentCity.sync="currentCity"></vue-store-grid>
+						<!-- INFINITE LOADING -->
+						<v-card v-if="loading" color="transparent" dark flat>
+							<v-card-text class="text-xs-center">
+								<v-progress-circular
+								indeterminate
+								color="grey"
+								></v-progress-circular>
+							</v-card-text>
+						</v-card>			
+					</v-container>
+
 				</v-card>
 			</v-flex>				
 		</v-layout>

@@ -203,7 +203,6 @@ class StoreController extends Controller {
 			})->with(['status', 'coupons' => function ($query) {
 				return $query->orderBy('created_at', 'desc')->get();
 			}])->show()->orderByPriority('desc')->paginate($size);
-
 		} else if ($type_id != 0) {
 
 			$stores = Store::where(function ($query) use ($city_id, $type_id, $district_id) {

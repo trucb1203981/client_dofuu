@@ -463,10 +463,6 @@
 </script>
 
 <style scoped>
-.card-radius {
-	/*border-radius: 15px 15px 0 0;*/
-	border-radius: 15px;
-}
 #overlay {
 	position: fixed; /* Sit on top of the page content */
 	display: block; /* Hidden by default */

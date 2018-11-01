@@ -11,21 +11,23 @@
 					</span>
 				</v-system-bar>
 
-				<v-card flat nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}">
+				<v-card flat nuxt :to="{name: 'city-store', params: {city: currentCity.slug, store: item.slug}}" tile>
 					<v-img :src="image(item.avatar)" :aspect-ratio="16/9" :lazy-src="`https://picsum.photos/10/6?image=${1 * 5 + 10}`">
 						<v-layout slot="placeholder" fill-height align-center justify-center ma-0 >
 							<v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
 						</v-layout>		
 					</v-img>
 
-
 					<v-divider light></v-divider>
 					<v-card-text  class="pt-4" style="position: relative;">
 
 						<v-btn slot="activator" v-if="!!item.coupon" absolute color="white" class="red--text" small right top style="height: 26px; width: 26px; top:-16px" round :ripple="false">
 							<v-tooltip top>
-								<span slot="activator" class="font-weight-bold">Giảm {{item.coupon.discount}}%</span>
-								<span>{{item.coupon.title}}</span>
+								<span slot="activator" class="font-weight-bold">Giảm 
+									<span v-if="item.coupon[0].discountPercent>0">{{item.coupon[0].discountPercent}}%</span>
+									<span v-if="item.coupon[0].discountPrice>0">{{item.coupon[0].discountPrice | formatPrice}}</span>
+								</span>
+								<span>{{item.coupon[0].title}}</span>
 							</v-tooltip>
 							
 						</v-btn>
@@ -116,10 +118,6 @@
 </script>
 
 <style scoped>
-.card-radius {
-	border-radius: 15px;
-}
-
 .v-card--reveal--text {
 	align-items: center;
 	bottom: 0;

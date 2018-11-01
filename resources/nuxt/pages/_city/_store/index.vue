@@ -21,14 +21,18 @@
 				</v-autocomplete>
 
 				<!-- COUPON START -->
-				<vue-coupon :coupon="store.coupon"></vue-coupon>
+				<v-layout row wrap>					
+					<vue-coupon :coupon="coupon" v-for="(coupon, i) in store.coupon" :key="i"></vue-coupon>
+				</v-layout>
 				<!-- COUPON END -->
+
 				<!-- PRODUCT LIST START -->
 				<v-content v-if="menu.length>0" v-for="(data, index) in menu" :key="index" class="pb-0">
 					<v-subheader :id="'item_'+data.id" v-show="data.products.length>0" class="text-uppercase">{{data.name}}</v-subheader>
 					<vue-product :products="data.products" @openCart="openCartDialog" />
 				</v-content>
 				<!-- PRODUCT LIST END -->
+				
 			</v-flex>
 
 			<!-- RIGHT NAVBAR DESKTOP -->
@@ -103,10 +107,8 @@
 							</v-data-table>
 						</v-card-text>
 
-						<v-divider></v-divider>
-
 						<!-- FIELD COUPON START -->
-						<v-toolbar color="grey lighten-3" flat dense>
+						<v-toolbar color="grey lighten-3" flat dense v-if="subTotal>0" :extended="alert.show">
 							<v-layout row justify-center align-center>
 
 								<v-flex v-if="coupon == null">
@@ -120,19 +122,15 @@
 								<v-flex v-else class="pa-0">
 									<v-chip close :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
 										<v-icon left>redeem</v-icon>
-										{{coupon.coupon}}											
+										{{coupon.code}}											
 									</v-chip>
-									<span class="text-xs-end red--text text--accent-3 font-weight-bold font-italic">Giảm {{coupon.discountPercent}}%</span>	
+									<span class="text-xs-end red--text text--accent-3 font-weight-bold font-italic">Giảm <span v-if="coupon.discountPercent>0">{{coupon.discountPercent}}%</span> <span v-if="coupon.discountPrice>0">{{coupon.discountPrice | formatPrice}}</span></span>	
 								</v-flex>
 
-								<span v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
-
-							</v-layout>			
+							</v-layout>	
+							<span  slot="extension" v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
 						</v-toolbar>
 						<!-- FIELD COUPON END -->
-
-						<v-divider></v-divider>
-
 						<v-layout row wrap>
 							<v-flex	xs12>
 								<v-list dense > 
@@ -142,7 +140,7 @@
 										<v-list-tile-content>Tạm tính:</v-list-tile-content>
 
 										<v-list-tile-content class="align-end">
-											<v-list-tile-title class="text-xs-right"><h3  :style="coupon !=null ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h3></v-list-tile-title>
+											<v-list-tile-title class="text-xs-right"><h3  :style="!!coupon ? `text-decoration : line-through` : '' ">{{subTotal | formatPrice}}</h3></v-list-tile-title>
 											<v-list-tile-title v-if="coupon != null" class="text-xs-right red--text text--accent-3"><h3>{{total | formatPrice}}</h3></v-list-tile-title>
 										</v-list-tile-content>
 
@@ -250,7 +248,7 @@
 				<v-divider></v-divider>
 
 				<!-- FIELD COUPON START -->
-				<v-toolbar color="grey lighten-3" flat dense>
+				<v-toolbar color="grey lighten-3" flat dense  v-if="subTotal>0" :extended="alert.show">
 					<v-layout row justify-center align-center>
 
 						<v-flex v-if="coupon == null">
@@ -264,14 +262,13 @@
 						<v-flex v-else class="pa-0">
 							<v-chip close :value="coupon != null" color="green darken-3" text-color="white" @input="removeCoupon">
 								<v-icon left>redeem</v-icon>
-								{{coupon.coupon}}											
+								{{coupon.code}}											
 							</v-chip>
-							<span class="text-xs-end red--text text--accent-3 font-weight-bold font-italic">Giảm {{coupon.discountPercent}}%</span>	
+							<span class="text-xs-end red--text text--accent-3 font-weight-bold font-italic">Giảm <span v-if="coupon.discountPercent>0">{{coupon.discountPercent}}%</span> <span v-if="coupon.discountPrice>0">{{coupon.discountPrice | formatPrice}}</span></span>	
 						</v-flex>
-
-						<span v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
-
 					</v-layout>			
+
+					<span  slot="extension" v-if="alert.show" class="red--text text-lg-right">{{alert.message}}</span>
 				</v-toolbar>
 				<!-- FIELD COUPON END -->
 
@@ -582,15 +579,14 @@
 			}
 		},
 		methods: {
-			checkCoupon: async function() {
+			checkCoupon: function() {
 				var vm = this
 				if(vm.code == null) {
 					vm.alert = Object.assign({}, {show: true, message: 'Vui lòng nhập mã giảm giá', type: 'error'})
 				} else {
-
 					if(!vm.loadingCoupon) {
-						vm.loadingCoupon = await !vm.loadingCoupon
-						const data = Object.assign({}, {storeID: this.store.id, coupon: this.code, subTotal: this.subTotal, districtID: this.store.districtId, cityID: this.currentCity.id})
+						vm.loadingCoupon = !vm.loadingCoupon
+						const data = Object.assign({}, {storeId: this.store.id, coupon: this.code, subTotal: this.subTotal, districtId: this.store.districtId, cityId: this.currentCity.id})
 						setTimeout(function() {						
 
 							axios.post('/api/Dofuu/CheckCouponCode', data, {withCredentials:true}).then(response => {
@@ -815,6 +811,14 @@
 		},
 		forceUppercase(e) {
 			this.code = e.toUpperCase()
+		},
+		calculateDeal: function(price, coupon) {
+			const maxPrice = coupon.maxPrice			
+			if(price > maxPrice && maxPrice != 0) {
+				return - numeral(maxPrice).value()
+			} else {
+				return - price
+			}
 		}
 	},
 	computed: {
@@ -849,7 +853,11 @@
 		},
 		dealPrice: function() {
 			if(this.coupon != null) {
-				return -Math.floor(numeral(this.subTotal).value()*numeral(this.coupon.discountPercent).value()/100)
+				const discountPercent = this.coupon.discountPercent
+				const discountPrice   = this.coupon.discountPrice
+				const subTotal        = this.subTotal
+				const dealPrice = Math.floor(numeral(subTotal).value()*numeral(discountPercent).value()/100 + numeral(discountPrice).value())				
+				return this.calculateDeal(dealPrice, this.coupon)
 			}
 			return 0
 		},

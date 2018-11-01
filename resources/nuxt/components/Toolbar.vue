@@ -1,7 +1,8 @@
 <template>
 	<v-card>
 		<v-system-bar status color="red darken-4" dark>
-			<span v-if="currentCity != null">				
+			<span v-if="!!currentCity">
+				<v-icon>access_time</v-icon>				
 				{{currentCity.service.startTime | formatTime}} - {{currentCity.service.endTime | formatTime}}
 			</span>
 		</v-system-bar>
@@ -113,19 +114,19 @@
 			<template v-for="(item, index) in types" >
 				<v-tab :key="index" nuxt :to="{name: 'city-dia-diem-type', params: {city: currentCity.slug, type: item.slug }}">
 					<v-avatar
-					  size="18"
-					  color="transparent"
-					  tile
+					size="18"
+					color="transparent"
+					tile
 					>
-					  <img :src="typeIcon(item.name, 'type')" alt="alt" style="width:18px; height:18px">
-					</v-avatar>
-					<!-- <v-icon left size="20">{{item.icon}}</v-icon> -->
-					<h5 class="pl-1">{{ item.name }}</h5>
-				</v-tab>
-				<v-divider vertical v-if="index != types.length-1" inset></v-divider>
-			</template>
-		</v-tabs>
-	</v-toolbar>
+					<img :src="typeIcon(item.name, 'type')" alt="alt" style="width:18px; height:18px">
+				</v-avatar>
+				<!-- <v-icon left size="20">{{item.icon}}</v-icon> -->
+				<h5 class="pl-1">{{ item.name }}</h5>
+			</v-tab>
+			<v-divider vertical v-if="index != types.length-1" inset></v-divider>
+		</template>
+	</v-tabs>
+</v-toolbar>
 </v-card>
 </template>
 

@@ -44,7 +44,7 @@ const mutations = {
 		state.dialog = false
 	},
 	ADD_COUPON(state, payload) {
-		state.coupon = payload.data
+		state.coupon = payload.coupon
 	},
 	REMOVE_COUPON(state) {
 		state.coupon = null

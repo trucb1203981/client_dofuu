@@ -534,13 +534,13 @@
 				var currentDay  = now.weekday() 
 				const startTime = '08:00'
 				const endTime   = '16:00'
-				// if(!coupon && this.store.verified) {
-				// 	if(currentDay>0 && currentDay < 6) {
-				// 		if(parseInt(timeNow.replace(regex, ''), 10) >= parseInt(startTime.replace(regex, ''), 10) && parseInt(timeNow.replace(regex, ''), 10) <= parseInt(endTime.replace(regex, ''), 10)) {
-				// 			return shipCost = 12000
-				// 		} 	
-				// 	}	
-				// }
+				if(!coupon && this.store.verified) {
+					if(currentDay>0 && currentDay < 6) {
+						if(parseInt(timeNow.replace(regex, ''), 10) >= parseInt(startTime.replace(regex, ''), 10) && parseInt(timeNow.replace(regex, ''), 10) <= parseInt(endTime.replace(regex, ''), 10)) {
+							return shipCost = 12000
+						} 	
+					}	
+				}
 				return shipCost
 			},
 			minTime: function() {

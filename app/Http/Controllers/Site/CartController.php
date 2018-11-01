@@ -264,13 +264,13 @@ class CartController extends Controller
 		$endTime   = (int)str_replace(':', '', '16:00');
 		$dayOfWeek = $now->dayOfWeek;
 
-		if(!$coupon) {
-			if($dayOfWeek > 0 && $dayOfWeek < 6) {
-				if($timeNow >= $startTime && $timeNow < $endTime) {
-					return $price = 12000;
-				} 
-			}
-		} 
+		// if(!$coupon) {
+		// 	if($dayOfWeek > 0 && $dayOfWeek < 6) {
+		// 		if($timeNow >= $startTime && $timeNow < $endTime) {
+		// 			return $price = 12000;
+		// 		} 
+		// 	}
+		// } 
 		return $price;
 	}
 

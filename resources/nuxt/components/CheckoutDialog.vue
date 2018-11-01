@@ -451,17 +451,17 @@
 					}, 200)
 				}
 				
-				// this.$store.dispatch('getUser')
-				// this.matrix = {
-				// 	distance: null,
-				// 	duration: null
-				// } 
-				// var cart = { instance: this.store.id, items: []}
-				// await window.localStorage.setItem('cart', JSON.stringify(cart))
-				// await this.$store.commit('FETCH_CART', cart)
-				// await this.$store.commit('REMOVE_COUPON')
-				// await this.$store.commit('CLOSE_CHECKOUT')
-				// this.$store.commit('CHECKOUT_SUCCESS')
+				this.$store.dispatch('getUser')
+				this.matrix = {
+					distance: null,
+					duration: null
+				} 
+				var cart = { instance: this.store.id, items: []}
+				await window.localStorage.setItem('cart', JSON.stringify(cart))
+				await this.$store.commit('FETCH_CART', cart)
+				await this.$store.commit('REMOVE_COUPON')
+				await this.$store.commit('CLOSE_CHECKOUT')
+				this.$store.commit('CHECKOUT_SUCCESS')
 			},
 			calculateDeal: function(price, coupon) {
 				const maxPrice = coupon.maxPrice			

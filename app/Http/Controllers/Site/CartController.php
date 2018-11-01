@@ -167,21 +167,21 @@ class CartController extends Controller
 
 					$this->checkFreeShip();
 					//Notify to employee in City
-					// $employees = User::where('role_id', '=', $this->employee->id)->get();
+					$employees = User::where('role_id', '=', $this->employee->id)->get();
 
-					// foreach($employees as $user) {
-					// 	$user->notify(new CheckoutNotification($regular_order)); 
-					// }		
+					foreach($employees as $user) {
+						$user->notify(new CheckoutNotification($regular_order)); 
+					}		
 
-					// Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($regular_order));
+					Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($regular_order));
 
-					// $res = [
-					// 	'type'    => 'success',
-					// 	'message' => 'Check out cart successfully.',
-					// 	'data'    => []
-					// ];
+					$res = [
+						'type'    => 'success',
+						'message' => 'Check out cart successfully.',
+						'data'    => []
+					];
 
-					// return response($res, 201);
+					return response($res, 201);
 				}
 			}
 		}

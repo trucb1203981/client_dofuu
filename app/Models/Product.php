@@ -31,6 +31,12 @@ class Product extends Model
 		return false;
 	}
 
+	public function scopeShow($query) {
+		return $query->where('status_id', '!=', 3)->whereHas('catalogue', function($query) {
+				$query->show();
+			});
+	}
+
 	public function catalogue() {
 		return $this->belongsTo('App\Models\Catalogue', 'catalogue_id');
 	}    

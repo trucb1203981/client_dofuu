@@ -61,7 +61,7 @@ class StoreResource extends JsonResource
                 });
             }),
             'catalogues'    => $this->whenLoaded('catalogues', function() {
-                return CatalogueResource::collection($this->catalogues->map(function($query) {return $query;})->sortBy('catalogue')->sortByDesc('priority'));
+                return CatalogueResource::collection($this->catalogues->map(function($query) {return $query;})->where('catalogue_show', 1)->sortBy('catalogue')->sortByDesc('priority'));
             }),
             'district'      => $this->whenLoaded('district', function() {
                 return new DistrictResource($this->district);

@@ -171,7 +171,6 @@ class StoreController extends Controller {
 			}, 'catalogues' => function ($query) {
 				return $query->show();
 			}])->first();
-
 			if (!is_null($store)) {
 				$store->views = ++$store->views;
 				$store->save();

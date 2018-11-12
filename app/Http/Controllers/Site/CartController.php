@@ -232,7 +232,7 @@ class CartController extends Controller
 
 	//CALCULATE DISCOUNT FOR COUPON
 	public function discountCoupon($subTotal, $coupon) {
-		$discountTotal = round(((float)$subTotal * (int)$coupon->discount_percent/100)+(int)$coupon->discount_price, -3);
+		$discountTotal = ((float)$subTotal * (int)$coupon->discount_percent/100)+(int)$coupon->discount_price;
 		$maxPrice      = $coupon->max_price;
 		if($discountTotal > $maxPrice && $maxPrice != 0) {
 			return (float)$maxPrice;

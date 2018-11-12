@@ -23,6 +23,14 @@ class Catalogue extends Model
 		return $query->where('catalogue_show', 1);
 	}
 
+	public function scopeOrderByAsc($query, $column) {
+		return $query->orderBy($column, 'asc');
+	}
+
+	public function scopeOrderByDesc($query, $column) {
+		return $query->orderBy($column, 'desc');
+	}
+
 	public function scopeLikeName($query, $keywords) {
 		return $query->where('catalogue', 'like', '%'.$keywords.'%')->orWhere('_catalogue', 'like', '%'.$keywords.'%');
 	}

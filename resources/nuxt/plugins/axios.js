@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import Auth from '@/utils/auth'// axios.defaults.baseURL = 'http://127.0.0.1:8001'
+import Auth from '@/utils/auth'
+// axios.defaults.baseURL = 'http://127.0.0.1:8001'
 // axios.defaults.headers.common['Content-type']   = 'application/json';
 // axios.defaults.headers.put['X-Requested-With']  = 'XMLHttpRequest';
 // axios.defaults.headers.post['X-Requested-With'] = 'XMLHttpRequest';

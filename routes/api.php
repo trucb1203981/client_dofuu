@@ -133,6 +133,13 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 	//FETCH STORES
 	Route::get('/GetStore/{id}', 'StoreController@showStore');
 
+	Route::group(['prefix' => 'Credentials'], function() {
+		//LOGIN
+		Route::post('/Login', 'AuthController@login');
+		//REGISTER
+		Route::post('/Register', 'AuthController@register');
+	});
+
 	Route::group(['prefix' => 'Type'], function() {
 		//FETCH TYPE
 		Route::post('/FetchAllTypes', 'TypeController@fetchType');

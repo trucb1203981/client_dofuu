@@ -43,7 +43,7 @@
 															<v-text-field prepend-icon="place" placeholder="Địa chỉ nhận" v-model="editedItem.address" id="auto-complete" ref="autocomplete" 
 															:hint="`Chọn nút phía bên phải trường địa chỉ nhận sẽ xác định vị trí hiện tại`"
 															@focus="autoComplete"
-															@keydown.enter="autoComplete"
+															@keydown.enter="searchPlace"
 															persistent-hint>
 															<template slot="append-outer">
 																<v-icon @click.prevent="currentLocation">gps_fixed</v-icon>
@@ -326,6 +326,13 @@
 					} else {
 						vm.setPlace(place)
 					}					
+				})
+			},
+			searchPlace() {
+				var vm = this
+				console.log(vm.editedItem.address)
+				geocoder('address', vm.editedItem.address).then(result => {
+					vm.setPlace(result[0])
 				})
 			},
 			setPlace(result) {
@@ -661,7 +668,7 @@
 			},
 			'editedItem.date': function(val) {
 				this.datestring = formatDate(val)
-			}
+			},
 		}
 	}
 </script>

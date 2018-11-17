@@ -458,7 +458,12 @@
 				this.$store.dispatch('getToCart', response.data.store.id)	
 			}
 		})	
+	},
+	beforeDestroy() {
+		this.$store.commit('CLOSE_CART')
+		
 	}
+
 }
 </script>
 

@@ -125,64 +125,64 @@ class CartController extends Controller
 	public function checkOut(Request $request) {
 
 		$now = Carbon::now()->toDateTimeString();
+		// Check confirmed
+		if($request->confirmed) {
 
-		if($request->filled('confirmed', 'name', 'phone', 'address', 'date', 'time', 'memo', 'total', 'subTotal', 'userId', 'paymentMethod', 'distance','items', 'city', 'store')) {
-			// Check confirmed
-			if($request->confirmed) {
-				$cityId     = $request->city['id'];
-				$storeId    = $request->store['id'];
-				$userId     = $request->userId;
-				$secret     = $request->coupon['secret'];
-				$coupon     = $request->coupon;
-				//Find store has truly
-				$store  = Store::ofCity($cityId)->findorFail($storeId);
-				if($store && auth('api')->user()->id == $userId) {
+			$cityId     = $request->city['id'];
+			$storeId    = $request->store['id'];
+			$userId     = $request->userId;
+			$secret     = $request->coupon['secret'];
+			$coupon     = $request->coupon;
+
+			//Find store has truly
+			$store  = Store::ofCity($cityId)->findorFail($storeId);
+
+			if($store && auth('api')->user()->id == $userId) {
 					
-					if($store->verified) {
-						$reduceShippingCost = $this->reduceShippingCost($coupon);
-					} else {
-						$reduceShippingCost = 0;
-					}
-					
-					$regular_order      = $this->createRegularOrder($request->all(), $reduceShippingCost);
-					$actual_order       = $this->createActualOrder($regular_order, $store);
-
-					if($coupon) {
-						$coupon = Coupon::hasStore($storeId)->unexpired()->checkToken($secret)->first();	
-						if($coupon) {
-							$regular_order->update([
-								'coupon'           => $coupon->coupon,
-								'secret'           => $coupon->token,
-								'discount_percent' => $coupon->discount_percent,
-								'discount_price'   => $coupon->discount_price,
-								'discount_total'   => $this->discountCoupon($request->subTotal, $coupon)
-							]);
-						}
-					}
-
-					foreach($request->items as $data) {
-						$regular_order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['size']['price'], 'total' => $data['subTotal'], 'memo' => $data['memo'], 'toppings' => serialize($data['toppings'])]]);
-						$actual_order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['size']['price'], 'total' => $data['subTotal'], 'memo' => $data['memo'], 'toppings' => serialize($data['toppings'])]]);
-					}
-
-					$this->checkFreeShip();
-					//Notify to employee in City
-					$employees = User::where('role_id', '=', $this->employee->id)->get();
-
-					foreach($employees as $user) {
-						$user->notify(new CheckoutNotification($regular_order)); 
-					}		
-
-					Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($regular_order));
-
-					$res = [
-						'type'    => 'success',
-						'message' => 'Check out cart successfully.',
-						'data'    => []
-					];
-
-					return response($res, 201);
+				if($store->verified) {
+					$reduceShippingCost = $this->reduceShippingCost($coupon);
+				} else {
+					$reduceShippingCost = 0;
 				}
+				
+				$regular_order      = $this->createRegularOrder($request->all(), $reduceShippingCost);
+				$actual_order       = $this->createActualOrder($regular_order, $store);
+
+				if($coupon) {
+					$coupon = Coupon::hasStore($storeId)->unexpired()->checkToken($secret)->first();	
+					if($coupon) {
+						$regular_order->update([
+							'coupon'           => $coupon->coupon,
+							'secret'           => $coupon->token,
+							'discount_percent' => $coupon->discount_percent,
+							'discount_price'   => $coupon->discount_price,
+							'discount_total'   => $this->discountCoupon($request->subTotal, $coupon)
+						]);
+					}
+				}
+
+				foreach($request->items as $data) {
+					$regular_order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['size']['price'], 'total' => $data['subTotal'], 'memo' => $data['memo'], 'toppings' => serialize($data['toppings'])]]);
+					$actual_order->products()->attach([$data['id'] => ['product_id' => $data['id'], 'quantity' => $data['qty'], 'price' => $data['size']['price'], 'total' => $data['subTotal'], 'memo' => $data['memo'], 'toppings' => serialize($data['toppings'])]]);
+				}
+
+				$this->checkFreeShip();
+				// Notify to employee in City
+				$employees = User::where('role_id', '=', $this->employee->id)->get();
+
+				foreach($employees as $user) {
+					$user->notify(new CheckoutNotification($regular_order)); 
+				}		
+
+				Mail::to('sp.dofuu@gmail.com')->send(new OrderMail($regular_order));
+
+				$res = [
+					'type'    => 'success',
+					'message' => 'Check out cart successfully.',
+					'data'    => []
+				];
+
+				return response($res, 201);
 			}
 		}
 	}

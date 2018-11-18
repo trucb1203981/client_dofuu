@@ -330,7 +330,6 @@
 			},
 			searchPlace() {
 				var vm = this
-				console.log(vm.editedItem.address)
 				geocoder('address', vm.editedItem.address).then(result => {
 					vm.setPlace(result[0])
 				})
@@ -342,7 +341,7 @@
 					this.editedItem.lat     = place.geometry.location.lat()
 					this.editedItem.lng     = place.geometry.location.lng()
 					
-					if(!place.types.some(type => type === "street_address" || type === "route")) {
+					if(!place.types.some(type => type === "street_address" || type === "route") && typeof place.name != 'undefined' ) {
 						this.editedItem.memo = place.name
 					} else {
 						this.editedItem.memo = "Càng nhanh càng tốt."
@@ -421,7 +420,8 @@
 				return v == 0 || v == 15 || v == 30 || v == 45
 			},
 			save: async function() {
-				var vm   = this				
+				var vm   = this	
+				console.log(this.editedItem.memo)			
 				var data = {
 					'userId'            : this.user.id,
 					'confirmed'         : true,
@@ -450,7 +450,17 @@
 					setTimeout(() => {
 						axios.post('/api/Dofuu/CheckOut', data, {headers: getHeader(), withCredentials:true}).then( (response) => {
 							if(response.status == 201) {
-
+								this.$store.dispatch('getUser')
+								this.matrix = {
+									distance: null,
+									duration: null
+								} 
+								var cart = { instance: this.store.id, items: []}
+								window.localStorage.setItem('cart', JSON.stringify(cart))
+								this.$store.commit('FETCH_CART', cart)
+								this.$store.commit('REMOVE_COUPON')
+								this.$store.commit('CLOSE_CHECKOUT')
+								this.$store.commit('CHECKOUT_SUCCESS')
 							}
 						}).finally(() => {
 							vm.processCheckout = false 
@@ -458,17 +468,7 @@
 					}, 200)
 				}
 				
-				this.$store.dispatch('getUser')
-				this.matrix = {
-					distance: null,
-					duration: null
-				} 
-				var cart = { instance: this.store.id, items: []}
-				await window.localStorage.setItem('cart', JSON.stringify(cart))
-				await this.$store.commit('FETCH_CART', cart)
-				await this.$store.commit('REMOVE_COUPON')
-				await this.$store.commit('CLOSE_CHECKOUT')
-				this.$store.commit('CHECKOUT_SUCCESS')
+				
 			},
 			calculateDeal: function(price, coupon) {
 				const maxPrice = coupon.maxPrice			

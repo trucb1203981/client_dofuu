@@ -420,8 +420,7 @@
 				return v == 0 || v == 15 || v == 30 || v == 45
 			},
 			save: async function() {
-				var vm   = this	
-				console.log(this.editedItem.memo)			
+				var vm   = this			
 				var data = {
 					'userId'            : this.user.id,
 					'confirmed'         : true,

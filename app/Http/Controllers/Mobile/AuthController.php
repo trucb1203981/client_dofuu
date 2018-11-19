@@ -61,26 +61,26 @@ class AuthController extends Controller
         return $this->respondUnauthorized();
     }
 
-    public function register(UserRequest $request) {
+    public function register(Request $request) {
 
         $user = User::create([
                 'name'      => $request->name,
                 'email'     => $request->email,
                 'password'  => bcrypt($request->password),
                 'phone'     => $request->phone,
+                'birthday'  => '2018-05-02',
+                'gender'    => 0,
                 'role_id'   => $this->customer->id,
                 'actived'   => 1
             ]);
 
-            $activation = Activation::create([
-                'user_id' => $user->id,
-                'token'   => hash_hmac('sha256', str_random(40), config('app.key'))
-            ]);
-            
-            Mail::to($user->email)->send(new ActiveUserMail($user));
-            return response('Create account Successfully!!!', 201);
-
-        return response('Something went wrong', 500);
+        $activation = Activation::create([
+            'user_id' => $user->id,
+            'token'   => hash_hmac('sha256', str_random(40), config('app.key'))
+        ]);
+        
+        // Mail::to($user->email)->send(new ActiveUserMail($user));
+        return response('Create account Successfully!!!', 201);
     }
 
     protected function validator(array $data) {

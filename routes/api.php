@@ -140,6 +140,10 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 		Route::post('/Register', 'AuthController@register');
 	});
 
+	Route::group(['prefix' => 'Users'], function() {
+		Route::post('/df', 'AuthController@me');
+	});
+
 	Route::group(['prefix' => 'Type'], function() {
 		//FETCH TYPE
 		Route::post('/FetchAllTypes', 'TypeController@fetchType');

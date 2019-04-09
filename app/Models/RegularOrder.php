@@ -14,6 +14,34 @@ class RegularOrder extends Model
 
 	protected $hidden  = [];
 
+	public function scopeByUserId($query, $userId) {
+		return $query->where('user_id', (int) $userId);
+	}
+
+	public function scopeByStoreId($query, $storeId) {
+		return $query->where('store_id', $storeId);
+	}
+
+	public function scopeByStatusId($query, $statusId) {
+		return $query->where('status_id', (int) $statusId);
+	}
+
+	public function scopeHasNotStatusId($query, $statusId) {
+		return $query->where('status_id', '!=', (int) $statusId);
+	}
+
+	public function scopeWithRange($query, $from, $to) {
+		return $query->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to);
+	}
+
+	public function scopeOrderByAsc($query, $column) {
+		return $query->orderBy($column, 'asc');
+	}
+
+	public function scopeOrderByDesc($query, $column) {
+		return $query->orderBy($column, 'desc');
+	}
+
 	public function user() {
 		return $this->belongsTo('App\Models\User', 'user_id');
 	}

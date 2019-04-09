@@ -13,7 +13,8 @@ class CatalogueResource extends JsonResource
      * @return array
      */
     public function toArray($request)
-    {
+    {   
+        
         return [
             'id'       => $this->id,
             'name'     => $this->catalogue,

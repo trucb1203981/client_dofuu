@@ -71,7 +71,7 @@ class Store extends Model
     // GET STORE OF CITY
     public function scopeOfCity($query, $city_id) {
         $cityId = $city_id;
-        return $this->whereHas('district', function($query) use ($cityId) {
+        return $query->whereHas('district', function($query) use ($cityId) {
             $query->byCityId($cityId);
         });
     }

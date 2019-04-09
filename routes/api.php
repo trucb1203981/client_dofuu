@@ -132,30 +132,38 @@ Route::group(['namespace' => 'Site'], function () {
 Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 	//FETCH STORES
 	Route::get('/GetStore/{id}', 'StoreController@showStore');
-
+	//CREDENTIALS
 	Route::group(['prefix' => 'Credentials'], function() {
 		//LOGIN
 		Route::post('/Login', 'AuthController@login');
 		//REGISTER
 		Route::post('/Register', 'AuthController@register');
 	});
-
+	//USER
 	Route::group(['prefix' => 'Users'], function() {
 		Route::post('/df', 'AuthController@me');
 	});
-
+	//TYPE
 	Route::group(['prefix' => 'Type'], function() {
 		//FETCH TYPE
 		Route::post('/FetchAllTypes', 'TypeController@fetchType');
 	});
-
+	//CITY
 	Route::group(['prefix' => 'City'], function() {
 		//FETCH CITY
 		Route::post('/FetchAllCities', 'CityController@fetchCity');
 		//GET CITY CURRENT
 		Route::post('/{cityId}/ShowCity', 'CityController@getCurrentCity');
 	});
-
+	//PRODUCT
+	Route::group(['prefix' => 'Product'], function() {
+		Route::post('/SearchByName', 'ProductController@search');
+	});
+	//CATALOGUE
+	Route::group(['prefix' => 'Catalogue'], function() {
+		Route::post('/FetchAllCatalogue', 'CatalogueController@fetch');
+	});
+	//STORE
 	Route::group(['prefix' => 'Store'], function() {
 		//GET ALL STORE HAS DEAL
 		Route::post('/FetchDealStores', 'StoreController@fetchStoreHasDeal');
@@ -165,7 +173,32 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 		Route::post('/FetchStoresByType', 'StoreController@storeByType');
 		//SHOW STORE
 		Route::post('/{storeId}/ShowStore', 'StoreController@getCurrentStore');
+		//SEARCH STORE
+		Route::post('/Search', 'StoreController@search');
 	});
-	
+	//COUPON
+	Route::group(['prefix' => 'Coupon'], function() {
+		//GET ALL COUPON IN STORE
+		Route::post('/FetchCouponsByStore', 'CouponController@fetchCouponByStore');
+		//CHECK COUPON
+		Route::post('/CheckCoupon', 'CouponController@checkCoupon');
+	});
+	//CART
+	Route::group(['prefix' => 'Cart'], function() {
+		//CHECK OUT
+		Route::post('/Checkout', 'CartController@checkout');
+	});
+	//ORDER
+	Route::group(['prefix' => 'Order'], function() {
+		Route::post('/FetchOrderByFilter', 'OrderController@orderByFilter');
+		Route::post('/{orderId}/Show', 'OrderController@show');
+		Route::post('/{orderId}/Cancel', 'OrderController@cancel');
+	});
+	//STATUS
+	Route::group(['prefix' => 'Status'], function() {
+		//GET STATUS
+		Route::post('/FetchOrderStatus', 'OrderStatusController@getOrderStatus');
+	});
+
 	Route::get('/FetchType/Stores', 'StoreController@fetchAllStoreByType');
 });

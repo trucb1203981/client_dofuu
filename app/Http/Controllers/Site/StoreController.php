@@ -239,7 +239,6 @@ class StoreController extends Controller {
 		$city_id     = $request->cookie('flag_c') != null ? $request->cookie('flag_c') : $this->currentCityID;
 
 		if ($type_id == 0 && $district_id == 0) {
-
 			$stores = Store::ofCity($city_id)->with(['status'])->active()->show()->orderByPriority('desc')->paginate($size);
 
 		} else if ($type_id != 0) {
@@ -254,7 +253,6 @@ class StoreController extends Controller {
 				$query->ofCity($city_id);
 				$query->byDistrictId($district_id);
 			})->with(['status'])->show()->orderByPriority('desc')->paginate($size);
-
 		}
 
 		$pagination = $this->pagination($stores);

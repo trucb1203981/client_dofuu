@@ -152,12 +152,6 @@
 									</v-flex>
 									<v-flex xs8 class="text-xs-right">
 										<div class="success--text" v-if="props.item.statusId == orderStatus('Thành công')"><strong>{{props.item.statusName}}</strong></div>
-										<!-- <div v-if="disableCancelOrder(props.item.statusName)">
-											<v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text" round>
-												Hủy 
-												<v-icon small right>block</v-icon>
-											</v-btn>
-										</div> -->
 										<h4 v-if="props.item.statusId != orderStatus('Thành công')"><span v-if="disableCancelOrder(props.item.statusName)"><v-btn small color="red accent-3" :disabled="orderStatus('hủy') == props.item.statusId" @click.prevent="showCancelDialog(props.item)" class="white--text" round>Hủy<v-icon small right>block</v-icon>
 										</v-btn></span>{{props.item.statusName}}</h4>
 									</v-flex>

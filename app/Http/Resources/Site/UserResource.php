@@ -29,7 +29,8 @@ class UserResource extends JsonResource
                     'type'     => 'Customer'
                 ];
 
-            } else if ($this->role_id === 4) {
+            } 
+            else if ($this->role_id === 4) {
                 $data = [
                     'id'         => $this->id,
                     'name'       => $this->name,
@@ -45,7 +46,24 @@ class UserResource extends JsonResource
                     'type'       => 'Partner',
                     'have_store' => $this->have_store == 1 ? true : false,
                 ];
-            }  else if($this->role_id === 2) {
+            }  
+            else if($this->role_id === 3) {
+                $data = [
+                    'id'         => $this->id,
+                    'name'       => $this->name,
+                    'birthday'   => $this->birthday,
+                    'gender'     => $this->gender,
+                    'email'      => $this->email,
+                    'image'      => $this->image,
+                    'address'    => $this->address,
+                    'phone'      => $this->phone,
+                    'freeShip'   => $this->free_ship,
+                    'points'   => $this->points,
+                    'type'       => 'Shipper',
+                    'isEmployee' => true
+                ];
+            }
+            else if($this->role_id === 2) {
                 $data = [
                     'id'         => $this->id,
                     'name'       => $this->name,

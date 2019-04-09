@@ -12,11 +12,6 @@ class Product extends Model
 
 	protected $hidden = [];
 
-
-	public function scopeLikeName($query, $keywords) {
-		return $query->where('name', 'like', '%'.$keywords.'%')->orWhere('_name', 'like', '%'.$keywords.'%');
-	}
-
 	public function getHaveSizeAttribute($value) {
 		if($value) {
 			return true;
@@ -29,6 +24,10 @@ class Product extends Model
 			return true;
 		} 
 		return false;
+	}
+
+	public function scopeLikeName($query, $keywords) {
+		return $query->where('name', 'like', '%'.$keywords.'%')->orWhere('_name', 'like', '%'.$keywords.'%');
 	}
 
 	public function scopeShow($query) {

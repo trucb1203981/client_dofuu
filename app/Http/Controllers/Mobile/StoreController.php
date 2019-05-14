@@ -32,7 +32,7 @@ class StoreController extends Controller {
 		$count             = $find->count();
 		$stores            = $find->limit($pageSize)->offset($offset)->get();
 
-		$results           = $this->respondSuccess('Search store', $stores->load('coupons', 'activities'));
+		$results           = $this->respondSuccess('Search store', $stores->load('coupons', 'activities', 'toppings'));
 		$results['end']    = $this->infiniteScroll($offset, $count, $pageSize);
 		return response($results);
 	}
@@ -49,7 +49,7 @@ class StoreController extends Controller {
 		$count             = $find->count();
 		$stores            = $find->limit($pageSize)->offset($offset)->get();
 		
-		$results           = $this->respondSuccess('Search store', $stores->load('coupons', 'activities'));
+		$results           = $this->respondSuccess('Search store', $stores->load('coupons', 'activities', 'toppings'));
 		$results['end']    = $this->infiniteScroll($offset, $count, $pageSize);
 		return response($results);
 	}
@@ -93,29 +93,18 @@ class StoreController extends Controller {
 		}])->show()->orderByPriority('desc')->get();
 
 
-		$results = $this->respondSuccess('Get stores with deal', $stores->load('coupons', 'activities'));
+		$results = $this->respondSuccess('Get stores with deal', $stores->load('coupons', 'activities', 'toppings'));
 		return response($results);
 	}
 
 	//SEACH STORE QUERY
 	public function search(Request $request) {
-		$request->endPoint = 'search_by_name';
+		$request->endPoint = 'fetch_store';
 		$keywords          = $request->keywords;
 		$cityId            = $request->cityId;
 		$pageSize          = 20;
 		$offset            = $request->offset;
 		
-		// $find = Store::show()->where(function ($query) use ($keywords, $cityId) {
-		// 	$query->ofCity($cityId);
-		// 	$query->likePlace($keywords);
-		// 	$query->orWhereHas('products', function ($queryChild) use ($keywords) {
-		// 		$queryChild->likeName($keywords);
-		// 	});
-		// 	$query->orWhereHas('catalogues', function ($queryChild) use ($keywords) {
-		// 		$queryChild->likeName($keywords);
-		// 	});
-		// 	$query->distinct('id');
-		// });
 		$city  = City::byId($cityId)->withCount(['stores' => function ($query) use ($keywords, $pageSize, $offset) {
 			return $query->show()->where(function ($query) use ($keywords) {
 				$query->likePlace($keywords);
@@ -142,7 +131,7 @@ class StoreController extends Controller {
 		}])->first();
 		$count = $city->stores_count;
 		$stores = $city->stores;		
-		$results          = $this->respondSuccess('Search store', $city->stores);
+		$results          = $this->respondSuccess('Search store', $city->stores->load('coupons', 'activities', 'toppings'));
 		$results['count'] = $count;
 		
 		return response($results, 200);

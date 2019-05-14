@@ -127,6 +127,34 @@ class AuthController extends Controller
         return $this->respondUnauthorized();
     }
 
+    public function loginFB(Request $request) {
+        $account = SocialAccount::where('provider', 'facebook')->byProviderId($request->id)->first();
+
+        if($account) {
+            $token = auth('api')->login($account->user);
+            return $this->respondWithToken($token, 1000);
+        } else {
+            $user = User::where('email', $request->email)->first();
+            if(!$user) {
+                $res = [
+                    'type'    => 'warning',
+                    'message' => 'Tài khoản chưa được đăng ký',
+                    'data'    => []
+                ];
+                return response($res, 204);
+            } else {
+                $account = SocialAccount::updateOrCreate([
+                    'user_id'          => $user->id,
+                    'provider_user_id' => $request->id,
+                    'provider'         => 'facebook'
+                ]);
+                $account->user()->associate($user);
+                $token = auth('api')->login($user);
+                return $this->respondWithToken($token, 1000);
+            }
+        }
+    }
+
     public function register(UserRequest $request) {
         
          if($request->filled(['name', 'email', 'password', 'phone'])) {
@@ -152,16 +180,38 @@ class AuthController extends Controller
             return $this->respondSuccess('Tạo tài khoản thành công.', $user, 201);
         }
         return response('Something went wrong', 500);
+    }
 
-        // $activation = Activation::create([
-        //     'user_id' => $user->id,
-        //     'token'   => hash_hmac('sha256', str_random(40), config('app.key'))
-        // ]);
-        // var_dump($user);
-        // die();
-        // Mail::to($user->email)->send(new ActiveUserMail($user));
+    public function registerFB(UserRequest $request) {
 
-        // return $this->respondSuccess('Tạo tài khoản thành công.', $user, 201);
+        $account = new SocialAccount([
+            'provider_user_id' => $request->id,
+            'provider'         => 'facebook'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if(!$user) {
+            $user = User::create([
+                'name'      => $request->name,
+                'email'     => $request->email,
+                'password'  => bcrypt($request->password),
+                'birthday'  => '2018-05-02',
+                'gender'    => 0,
+                'phone'     => $request->phone,
+                'role_id'   => $this->customer->id,
+                'free_ship' => 1,
+                'actived'   => 1,
+                'image' => $request->picture['data']['url']
+            ]);
+        }
+        $account->user()->associate($user);
+        $account->save();
+
+
+        $token = auth('api')->login($user);
+
+        return $this->respondWithToken($token, 1000);
     }
 
     protected function validator(array $data) {

@@ -10,6 +10,14 @@ class SocialAccount extends Model
 
 	protected $fillable = ['user_id', 'provider_user_id', 'provider'];
 
+	public function scopeByProviderId($query, $providerId) {
+		return $query->where('provider_user_id', $providerId);
+	}
+
+	public function scopeByUserId($query, $userId) {
+		return $query->where('user_id', $userId);
+	}
+
 	public function user()
 	{
 		return $this->belongsTo('App\Models\User', 'user_id');

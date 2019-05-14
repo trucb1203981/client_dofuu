@@ -25,14 +25,6 @@ class StoreResource extends JsonResource
                     'typeName' => $this->type->type_name
                 ];
             break;
-            case 'search_by_name':
-                return [
-                    'id'       => $this->id,
-                    'name'     => $this->store_name,
-                    'avatar'   => $this->store_avatar,
-                    'address'  => $this->store_address,
-                    'typeName' => $this->type->type_name
-                ];
             case 'fetch_store': 
                 return [
                     'id'           => $this->id,

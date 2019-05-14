@@ -136,12 +136,17 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 	Route::group(['prefix' => 'Credentials'], function() {
 		//LOGIN
 		Route::post('/Login', 'AuthController@login');
+		//LOGIN FACEBOOK
+		Route::post('/Facebook/Login', 'AuthController@loginFB');
 		//REGISTER
 		Route::post('/Register', 'AuthController@register');
+		//FACEBOOK REGISTER
+		Route::post('/Facebook/Register', 'AuthController@registerFB');
 	});
 	//USER
 	Route::group(['prefix' => 'Users'], function() {
 		Route::post('/df', 'AuthController@me');
+		Route::post('/ChangePassword', 'UserController@changePassword');
 	});
 	//TYPE
 	Route::group(['prefix' => 'Type'], function() {

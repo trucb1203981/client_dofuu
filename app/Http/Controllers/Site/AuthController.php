@@ -223,11 +223,11 @@ class AuthController extends Controller
     }
 
     public function loginFB(Request $request) {
-        $account = SocialAccount::where('provider', 'facebook')->where('provider_user_id', $request->id)->first();
+        $account = SocialAccount::where('provider', 'facebook')->byProviderId($request->id)->first();
+
         if($account) {
             $token = auth('api')->login($account->user);
             return $this->respondWithToken($token, 1000);
-
         } else {
             $user = User::where('email', $request->email)->first();
             if(!$user) {
@@ -238,7 +238,8 @@ class AuthController extends Controller
                 ];
                 return response($res, 204);
             } else {
-                $account = new SocialAccount([
+                $account = SocialAccount::updateOrCreate([
+                    'user_id'          => $user->id,
                     'provider_user_id' => $request->id,
                     'provider'         => 'facebook'
                 ]);

@@ -145,7 +145,7 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'm'], function () {
 	});
 	//USER
 	Route::group(['prefix' => 'Users'], function() {
-		Route::post('/df', 'AuthController@me');
+		Route::post('/GetAuth', 'AuthController@me');
 		Route::post('/ChangePassword', 'UserController@changePassword');
 	});
 	//TYPE

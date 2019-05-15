@@ -14,8 +14,7 @@ use App\Models\Activation;
 use App\Models\SocialAccount;
 use App\Http\Requests\Site\AuthRequest;
 use App\Http\Requests\Mobile\UserRequest;
-use App\Http\Resources\Site\AuthResource;
-use App\Http\Resources\Site\UserResource;
+use App\Http\Resources\Mobile\UserResource;
 use App\Mail\ActiveUserMail;
 use Redirect;
 use Mail;
@@ -29,6 +28,7 @@ class AuthController extends Controller
         $this->customer = Role::where('name', 'Customer')->first();
         $this->partner  = Role::where('name', 'Partner')->first();
         $this->employee = Role::where('name', 'Employee')->first();
+        $this->shipper = Role::where('name', 'Shipper')->first();
         $this->middleware('auth:api', ['except' => ['login', 'register', 'loginFB', 'registerFB', 'socialLogin']]);
     }
 
@@ -50,36 +50,7 @@ class AuthController extends Controller
                     'freeShip' => $user->free_ship,
                     'type'     => 'Customer'
                 ];
-
-            } else if ($user->role_id == $this->partner->id) {
-                $data = [
-                    'id'         => $user->id,
-                    'name'       => $user->name,
-                    'birthday'   => $user->birthday,
-                    'gender'     => $user->gender,
-                    'email'      => $user->email,
-                    'image'      => $user->image,
-                    'address'    => $user->address,
-                    'phone'      => $user->phone,
-                    'freeShip'   => $user->free_ship,
-                    'isPartner'  => true,
-                    'type'       => 'Partner'
-                ];
-            }  else if($user->role_id == $this->employee->id) {
-                $data = [
-                    'id'         => $user->id,
-                    'name'       => $user->name,
-                    'birthday'   => $user->birthday,
-                    'gender'     => $user->gender,
-                    'email'      => $user->email,
-                    'image'      => $user->image,
-                    'address'    => $user->address,
-                    'phone'      => $user->phone,
-                    'freeShip'   => $user->free_ship,
-                    'type'       => 'Admin',
-                    'isEmployee' => true
-                ];
-            }
+            } 
             $res = [
                 'type'    => 'success',
                 'message' => '',

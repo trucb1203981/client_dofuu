@@ -160,50 +160,6 @@ class AuthController extends Controller
         $user = auth('api')->user();
 
         if($user->actived) {
-            if ($user->role_id == $this->customer->id) {
-                $data = [
-                    'id'       => $user->id,
-                    'name'     => $user->name,
-                    'birthday' => $user->birthday,
-                    'gender'   => $user->gender,
-                    'email'    => $user->email,
-                    'image'    => $user->image,
-                    'address'  => $user->address,
-                    'phone'    => $user->phone,
-                    'freeShip' => $user->free_ship,
-                    'type'     => 'Customer'
-                ];
-
-            } else if ($user->role_id == $this->partner->id) {
-                $data = [
-                    'id'         => $user->id,
-                    'name'       => $user->name,
-                    'birthday'   => $user->birthday,
-                    'gender'     => $user->gender,
-                    'email'      => $user->email,
-                    'image'      => $user->image,
-                    'address'    => $user->address,
-                    'phone'      => $user->phone,
-                    'freeShip'   => $user->free_ship,
-                    'isPartner'  => true,
-                    'type'       => 'Partner',
-                    'have_store' => $user->have_store == 1 ? true : false,
-                ];
-            }  else if($user->role_id == $this->employee->id) {
-                $data = [
-                    'id'         => $user->id,
-                    'name'       => $user->name,
-                    'birthday'   => $user->birthday,
-                    'gender'     => $user->gender,
-                    'email'      => $user->email,
-                    'image'      => $user->image,
-                    'address'    => $user->address,
-                    'phone'      => $user->phone,
-                    'freeShip'   => $user->free_ship,
-                    'type'       => 'Admin',
-                    'isEmployee' => true
-                ];
-            }
             $res = [
                 'type'    => 'success',
                 'message' => '',

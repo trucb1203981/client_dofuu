@@ -13,7 +13,7 @@
 			<div><strong>Địa chỉ:</strong> 160/18, đường 30/4, Phường An Phú, Quận Ninh Kiều, Cần Thơ.</div>
 			<div><strong>Hotline:</strong> 0888.735.739</div>
 			<div><strong>Email:</strong> dofuu.company@gmail.com</div>
-
+			<nuxt-link to="/privacy">Chính sách</nuxt-link>
 		</v-card-text>
 	</v-card>
 </template>

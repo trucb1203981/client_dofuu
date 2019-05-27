@@ -85,22 +85,25 @@ class CartController extends Controller
 	//CREATE REGULAR ORDER
 	public function createRegularOrder($request) {
 		$regular_order = RegularOrder::create([
-			'name'            => $request['name'],
-			'address'         => $request['address'],
-			'lat'             => $request['lat'],
-			'lng'             => $request['lng'],
-			'distance'        => $request['distance'],
-			'phone'           => $request['phone'],
-			'date'            => $request['date'],
-			'time'            => $request['time'],
-			'delivery_price'  => (int)$request['deliveryPrice'],
-			'subtotal_amount' => $request['cart']['total'],
-			'amount'          => $request['total'],
-			'memo'            => $request['memo'],
-			'payment_id'      => $request['paymentMethod'],
-			'status_id'       => 1,
-			'user_id'         => $request['userId'],
-			'store_id'        => $request['cart']['instance']
+			'name'                => $request['name'],
+			'address'             => $request['address'],
+			'address_description' => $request['addressDescription'],
+			'lat'                 => $request['lat'],
+			'lng'                 => $request['lng'],
+			'place_id'            => $request['placeId'],
+			'distance'            => $request['distance'],
+			'phone'               => $request['phone'],
+			'date'                => $request['date'],
+			'time'                => $request['time'],
+			'delivery_price'      => (int)$request['deliveryPrice'],
+			'subtotal_amount'     => $request['cart']['total'],
+			'amount'              => $request['total'],
+			'memo'                => $request['memo'],
+			
+			'payment_id'          => $request['paymentMethod'],
+			'status_id'           => 1,
+			'user_id'             => $request['userId'],
+			'store_id'            => $request['cart']['instance']
 		]);
 		return $regular_order;
 	}

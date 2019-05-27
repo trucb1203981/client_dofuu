@@ -10,7 +10,7 @@ class RegularOrder extends Model
 	
 	protected $guarded = [];
 	
-	protected $fillable = ['name', 'address', 'lat', 'lng', 'distance', 'phone', 'date', 'time', 'delivery_price', 'subtotal_amount', 'amount', 'coupon', 'secret', 'discount_percent', 'discount_price', 'discount_total', 'memo', 'note', 'paymentinfo', 'security', 'employee_id', 'shipper_id', 'user_id', 'payment_id', 'store_id', 'status_id'];
+	protected $fillable = ['name', 'address', 'lat', 'lng', 'place_id', 'distance', 'phone', 'date', 'time', 'delivery_price', 'subtotal_amount', 'amount', 'coupon', 'secret', 'discount_percent', 'discount_price', 'discount_total', 'memo', 'address_description', 'note', 'paymentinfo', 'security', 'employee_id', 'shipper_id', 'user_id', 'payment_id', 'store_id', 'status_id'];
 
 	protected $hidden  = [];
 

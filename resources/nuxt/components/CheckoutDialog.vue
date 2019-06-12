@@ -483,12 +483,7 @@
 				var user      = this.user
 				deliveries.forEach(item => {
 					if(item.from <= distance && item.to >= distance && service.minRange >= distance) {
-						if(user.freeShip) {
-							shipPrice = 0
-						} else {
-							shipPrice = parseFloat(item.price)
-						}	
-						
+						shipPrice = parseFloat(item.price)						
 					} else if(item.from <= distance && item.to >= distance && service.maxRange >= distance && service.minRange < distance) {
 						shipPrice = Math.round(parseFloat(item.price)*distance/unit)*unit
 					}

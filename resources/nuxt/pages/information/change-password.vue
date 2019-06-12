@@ -133,7 +133,6 @@
 								vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"success", close:true })
 							}
 							if(response.status === 202) {
-								console.log('ok')
 								vm.$store.dispatch('alert', {index:0, name: vm.$route.name, message: response.data.message, type:"error", close:true })
 							}
 						}).finally(() => {

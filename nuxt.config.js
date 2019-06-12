@@ -15,7 +15,7 @@ module.exports = laravelNuxt({
 		{ hid: 'description', name: 'description', content: 'Dofuu website' }
 		],
 		link: [
-		{ rel: 'icon', type: 'image/x-icon', href: '/dofuu24x24.png'},
+		{ rel: 'icon', type: 'image/x-icon', href: '/dofuu48x48.png'},
 		{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'},
 		{ rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.1.1/css/all.css', integrity:"sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ", crossorigin:"anonymous"}
 		],

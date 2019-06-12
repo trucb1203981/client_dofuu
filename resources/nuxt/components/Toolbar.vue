@@ -24,13 +24,42 @@
 				</v-btn>
 			</template>
 		</v-autocomplete>	 -->	
-		<v-text-field class="btn-custom mx-2" solo :flat="!focusSearchInput" :background-color="focusSearchInput ? 'white' : 'grey lighten-3'" label="Tìm kiếm (quán, món, ...)"  @keyup.enter="search" v-model="keywords" @focus="focusSearchInput = true " @blur="focusSearchInput = false" style="border-radius: 1px solid blue">
-			<v-btn :color="focusSearchInput ? 'blue' : 'grey lighten-3'" :outline="focusSearchInput" icon  class="ma-0"  style="right: -10px" @click.prevent="search" small slot="append">
+		<v-text-field 
+			class="btn-custom mx-2" 
+			solo 
+			:flat="!focusSearchInput" 
+			:background-color="focusSearchInput ? 'white' : 'grey lighten-3'" 
+			label="Tìm kiếm (quán, món, ...)"  
+			@keyup.enter="search" 
+			v-model="keywords" 
+			@focus="focusSearchInput = true " 
+			@blur="focusSearchInput = false" 
+			style="border-radius: 1px solid blue"
+		>
+			<v-btn 
+				:color="focusSearchInput ? 'blue' : 'grey lighten-3'" 
+				:outline="focusSearchInput" 
+				icon  
+				class="ma-0"  
+				style="right: -10px" 
+				@click.prevent="search" 
+				small 
+				slot="append"
+			>
 				<v-icon :color="focusSearchInput ? 'blue' : 'grey'" >search</v-icon>
 			</v-btn>
 		</v-text-field>
 		<v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
-
+		<v-btn 
+			small 
+			color="red red darken-3" 
+			:round="$vuetify.breakpoint.mdAndUp" 
+			:icon="$vuetify.breakpoint.smAndDown" 
+			href="https://play.google.com/store/apps/details?id=com.dofuu&hl=vi" 
+			target="_blank" 
+		>
+			<v-icon color="white">android</v-icon> <span class="hidden-sm-and-down pl-1 white--text">Tải app</span>
+		</v-btn>
 		<v-btn v-if="!isAuth" nuxt :to="{path: '/login', query: {redirect: $route.path}}" color="blue" small dark :round="$vuetify.breakpoint.mdAndUp" :icon="$vuetify.breakpoint.smAndDown" class="mx-0">
 			<v-icon>person</v-icon> <span class="hidden-sm-and-down pl-1">ĐĂNG NHẬP</span>
 		</v-btn>

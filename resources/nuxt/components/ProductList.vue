@@ -19,8 +19,8 @@
 							<v-layout align-center justify-center>
 								<v-flex xs9>
 									<v-card style="border-radius: 50%" :max-width="imageSize" :max-height="imageSize" raised>	
-										<v-avatar :size="imageSize"  color="grey lighten-3">
-											<img :src="image(item.image)" alt="item.name">
+										<v-avatar :size="imageSize" style="margin:1px"  color="grey lighten-3">
+											<v-img :src="image(item.image)" alt="item.name" />
 										</v-avatar>											
 									</v-card>	
 								</v-flex>	

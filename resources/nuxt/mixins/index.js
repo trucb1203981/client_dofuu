@@ -81,6 +81,9 @@ export default {
 				case 'vỉa hè':
 				return { url: `/map_icons/${color}/via-he.png`, scaledSize: new google.maps.Size(30, 38) }
 				break
+				default:
+				return { url: `/map_icons/${color}/quan-an.png`, scaledSize: new google.maps.Size(30, 38)}
+				break
 			}
 		},
 		// storeURL: function(slug) {

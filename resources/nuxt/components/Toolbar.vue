@@ -232,26 +232,32 @@
 			} 
 			return 'Khách hàng'
 		},
-		typeIcon: function(value, color) {
+		typeIcon: function(value, zzz) {
 			var status = new String(value).toLowerCase()
 			switch(status) {
 				case 'quán ăn':
-				return `/map_icons/${color}/quan-an.png`
+				return `/map_icons/${type}/quan-an.png`
 				break
 				case 'trà sữa':
-				return `/map_icons/${color}/tra-sua.png`
+				return `/map_icons/${type}/tra-sua.png`
 				break
 				case 'cà phê':
-				return `/map_icons/${color}/ca-phe.png`
+				return `/map_icons/${type}/ca-phe.png`
 				break
 				case 'ăn vặt':
-				return `/map_icons/${color}/an-vat.png`
+				return `/map_icons/${type}/an-vat.png`
 				break
 				case 'thức ăn nhanh':
-				return `/map_icons/${color}/thuc-an-nhanh.png`
+				return `/map_icons/${type}/thuc-an-nhanh.png`
 				break
 				case 'vỉa hè':
-				return `/map_icons/${color}/via-he.png`
+				return `/map_icons/${type}/via-he.png`
+				break
+				case 'trái cây':
+				return `/map_icons/${type}/trai-cay.png`
+				break
+				default:
+				return `/map_icons/${type}/quan-an.png`
 				break
 			}
 		},

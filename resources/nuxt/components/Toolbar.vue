@@ -232,7 +232,7 @@
 			} 
 			return 'Khách hàng'
 		},
-		typeIcon: function(value, zzz) {
+		typeIcon: function(value, type) {
 			var status = new String(value).toLowerCase()
 			switch(status) {
 				case 'quán ăn':

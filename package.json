@@ -8,7 +8,7 @@
         "@babel/polyfill": "^7.0.0",
         "@babel/runtime": "^7.0.0",
         "@nuxtjs/google-analytics": "^2.0.2",
-        "axios": "^0.18.0",
+        "axios": "^0.21.1",
         "babel-plugin-transform-imports": "^1.5.1",
         "babel-polyfill": "^6.26.0",
         "cookieparser": "^0.1.0",
